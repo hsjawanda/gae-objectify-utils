@@ -12,6 +12,8 @@
 		<appengine.target.version>1.9.30</appengine.target.version>
 		<junit.version>4.10</junit.version>
 		<lombok.version>1.16.6</lombok.version>
+		<freemarker.version>2.3.20</freemarker.version>
+		<guava.version>18.0</guava.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -30,6 +32,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.googlecode.objectify</groupId>
 			<artifactId>objectify</artifactId>
 			<version>5.1.9</version>
@@ -44,7 +53,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>18.0</version>
+			<version>${guava.version}</version>
 		</dependency>
 
 		<dependency>
@@ -52,6 +61,12 @@
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker-gae</artifactId>
+			<version>${freemarker.version}</version>
 		</dependency>
 
 		<dependency>

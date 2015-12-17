@@ -1,7 +1,7 @@
 /**
  *
  */
-package in.co.amebatechnologies.empireapp.models;
+package com.hsjawanda.gaeobjectify.models;
 
 /**
  * @author harsh.deep

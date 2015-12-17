@@ -1,7 +1,7 @@
 /**
  *
  */
-package in.co.amebatechnologies.empireapp.data;
+package com.hsjawanda.gaeobjectify.data;
 
 import java.lang.reflect.Field;
 

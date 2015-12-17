@@ -1,7 +1,7 @@
 /**
  *
  */
-package in.co.amebatechnologies.empireapp.util;
+package com.hsjawanda.gaeobjectify.util;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;

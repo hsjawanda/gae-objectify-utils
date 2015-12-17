@@ -1,0 +1,381 @@
+/**
+ *
+ */
+package com.hsjawanda.gaeobjectify.collections;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import com.googlecode.objectify.Ref;
+
+/**
+ * @author Harshdeep Jawanda <hsjawanda@gmail.com>
+ *
+ */
+public class RefsList<E> implements List<E> {
+
+	private List<Ref<E>> wrapped;
+
+	public RefsList(List<Ref<E>> toWrap) {
+		checkNotNull(toWrap);
+		this.wrapped = new ArrayList<>(toWrap);
+
+	}
+
+	public RefsList() {
+		this.wrapped = new ArrayList<>();
+	}
+
+	/**
+	 * @param index
+	 * @param element
+	 * @see java.util.List#add(int, java.lang.Object)
+	 */
+	@Override
+	public void add(int index, E element) {
+		this.add(index, GaeDataUtil.getNullableRefFromPojo(element));
+	}
+
+	protected boolean add(int index, Ref<E> ref) {
+		if (null != ref) {
+			this.wrapped.add(index, ref);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param e
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	@Override
+	public boolean add(E e) {
+		return this.add(GaeDataUtil.getNullableRefFromPojo(e));
+	}
+
+	protected boolean add(Ref<E> ref) {
+		if (null != ref)
+			return this.wrapped.add(ref);
+		return false;
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#addAll(java.util.Collection)
+	 */
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		if (null == c || c.size() < 1)
+			return false;
+		boolean listChanged = false;
+		for (E element : c) {
+			listChanged |= this.add(GaeDataUtil.getNullableRefFromPojo(element));
+			// if (null != ref) {
+			// this.wrapped.add(ref);
+			// listChanged = true;
+			// }
+		}
+		return listChanged;
+	}
+
+	/**
+	 * @param index
+	 * @param c
+	 * @return
+	 * @see java.util.List#addAll(int, java.util.Collection)
+	 */
+	@Override
+	public boolean addAll(int index, Collection<? extends E> c) {
+		if (null == c || c.size() < 1)
+			return false;
+		boolean listChanged = false;
+		for (E element : c) {
+			listChanged |= this.add(index, GaeDataUtil.getNullableRefFromPojo(element));
+			// if (null != ref) {
+			// this.wrapped.add(ref);
+			// listChanged = true;
+			// }
+		}
+		return listChanged;
+		// if (null == c || c.size() < 1)
+		// return false;
+		// List<Ref<E>> refList = new ArrayList<>(c.size());
+		// for (E element : c) {
+		// Ref<E> ref = GaeDataUtil.getNullableRefFromPojo(element);
+		// if (null != ref) {
+		// refList.add(ref);
+		// }
+		// }
+		// return this.wrapped.addAll(index, refList);
+	}
+
+	/**
+	 *
+	 * @see java.util.List#clear()
+	 */
+	@Override
+	public void clear() {
+		this.wrapped.clear();
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.List#contains(java.lang.Object)
+	 */
+	@Override
+	public boolean contains(Object o) {
+		return this.wrapped.contains(GaeDataUtil.getNullableRefFromPojo(o));
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#containsAll(java.util.Collection)
+	 */
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		if (null == c || c.size() < 1)
+			return false;
+		for (Object elem : c) {
+			if (!this.contains(elem))
+				return false;
+		}
+		return true;
+
+		// List<Object> refList = new ArrayList<>(c.size());
+		// for (Object element : c) {
+		// Ref<Object> ref = GaeDataUtil.getNullableRefFromPojo(element);
+		// if (null != ref) {
+		// refList.add(ref);
+		// }
+		// }
+		// return this.wrapped.containsAll(refList);
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.List#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object o) {
+		return this.wrapped.equals(GaeDataUtil.getNullableRefFromPojo(o));
+	}
+
+	/**
+	 * @param index
+	 * @return
+	 * @see java.util.List#get(int)
+	 */
+	@Override
+	public E get(int index) {
+		return this.wrapped.get(index).get();
+	}
+
+	/**
+	 * @return
+	 * @see java.util.List#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.wrapped.hashCode();
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.List#indexOf(java.lang.Object)
+	 */
+	@Override
+	public int indexOf(Object o) {
+		return this.wrapped.indexOf(GaeDataUtil.getNullableRefFromPojo(o));
+	}
+
+	/**
+	 * @return
+	 * @see java.util.List#isEmpty()
+	 */
+	@Override
+	public boolean isEmpty() {
+		return this.wrapped.isEmpty();
+	}
+
+	/**
+	 * @return
+	 * @see java.util.List#iterator()
+	 */
+	@Override
+	public RefsIterator<E> iterator() {
+		return new RefsIterator<>(this.wrapped.iterator());
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.List#lastIndexOf(java.lang.Object)
+	 */
+	@Override
+	public int lastIndexOf(Object o) {
+		return this.wrapped.lastIndexOf(GaeDataUtil.getNullableRefFromPojo(o));
+	}
+
+	/**
+	 * @return
+	 * @see java.util.List#listIterator()
+	 */
+	@Override
+	public ListIterator<E> listIterator() {
+		return new RefsListIterator<>(this.wrapped.listIterator());
+	}
+
+	/**
+	 * @param index
+	 * @return
+	 * @see java.util.List#listIterator(int)
+	 */
+	@Override
+	public ListIterator<E> listIterator(int index) {
+		return new RefsListIterator<>(this.wrapped.listIterator(index));
+	}
+
+	/**
+	 * @param index
+	 * @return
+	 * @see java.util.List#remove(int)
+	 */
+	@Override
+	public E remove(int index) {
+		return this.wrapped.remove(index).get();
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.List#remove(java.lang.Object)
+	 */
+	@Override
+	public boolean remove(Object o) {
+		return this.wrapped.remove(GaeDataUtil.getNullableRefFromPojo(o));
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#removeAll(java.util.Collection)
+	 */
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		if (null == c)
+			return false;
+		boolean listChanged = false;
+		for (Object elem : c) {
+			listChanged |= this.remove(elem);
+		}
+		return listChanged;
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#retainAll(java.util.Collection)
+	 */
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		if (null == c)
+			return false;
+		boolean listChanged = false;
+		Iterator<Ref<E>> iter = this.wrapped.iterator();
+		while (iter.hasNext()) {
+			Ref<E> ref = iter.next();
+			if (!c.contains(ref.get())) {
+				iter.remove();
+				listChanged = true;
+			}
+		}
+		return listChanged;
+	}
+
+	/**
+	 * @param index
+	 * @param element
+	 * @return <code>null</code> if a valid <code>Ref</code> couldn't be created for
+	 *         <code>element</code>, the previous element otherwise.
+	 * @see java.util.List#set(int, java.lang.Object)
+	 */
+	@Override
+	public E set(int index, E element) {
+		return this.set(index, GaeDataUtil.getNullableRefFromPojo(checkNotNull(element)));
+	}
+
+	protected E set(int index, Ref<E> ref) {
+		checkArgument(null != ref, "Couldn't create a valid ref for element.");
+		return this.wrapped.set(index, ref).get();
+	}
+
+	/**
+	 * @return
+	 * @see java.util.List#size()
+	 */
+	@Override
+	public int size() {
+		return this.wrapped.size();
+	}
+
+	/**
+	 * @param fromIndex
+	 * @param toIndex
+	 * @return
+	 * @see java.util.List#subList(int, int)
+	 */
+	@Override
+	public List<E> subList(int fromIndex, int toIndex) {
+		return new RefsList<E>(this.wrapped.subList(fromIndex, toIndex));
+	}
+
+	/**
+	 * @return
+	 * @see java.util.List#toArray()
+	 */
+	@Override
+	public Object[] toArray() {
+		Object[] arr = new Object[this.wrapped.size()];
+		int index = 0;
+		for (Ref<E> ref : this.wrapped) {
+			arr[index++] = ref.get();
+		}
+		return arr;
+	}
+
+	/**
+	 * @param a
+	 * @return
+	 * @see java.util.List#toArray(java.lang.Object[])
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T[] toArray(T[] a) {
+		if (a.length < this.wrapped.size()) {
+			a = (T[]) Array.newInstance(a.getClass().getComponentType(), this.wrapped.size());
+		}
+		Object[] arr = a;
+		int index = 0;
+		for (Ref<E> ref : this.wrapped) {
+			arr[index++] = ref.get();
+		}
+
+		if (a.length > this.wrapped.size()) {
+			a[this.wrapped.size()] = null;
+		}
+
+		return a;
+	}
+}

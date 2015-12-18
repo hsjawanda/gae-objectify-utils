@@ -3,6 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.collections;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Array;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.googlecode.objectify.Ref;
+import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
 
 /**
  * @author Harshdeep Jawanda <hsjawanda@gmail.com>

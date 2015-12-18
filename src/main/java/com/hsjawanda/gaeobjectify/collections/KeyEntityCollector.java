@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.hsjawanda.gaeobjectify.util;
+package com.hsjawanda.gaeobjectify.collections;
 
 import com.googlecode.objectify.Key;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;

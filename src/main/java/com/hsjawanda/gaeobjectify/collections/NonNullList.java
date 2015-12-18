@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.hsjawanda.gaeobjectify.util;
+package com.hsjawanda.gaeobjectify.collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

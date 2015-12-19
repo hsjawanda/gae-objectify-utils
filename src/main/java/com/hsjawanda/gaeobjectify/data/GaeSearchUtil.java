@@ -7,6 +7,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +17,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.google.appengine.api.search.Document;
 import com.google.appengine.api.search.GeoPoint;
+import com.google.appengine.api.search.GetRequest;
+import com.google.appengine.api.search.GetResponse;
 import com.google.appengine.api.search.Index;
 import com.google.appengine.api.search.IndexSpec;
 import com.google.appengine.api.search.PutException;
@@ -25,7 +30,6 @@ import com.google.appengine.api.search.SearchServiceFactory;
 import com.google.appengine.api.search.SortExpression;
 import com.google.appengine.api.search.SortOptions;
 import com.google.appengine.api.search.StatusCode;
-
 import com.hsjawanda.gaeobjectify.util.Constants;
 
 
@@ -38,6 +42,8 @@ public class GaeSearchUtil {
 	private static final Logger log = Logger.getLogger(GaeSearchUtil.class.getName());
 
 	private static final int maxTries = 5;
+
+	private static final int batchMax = 200;
 
 	public static boolean indexDocument(String indexName, Document document) {
 		Index index = getIndex(indexName);
@@ -93,7 +99,37 @@ public class GaeSearchUtil {
 	public static void deleteDocuments(String indexName, Iterable<String> docIds) {
 		Index index = getIndex(indexName);
 		if (null != index) {
-			index.delete(docIds);
+			int max = batchMax;
+			List<String> idList = new ArrayList<>(max);
+			Iterator<String> iter = docIds.iterator();
+			while (iter.hasNext()) {
+				idList.clear();
+				for (int i = 0; i < max && iter.hasNext(); i++) {
+					idList.add(iter.next());
+				}
+				index.delete(idList);
+			}
+		}
+	}
+
+	public static void deleteIndexContents(String indexName) {
+		Index index = getIndex(indexName);
+		if (null != index) {
+			GetRequest req = GetRequest.newBuilder().setReturningIdsOnly(true).setLimit(batchMax)
+					.build();
+			List<String> docIds = new ArrayList<>(batchMax);
+			while (true) {
+				GetResponse<Document> resp = index.getRange(req);
+				if (resp.getResults().isEmpty()) {
+					break;
+				} else {
+					docIds.clear();
+					for (Document doc : resp) {
+						docIds.add(doc.getId());
+					}
+					deleteDocuments(indexName, docIds);
+				}
+			}
 		}
 	}
 

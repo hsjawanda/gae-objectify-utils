@@ -49,7 +49,7 @@ public class UriParser {
 			}
 		}
 		String action = EMPTY;
-		if (this.hasAction) {
+		if (this.hasAction && parts.size() > 0) {
 			action = parts.get(0);
 			parts = parts.subList(1, parts.size());
 			if (debug) {
@@ -57,7 +57,7 @@ public class UriParser {
 			}
 		}
 		UriInfo info = new UriInfo(action);
-		info.setParams(this.mapList(parts));
+		info.setParams(mapList(parts));
 		return info;
 	}
 

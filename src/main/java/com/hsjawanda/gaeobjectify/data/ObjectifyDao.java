@@ -21,7 +21,6 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Result;
 import com.googlecode.objectify.SaveException;
 import com.googlecode.objectify.cmd.Query;
-
 import com.hsjawanda.gaeobjectify.util.PagingData;
 
 
@@ -68,6 +67,12 @@ public class ObjectifyDao<T> {
 		return getByKey(key);
 	}
 
+	public Map<String, T> getByIds(Iterable<String> ids) {
+		if (null == ids)
+			return Collections.emptyMap();
+		return ofy().load().type(this.cls).ids(ids);
+	}
+
 	public Optional<T> getById(long id) {
 		Key<T> key = null;
 		try {
@@ -105,9 +110,13 @@ public class ObjectifyDao<T> {
 		return key;
 	}
 
-	public String getWebKeyFromPojo(T pojo) {
+	public String getWebKeyFor(T pojo) {
 		Key<T> key = getKeyFromPojo(pojo);
 		return (null == key) ? EMPTY : key.toWebSafeString();
+	}
+
+	public List<T> getAll() {
+		return ofy().load().type(this.cls).list();
 	}
 
 	public T getByProjection(Class<T> cls, String... propNames) {
@@ -145,18 +154,11 @@ public class ObjectifyDao<T> {
 		if (null == entities)
 			return true;
 		return saveEntities(Arrays.asList(entities));
-		// try {
-		// ofy().save().entities(entities);
-		// return true;
-		// } catch (Exception e) {
-		// this.log.log(Level.WARNING, "Exception saving entities.", e);
-		// return false;
-		// }
 	}
 
 	public boolean saveEntities(Iterable<T> entities) {
 		try {
-			ofy().save().entities(entities);
+			ofy().save().entities(entities).now();
 			return true;
 		} catch (Exception e) {
 			this.log.log(Level.WARNING, "Exception saving entities...", e);
@@ -173,7 +175,9 @@ public class ObjectifyDao<T> {
 	}
 
 	public void deferredSaveEntity(T t) {
-		ofy().defer().save().entity(t);
+		if (null != t) {
+			ofy().defer().save().entity(t);
+		}
 	}
 
 	public void deferredDeleteEntities(@SuppressWarnings("unchecked") T... ts) {
@@ -185,7 +189,19 @@ public class ObjectifyDao<T> {
 	}
 
 	public void deferredDeleteEntity(T t) {
-		ofy().defer().delete().entity(t);
+		if (null != t) {
+			ofy().defer().delete().entity(t);
+		}
+	}
+
+	public void deferredDeleteByKey(Iterable<Key<T>> keys) {
+		ofy().defer().delete().keys(keys);
+	}
+
+	public void deferredDeleteByKey(Key<T> key) {
+		if (null != key) {
+			ofy().defer().delete().key(key);
+		}
 	}
 
 	public boolean deleteEntity(T entity) {
@@ -249,9 +265,11 @@ public class ObjectifyDao<T> {
 
 	public Ref<T> getNullableRefFromPojo(T entity) {
 		Ref<T> ref = null;
-		if (null != entity && Check.idNotNull(entity)) {
+		if (null != entity /* && Check.idNotNull(entity) */) {
 			try {
 				ref = Ref.create(entity);
+			} catch (NullPointerException e) {
+				this.log.warning("NullPointerException because: " + e.getMessage());
 			} catch (Exception e) {
 				this.log.log(Level.WARNING,
 						"Error creating a Ref<" + this.cls.getSimpleName() + "> to a POJO", e);

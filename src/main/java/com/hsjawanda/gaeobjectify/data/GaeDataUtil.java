@@ -140,20 +140,10 @@ public class GaeDataUtil {
 		}
 	}
 
-	// public static boolean saveEntities(Object... entities) {
-	// try {
-	// ofy().save().entities(entities);
-	// return true;
-	// } catch (Exception e) {
-	// log.log(Level.WARNING, "Exception saving entities.", e);
-	// return false;
-	// }
-	// }
-
 	@SafeVarargs
 	public static <T extends GaeEntity> boolean saveEntities(T... entities) {
 		try {
-			ofy().save().entities(entities);
+			ofy().save().entities(entities).now();
 			return true;
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Exception saving entities.", e);
@@ -163,7 +153,7 @@ public class GaeDataUtil {
 
 	public static <T extends GaeEntity> boolean saveEntities(Iterable<T> entities) {
 		try {
-			ofy().save().entities(entities);
+			ofy().save().entities(entities).now();
 			return true;
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Exception saving Iterable entities...", e);

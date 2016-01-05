@@ -261,6 +261,8 @@ public class NonNullList<E> implements List<E> {
 	 */
 	@Override
 	public boolean remove(Object o) {
+		if (null == o)
+			return true;
 		return this.wrapped.remove(o);
 	}
 

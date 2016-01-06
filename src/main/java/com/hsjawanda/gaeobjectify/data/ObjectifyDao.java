@@ -64,7 +64,13 @@ public class ObjectifyDao<T> {
 	}
 
 	public Optional<T> getById(String id) {
-		Key<T> key = Key.create(this.cls, id);
+		Key<T> key = null;
+		try {
+			key = Key.create(this.cls, id);
+		} catch (Exception e) {
+			this.log.warning("Error creating key: " + e.getMessage());
+			return Optional.absent();
+		}
 		return getByKey(key);
 	}
 

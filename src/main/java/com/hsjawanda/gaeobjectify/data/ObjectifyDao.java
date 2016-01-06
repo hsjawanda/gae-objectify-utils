@@ -6,6 +6,7 @@ package com.hsjawanda.gaeobjectify.data;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -115,6 +116,17 @@ public class ObjectifyDao<T> {
 		return (null == key) ? EMPTY : key.toWebSafeString();
 	}
 
+	public Key<T> keyFor(String id) {
+		Key<T> key = null;
+		try {
+			key = Key.create(this.cls, id);
+		} catch (Exception e) {
+			this.log.log(Level.WARNING, "Error creating Key<" + this.cls.getSimpleName() + ">...",
+					e);
+		}
+		return key;
+	}
+
 	public List<T> getAll() {
 		return ofy().load().type(this.cls).list();
 	}
@@ -191,6 +203,15 @@ public class ObjectifyDao<T> {
 	public void deferredDeleteEntity(T t) {
 		if (null != t) {
 			ofy().defer().delete().entity(t);
+		}
+	}
+
+	public void deferredDeleteById(String id) {
+		if (isNotBlank(id)) {
+			Key<T> key = keyFor(id);
+			if (null != key) {
+				ofy().defer().delete().key(key);
+			}
 		}
 	}
 

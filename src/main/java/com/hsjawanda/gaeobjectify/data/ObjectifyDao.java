@@ -41,6 +41,8 @@ public class ObjectifyDao<T> {
 	}
 
 	public Optional<T> getByKey(Key<T> key) {
+		if (null == key)
+			return Optional.absent();
 		return Optional.fromNullable(ofy().load().key(key).now());
 	}
 
@@ -64,6 +66,8 @@ public class ObjectifyDao<T> {
 	}
 
 	public Optional<T> getById(String id) {
+		if (isBlank(id))
+			return Optional.absent();
 		Key<T> key = null;
 		try {
 			key = Key.create(this.cls, id);
@@ -221,13 +225,19 @@ public class ObjectifyDao<T> {
 		}
 	}
 
-	public void deferredDeleteByKey(Iterable<Key<T>> keys) {
+	public void deferredDeleteByKeys(Iterable<Key<T>> keys) {
 		ofy().defer().delete().keys(keys);
 	}
 
 	public void deferredDeleteByKey(Key<T> key) {
 		if (null != key) {
 			ofy().defer().delete().key(key);
+		}
+	}
+
+	public void deferredDeleteByRef(Ref<T> ref) {
+		if (null != ref) {
+			deferredDeleteByKey(ref.getKey());
 		}
 	}
 

@@ -32,24 +32,30 @@ public class EntityCollector<K, V> {
 
 	protected Map<K, V> entityMap;
 
+	protected KeyGenerator<K, V> keyGen;
+
 	protected boolean entityMapModified = false;
 
 	protected boolean hasEntityAnnotation = true;
 
 	Class<V> cls;
 
-	public EntityCollector(Class<V> cls) {
+	public static <K, V> EntityCollector<K, V> instance(Class<V> cls, KeyGenerator<K, V> keyGen) {
 		checkNotNull(cls);
-		this.cls = cls;
+		checkNotNull(keyGen);
+		EntityCollector<K, V> ec = new EntityCollector<>();
+		ec.cls = cls;
+		ec.keyGen = keyGen;
+		return ec;
 	}
 
-	public void addEntity(K key, V entity) {
-		if (null == key || null == entity)
+	public void addEntity(V entity) {
+		if (null == entity)
 			return;
 		if (null == this.entityMap) {
-			this.allocateMap();
+			allocateMap();
 		}
-		this.entityMap.put(key, entity);
+		this.entityMap.put(this.keyGen.keyFor(entity), entity);
 		this.entityMapModified = true;
 	}
 
@@ -92,8 +98,9 @@ public class EntityCollector<K, V> {
 		if (this.entityMapModified) {
 			if (null == this.entities) {
 				this.entities = new ArrayList<>(this.entityMap.size());
+			} else {
+				this.entities.clear();
 			}
-			this.entities.clear();
 			for (K key : this.entityMap.keySet()) {
 				this.entities.add(this.entityMap.get(key));
 			}
@@ -102,12 +109,36 @@ public class EntityCollector<K, V> {
 		return this.entities;
 	}
 
-	public void loadFromEntityRefs(Class<V> cls, List<Ref<V>> refs) {
+	public Map<K, V> asMap() {
+		return Collections.unmodifiableMap(this.entityMap);
+	}
+
+	public void loadFromEntityRefs(List<Ref<V>> refs) {
+		if (null != refs) {
+			allocateMap();
+			this.entityMap.clear();
+			for (Ref<V> ref : refs) {
+				if (null == ref) {
+					continue;
+				}
+				V entity = ref.get();
+				this.entityMap.put(this.keyGen.keyFor(entity), entity);
+			}
+		}
 		throw new NotImplementedException("Not yet implemented.");
 	}
 
-	public Map<K, V> loadFromEmbeddedEntities(Class<V> cls, List<V> entities) {
-		throw new NotImplementedException("Not yet implemented.");
+	public void loadFromEntities(List<V> entities) {
+		if (null != entities && entities.size() > 0) {
+			allocateMap();
+			this.entityMap.clear();
+			for (V entity : entities) {
+				if (null == entity) {
+					continue;
+				}
+				this.entityMap.put(this.keyGen.keyFor(entity), entity);
+			}
+		}
 	}
 
 	protected void allocateMap() {

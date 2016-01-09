@@ -13,14 +13,15 @@ import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
  */
 public class KeyEntityCollector<T> extends EntityCollector<Key<T>, T> {
 
-	public KeyEntityCollector(Class<T> cls) {
-		super(cls);
+	public KeyEntityCollector() {
+		super();
 	}
 
+	@Override
 	public void addEntity(T entity) {
 		if (null == entity)
 			return;
-		super.addEntity(GaeDataUtil.getKeyFromPojo(entity), entity);
+		this.entityMap.put(GaeDataUtil.getKeyFromPojo(entity), entity);
 	}
 
 	public T removeEntity(Key<T> entityKey) {

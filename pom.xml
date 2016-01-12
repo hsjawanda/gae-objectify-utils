@@ -14,6 +14,8 @@
 		<junit.version>4.10</junit.version>
 		<lombok.version>1.16.6</lombok.version>
 		<freemarker.version>2.3.20</freemarker.version>
+		<jackson.version>2.6.1</jackson.version>
+		<joda.money.version>0.10.0</joda.money.version>
 		<guava.version>18.0</guava.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipTests>true</skipTests>
@@ -83,6 +85,18 @@
 			<artifactId>appengine-api-stubs</artifactId>
 			<version>${appengine.target.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.joda</groupId>
+			<artifactId>joda-money</artifactId>
+			<version>${joda.money.version}</version>
 		</dependency>
 
 	</dependencies>

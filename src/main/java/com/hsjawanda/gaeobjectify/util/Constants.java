@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.mail.internet.InternetAddress;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Range;
 
 
 /**
@@ -37,6 +38,10 @@ public class Constants {
 	public static final BigDecimal HUNDRED = new BigDecimal(100);
 
 	public static final Joiner pathJoiner = Joiner.on('/').skipNulls();
+
+	public static final Range<Double> latRange = Range.closed(-90.0, 90.0);
+
+	public static final Range<Double> longRange = Range.closed(-180.0, 180.0);
 
 	private Constants() {
 	}

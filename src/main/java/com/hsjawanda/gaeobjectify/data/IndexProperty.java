@@ -7,7 +7,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Work;
-
 import com.hsjawanda.gaeobjectify.models.UniqueStringProperty;
 
 

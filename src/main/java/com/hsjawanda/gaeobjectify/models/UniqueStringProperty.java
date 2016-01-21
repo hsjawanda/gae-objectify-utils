@@ -19,12 +19,6 @@ public class UniqueStringProperty<T> {
 	@Id
 	private String id;
 
-	// @Ignore
-	// private String namespace;
-	//
-	// @Ignore
-	// private String value;
-
 	private Ref<T> reference;
 
 	protected UniqueStringProperty() {

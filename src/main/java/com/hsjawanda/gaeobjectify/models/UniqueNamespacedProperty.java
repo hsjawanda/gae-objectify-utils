@@ -3,14 +3,15 @@
  */
 package com.hsjawanda.gaeobjectify.models;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import java.util.List;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.googlecode.objectify.annotation.Ignore;
 
 
 /**
@@ -25,11 +26,14 @@ public class UniqueNamespacedProperty<T> extends UniqueStringProperty<T> {
 
 	private static final Splitter splitter = Splitter.on(separator);
 
+	@Ignore
+	private List<String> parts;
+
 	protected UniqueNamespacedProperty() {
 	}
 
 	protected UniqueNamespacedProperty(String namespace, String id) {
-		super(joiner(namespace, id));
+		super(joiner(trimToNull(namespace), trimToEmpty(id)));
 	}
 
 	// public static Optional<PrincipalTpId> getById(String namespace, String id) {
@@ -38,10 +42,10 @@ public class UniqueNamespacedProperty<T> extends UniqueStringProperty<T> {
 	// return GaeDataUtil.getById(PrincipalTpId.class, joiner(namespace, id));
 	// }
 
-	protected static void checkArgs(String namespace, String id) {
-		checkArgument(isNotBlank(namespace), "namespace can't be null, empty or whitespace.");
-		checkArgument(isNotBlank(id), "id can't be null, empty or whitespace.");
-	}
+	// protected static void checkArgs(String namespace, String id) {
+	// checkArgument(isNotBlank(namespace), "namespace can't be null, empty or whitespace.");
+	// checkArgument(isNotBlank(id), "id can't be null, empty or whitespace.");
+	// }
 
 	protected static String joiner(String namespace, String id) {
 		return joiner.join(namespace, id);
@@ -51,17 +55,27 @@ public class UniqueNamespacedProperty<T> extends UniqueStringProperty<T> {
 		return splitter.splitToList(namespacedId);
 	}
 
-	public String getIdentifier() {
-		List<String> parts = splitter(super.getId());
-		if (parts.size() > 1)
-			return parts.get(1);
-		return EMPTY;
+	protected String getIdentifier() {
+		if (null == this.parts) {
+			this.parts = splitter(super.getId());
+		}
+		switch (this.parts.size()) {
+		case 0:
+			return EMPTY;
+		case 1:
+			return this.parts.get(0);
+		case 2:
+		default:
+			return this.parts.get(1);
+		}
 	}
 
-	public String getNamespace() {
-		List<String> parts = splitter(super.getId());
-		if (parts.size() > 0)
-			return parts.get(0);
+	protected String getNamespace() {
+		if (null == this.parts) {
+			this.parts = splitter(super.getId());
+		}
+		if (this.parts.size() > 0)
+			return this.parts.get(0);
 		return EMPTY;
 	}
 

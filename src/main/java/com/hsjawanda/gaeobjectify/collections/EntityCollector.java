@@ -34,7 +34,7 @@ public class EntityCollector<K, V> {
 
 	protected KeyGenerator<K, V> keyGen;
 
-	protected boolean entityMapModified = false;
+	protected boolean entityMapModified = true;
 
 	protected boolean hasEntityAnnotation = true;
 
@@ -93,14 +93,13 @@ public class EntityCollector<K, V> {
 	}
 
 	public List<V> asList() {
-		if (null == this.entityMap || this.entityMap.size() < 1)
+		if (null == this.entityMap || this.entityMap.isEmpty())
 			return Collections.emptyList();
+		if (null == this.entities) {
+			this.entities = new ArrayList<>(this.entityMap.size());
+		}
 		if (this.entityMapModified) {
-			if (null == this.entities) {
-				this.entities = new ArrayList<>(this.entityMap.size());
-			} else {
-				this.entities.clear();
-			}
+			this.entities.clear();
 			for (K key : this.entityMap.keySet()) {
 				this.entities.add(this.entityMap.get(key));
 			}

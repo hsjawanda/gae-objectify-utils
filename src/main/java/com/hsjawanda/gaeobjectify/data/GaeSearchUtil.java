@@ -151,8 +151,10 @@ public class GaeSearchUtil {
 			QueryOptions.Builder qob, SortOptions.Builder sob) {
 		Results<ScoredDocument> docs;
 		Index index = getIndex(indexName);
-		if (null == index)
+		if (null == index) {
+			log.warning("Couldn't find index with name " + indexName);
 			return null;
+		}
 		Query.Builder qryBldr = Query.newBuilder();
 		if (null != qob) {
 			if (null != sob) {
@@ -175,6 +177,11 @@ public class GaeSearchUtil {
 				.setDirection(SortExpression.SortDirection.ASCENDING).build();
 		String query = String.format("%s < %f", distance, radius);
 		return ImmutablePair.of(query, se);
+	}
+
+	public static String distanceQuery(GeoPoint centre, String propertyName) {
+		return String.format("distance(%s, geopoint(%f, %f))", propertyName, centre.getLatitude(),
+				centre.getLongitude());
 	}
 
 	public static Index getIndex(String indexName) {

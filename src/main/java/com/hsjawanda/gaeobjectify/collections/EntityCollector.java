@@ -26,7 +26,7 @@ public class EntityCollector<K, V> {
 
 	private static final int INITIAL_CAPACITY = 3;
 
-	protected List<V> entities;
+	protected List<V> entityList;
 
 	protected List<Ref<V>> entityRefs;
 
@@ -95,17 +95,17 @@ public class EntityCollector<K, V> {
 	public List<V> asList() {
 		if (null == this.entityMap || this.entityMap.isEmpty())
 			return Collections.emptyList();
-		if (null == this.entities) {
-			this.entities = new ArrayList<>(this.entityMap.size());
+		if (null == this.entityList) {
+			this.entityList = new ArrayList<>(this.entityMap.size());
 		}
 		if (this.entityMapModified) {
-			this.entities.clear();
+			this.entityList.clear();
 			for (K key : this.entityMap.keySet()) {
-				this.entities.add(this.entityMap.get(key));
+				this.entityList.add(this.entityMap.get(key));
 			}
 			this.entityMapModified = false;
 		}
-		return this.entities;
+		return this.entityList;
 	}
 
 	public Map<K, V> asMap() {

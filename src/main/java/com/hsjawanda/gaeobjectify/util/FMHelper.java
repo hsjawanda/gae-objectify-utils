@@ -5,12 +5,14 @@ package com.hsjawanda.gaeobjectify.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
+import freemarker.core.Environment;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -74,7 +76,10 @@ public class FMHelper {
 			return false;
 		}
 		try {
-			template.process(args, res.getWriter());
+			Environment env = template.createProcessingEnvironment(args, res.getWriter());
+			env.setOutputEncoding(StandardCharsets.UTF_16.name());
+			env.process();
+			// template.process(args, res.getWriter());
 		} catch (TemplateException | IOException e) {
 			log.log(Level.WARNING, "Failed to process template '" + tmpl + "'.", e);
 			return false;

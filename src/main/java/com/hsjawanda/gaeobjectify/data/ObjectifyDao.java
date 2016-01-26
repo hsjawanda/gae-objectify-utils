@@ -78,7 +78,7 @@ public class ObjectifyDao<T> {
 		return getByKey(key);
 	}
 
-	public Map<String, T> getByIds(Iterable<String> ids) {
+	public Map<String, T> getByStringIds(Iterable<String> ids) {
 		if (null == ids)
 			return Collections.emptyMap();
 		return ofy().load().type(this.cls).ids(ids);
@@ -94,6 +94,12 @@ public class ObjectifyDao<T> {
 					+ this.cls.getSimpleName() + "> from long id", e);
 		}
 		return Optional.absent();
+	}
+
+	public Map<Long, T> getByLongIds(Iterable<Long> ids) {
+		if (null == ids)
+			return Collections.emptyMap();
+		return ofy().load().type(this.cls).ids(ids);
 	}
 
 	public Key<T> getKeyFromPojo(T pojo) {

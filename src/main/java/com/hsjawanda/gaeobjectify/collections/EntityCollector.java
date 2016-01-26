@@ -49,7 +49,7 @@ public class EntityCollector<K, V> {
 		return ec;
 	}
 
-	public void addEntity(V entity) {
+	public void add(V entity) {
 		if (null == entity)
 			return;
 		if (null == this.entityMap) {
@@ -59,7 +59,7 @@ public class EntityCollector<K, V> {
 		this.entityMapModified = true;
 	}
 
-	public V removeEntityByKey(K key) {
+	public V removeByKey(K key) {
 		if (null == key || null == this.entityMap)
 			return null;
 		V removedEntity = this.entityMap.remove(key);

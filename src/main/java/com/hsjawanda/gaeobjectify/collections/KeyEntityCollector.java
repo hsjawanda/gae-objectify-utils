@@ -18,14 +18,14 @@ public class KeyEntityCollector<T> extends EntityCollector<Key<T>, T> {
 	}
 
 	@Override
-	public void addEntity(T entity) {
+	public void add(T entity) {
 		if (null == entity)
 			return;
 		this.entityMap.put(GaeDataUtil.getKeyFromPojo(entity), entity);
 	}
 
 	public T removeEntity(Key<T> entityKey) {
-		return super.removeEntityByKey(entityKey);
+		return super.removeByKey(entityKey);
 	}
 
 	public T removeEntity(String webKey) {

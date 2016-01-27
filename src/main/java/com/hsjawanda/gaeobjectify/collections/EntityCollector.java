@@ -59,6 +59,12 @@ public class EntityCollector<K, V> {
 		this.entityMapModified = true;
 	}
 
+	public boolean containsValue(V entity) {
+		if (null != this.entityMap)
+			return this.entityMap.containsValue(entity);
+		return false;
+	}
+
 	public V removeByKey(K key) {
 		if (null == key || null == this.entityMap)
 			return null;

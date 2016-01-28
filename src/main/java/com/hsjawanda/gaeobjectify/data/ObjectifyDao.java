@@ -3,6 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.data;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -322,17 +323,20 @@ public class ObjectifyDao<T> {
 	}
 
 	public void getPaginatedEntities(PagingData<T> pd, Filter... filters) {
-		// checkNotNull(cls);
-		if (null == pd) {
-			pd = PagingData.<T> builder().build();
-		}
-		Query<T> qry = ofy().load().type(this.cls).offset(pd.getOffset())
-				.limit(pd.getItemsPerPage());
-		for (Filter filter : filters) {
-			if (null != filter) {
-				qry = qry.filter(filter);
+		checkNotNull(pd, "The PagingData object can't be null.");
+		Query<T> qry = ofy().load().type(this.cls);
+		if (null != filters) {
+			for (Filter filter : filters) {
+				if (null != filter) {
+					qry = qry.filter(filter);
+				}
 			}
 		}
+		if (pd.isGenTotalResults()) {
+			qry = qry.limit(pd.getCountLimit());
+			pd.setTotalResults(qry.count());
+		}
+		qry = qry.offset(pd.getOffset()).limit(pd.getItemsPerPage());
 		pd.setResults(qry.list());
 	}
 

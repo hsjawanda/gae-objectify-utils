@@ -7,14 +7,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import lombok.Builder;
-
 import com.google.common.collect.Range;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
- * @author harsh.deep
+ * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
+ * @param <T>
  */
 public class PagingData<T> {
 
@@ -30,6 +33,19 @@ public class PagingData<T> {
 	private int itemsPerPage = Defaults.itemsPerPage;
 
 	private static Range<Integer> perPageRange = Range.closed(1, 100);
+
+	@Getter
+	private int totalResults = -1;
+
+	@Getter
+	private int totalPages = 0;
+
+	@Getter
+	private int countLimit = 5000;
+
+	@Getter
+	@Setter
+	private boolean genTotalResults = true;
 
 	@Builder
 	private PagingData(int pgNum, int itemsPerPage) {
@@ -90,6 +106,26 @@ public class PagingData<T> {
 		}
 	}
 
+	public void setTotalResults(int totalResults) {
+		if (totalResults >= 0) {
+			this.totalResults = totalResults;
+			calcTotalPages();
+		}
+	}
+
+	public void setCountLimit(int limit) {
+		if (limit >= 100) {
+			this.countLimit = limit;
+		}
+	}
+
+	private void calcTotalPages() {
+		this.totalPages = this.totalResults / this.itemsPerPage;
+		if (this.totalResults % this.itemsPerPage > 0) {
+			this.totalPages++;
+		}
+	}
+
 	/**
 	 * Get the zero-based offset into the result set.
 	 *
@@ -114,7 +150,10 @@ public class PagingData<T> {
 	 * @return the number of succeeding pages.
 	 */
 	public int nextPages() {
-		// TODO: improve this
-		return 1;
+		return this.totalPages - this.pgNum;
+	}
+
+	public boolean hasMore() {
+		return !(this.totalResults < this.countLimit);
 	}
 }

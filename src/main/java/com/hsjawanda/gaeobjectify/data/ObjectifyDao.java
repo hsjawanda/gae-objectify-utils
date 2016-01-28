@@ -255,10 +255,10 @@ public class ObjectifyDao<T> {
 		if (null == key)
 			return true;
 		else
-			return deleteEntity(key);
+			return deleteByKey(key);
 	}
 
-	public boolean deleteEntity(Key<T> key) {
+	public boolean deleteByKey(Key<T> key) {
 		if (null == key)
 			return true;
 		try {
@@ -270,10 +270,16 @@ public class ObjectifyDao<T> {
 		}
 	}
 
-	public boolean deleteEntity(Ref<T> ref) {
+	public boolean deleteByRef(Ref<T> ref) {
 		if (null == ref)
 			return true;
-		return deleteEntity(ref.key());
+		return deleteByKey(ref.key());
+	}
+
+	public boolean deleteByWebKey(String webKey) {
+		if (isBlank(webKey))
+			return true;
+		return deleteByKey(Key.<T> create(webKey));
 	}
 
 	public boolean deleteEntityAsync(T pojo) {

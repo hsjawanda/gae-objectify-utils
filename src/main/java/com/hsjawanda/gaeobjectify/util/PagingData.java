@@ -150,7 +150,7 @@ public class PagingData<T> {
 	 * @return the number of succeeding pages.
 	 */
 	public int nextPages() {
-		return this.totalPages - this.pgNum;
+		return Math.max(0, this.totalPages - this.pgNum);
 	}
 
 	public boolean hasMore() {

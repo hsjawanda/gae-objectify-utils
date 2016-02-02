@@ -305,9 +305,11 @@ public class ObjectifyDao<T> {
 
 	public List<T> queryByType(Filter... filters) {
 		Query<T> qry = ofy().load().type(this.cls);
-		for (Filter filter : filters) {
-			if (null != filter) {
-				qry = qry.filter(filter);
+		if (null != filters) {
+			for (Filter filter : filters) {
+				if (null != filter) {
+					qry = qry.filter(filter);
+				}
 			}
 		}
 		return qry.list();

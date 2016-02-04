@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,14 +17,14 @@ import com.google.common.base.Splitter;
 
 
 /**
- * @author harsh.deep
+ * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
  */
 public class UriParser {
 
 	private static final Logger log = Logger.getLogger(UriParser.class.getName());
 
-	private boolean consumeMapping;
+	private boolean consumeMapping = true;
 
 	private boolean hasAction;
 
@@ -32,25 +33,62 @@ public class UriParser {
 	private UriParser() {
 	}
 
+	/**
+	 * See {@link #parse(String, boolean)} for detailed documentation.
+	 *
+	 * @param req
+	 *            the request object
+	 * @return see {@link #parse(String, boolean)}
+	 */
 	public UriInfo parse(HttpServletRequest req) {
 		return this.parse(req, false);
 	}
 
+	/**
+	 * See {@link #parse(String, boolean)} for detailed documentation.
+	 *
+	 * @param req
+	 *            the request object.
+	 * @param debug
+	 *            if {@code true}, debug information will be logged.
+	 * @return see {@link #parse(String, boolean)}.
+	 */
 	public UriInfo parse(HttpServletRequest req, boolean debug) {
-		String uri = req.getRequestURI();
+		if (null == req)
+			return parse(EMPTY, debug);
+		return parse(req.getRequestURI(), debug);
+	}
+
+	/**
+	 * <p>
+	 * Parse the URI and create a {@link UriInfo} object with the appropriate values.
+	 *
+	 * <p>
+	 * The {@code action} and {@code param}s (not the values of the {@code param}s) in the returned
+	 * {@link UriInfo} object will be lower-cased. Any {@code param} without a corresponding
+	 * {@code value} in the {@code uri} will have the empty {@code String} as its value.
+	 *
+	 * @param uri
+	 *            the {@code uri} to parse.
+	 * @param debug
+	 *            if {@code true}, debug information will be logged.
+	 * @return a {@code UriInfo} object representing data from the {@code uri}. Never {@code null}.
+	 */
+	public UriInfo parse(String uri, boolean debug) {
+		uri = trimToEmpty(uri);
 		List<String> parts = splitter.splitToList(uri);
 		if (debug) {
 			log.info("Parts of URI: " + parts);
 		}
-		if (this.consumeMapping) {
+		if (this.consumeMapping && !parts.isEmpty()) {
 			parts = parts.subList(1, parts.size());
 			if (debug) {
 				log.info("After consuming, parts: " + parts);
 			}
 		}
 		String action = EMPTY;
-		if (this.hasAction && parts.size() > 0) {
-			action = parts.get(0);
+		if (this.hasAction && !parts.isEmpty()) {
+			action = parts.get(0).toLowerCase();
 			parts = parts.subList(1, parts.size());
 			if (debug) {
 				log.info("After action, parts: " + parts);
@@ -70,9 +108,9 @@ public class UriParser {
 		Map<String, String> retMap = new HashMap<>(capacity);
 		for (int i = 0; i < size; i += 2) {
 			if (i == size - 1) {
-				retMap.put(parts.get(i), EMPTY);
+				retMap.put(parts.get(i).toLowerCase(), EMPTY);
 			} else {
-				retMap.put(parts.get(i), parts.get(i + 1));
+				retMap.put(parts.get(i).toLowerCase(), parts.get(i + 1));
 			}
 		}
 		return retMap;
@@ -98,10 +136,10 @@ public class UriParser {
 			return parser;
 		}
 
-		public Builder setConsumeMapping(boolean consume) {
-			this._consumeMapping = consume;
-			return this;
-		}
+//		public Builder setConsumeMapping(boolean consume) {
+//			this._consumeMapping = consume;
+//			return this;
+//		}
 
 		public Builder setHasAction(boolean action) {
 			this._hasAction = action;

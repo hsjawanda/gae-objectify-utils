@@ -30,11 +30,15 @@ public class UriInfo {
 	}
 
 	public Optional<String> getParam(String key) {
-		return Optional.fromNullable(this.args.get(key));
+		if (null == key)
+			return Optional.absent();
+		return Optional.fromNullable(this.args.get(key.toLowerCase()));
 	}
 
 	public boolean containsParam(String key) {
-		return this.args.containsKey(key);
+		if (null == key)
+			return false;
+		return this.args.containsKey(key.toLowerCase());
 	}
 
 	public ImmutableMap<String, String> getParams() {

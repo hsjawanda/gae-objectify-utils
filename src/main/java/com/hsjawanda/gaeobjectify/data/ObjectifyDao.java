@@ -317,7 +317,7 @@ public class ObjectifyDao<T> {
 
 	public Ref<T> getNullableRefFromPojo(T entity) {
 		Ref<T> ref = null;
-		if (null != entity /* && Check.idNotNull(entity) */) {
+		if (null != entity) {
 			try {
 				ref = Ref.create(entity);
 			} catch (NullPointerException e) {

@@ -15,6 +15,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableListIterator;
 
+import lombok.Builder;
+
 
 /**
  * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
@@ -22,7 +24,7 @@ import com.google.common.collect.UnmodifiableListIterator;
  */
 public class Passwords {
 
-	private int minLoChars, minUpChars, minSpChars, minNumbers, minLength;
+	private int minLowerChars, minUpperChars, minSpecialChars, minDigits, minLength;
 
 	private static int _minLoChars = 0, _minUpChars = 0, _minSpChars = 0, _minNumbers = 0,
 			_minLength = 8;
@@ -37,13 +39,23 @@ public class Passwords {
 	private Passwords() {
 	}
 
+	@Builder
+	private Passwords(int minLowerChars, int minUpperChars, int minSpecialChars, int minDigits,
+			int minLength) {
+		this.minLowerChars = Math.max(0, minLowerChars);
+		this.minUpperChars = Math.max(0, minUpperChars);
+		this.minSpecialChars = Math.max(0, minSpecialChars);
+		this.minDigits = Math.max(0, minDigits);
+		this.minLength = Math.max(8, minLength);
+	}
+
 	public static Passwords getInstance() {
 		if (null == instance) {
 			instance = new Passwords();
-			instance.minLoChars = _minLoChars;
-			instance.minUpChars = _minUpChars;
-			instance.minSpChars = _minSpChars;
-			instance.minNumbers = _minNumbers;
+			instance.minLowerChars = _minLoChars;
+			instance.minUpperChars = _minUpChars;
+			instance.minSpecialChars = _minSpChars;
+			instance.minDigits = _minNumbers;
 			instance.minLength = _minLength;
 		}
 		return instance;
@@ -75,24 +87,24 @@ public class Passwords {
 				spChars++;
 			}
 		}
-		if (loChars < this.minLoChars) {
-			addReason("minimum lower-case characters", this.minLoChars, failureReason);
+		if (loChars < this.minLowerChars) {
+			addReason("minimum lower-case characters", this.minLowerChars, failureReason);
 		}
-		if (upChars < this.minUpChars) {
-			addReason("minimum upper-case characters", this.minUpChars, failureReason);
+		if (upChars < this.minUpperChars) {
+			addReason("minimum upper-case characters", this.minUpperChars, failureReason);
 		}
-		if (spChars < this.minSpChars) {
-			addReason("minimum special characters", this.minSpChars, failureReason);
+		if (spChars < this.minSpecialChars) {
+			addReason("minimum special characters", this.minSpecialChars, failureReason);
 		}
-		if (numbers < this.minNumbers) {
-			addReason("minimum numbers", this.minNumbers, failureReason);
+		if (numbers < this.minDigits) {
+			addReason("minimum numbers", this.minDigits, failureReason);
 		}
 		if (invalidChars > 0) {
 			addReason("contains invalid characters (allowed: " + validChars + ")", 0,
 					failureReason);
 		}
-		if (loChars >= this.minLoChars && upChars >= this.minUpChars && spChars >= this.minSpChars
-				&& numbers >= this.minNumbers)
+		if (loChars >= this.minLowerChars && upChars >= this.minUpperChars
+				&& spChars >= this.minSpecialChars && numbers >= this.minDigits)
 			return ImmutablePair.of(Boolean.TRUE, StringUtils.EMPTY);
 		else
 			return ImmutablePair.of(Boolean.FALSE, failureReason.toString());

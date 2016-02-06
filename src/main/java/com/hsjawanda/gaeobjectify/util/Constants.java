@@ -43,6 +43,8 @@ public class Constants {
 
 	public static final Range<Double> longRange = Range.closed(-180.0, 180.0);
 
+	public static final String HOMEPAGE = "/";
+
 	private Constants() {
 	}
 

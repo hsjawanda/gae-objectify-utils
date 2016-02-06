@@ -11,12 +11,16 @@
 
 	<properties>
 		<appengine.target.version>1.9.30</appengine.target.version>
+		<commons.validator.version>1.5.0</commons.validator.version>
 		<junit.version>4.10</junit.version>
 		<lombok.version>1.16.6</lombok.version>
 		<freemarker.version>2.3.20</freemarker.version>
 		<jackson.version>2.6.1</jackson.version>
 		<joda.money.version>0.10.0</joda.money.version>
-		<guava.version>18.0</guava.version>
+		<jsr.version>3.0.1</jsr.version>
+		<guava.version>19.0</guava.version>
+		<shiro.version>1.2.4</shiro.version>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipTests>true</skipTests>
 	</properties>
@@ -97,6 +101,30 @@
 			<groupId>org.joda</groupId>
 			<artifactId>joda-money</artifactId>
 			<version>${joda.money.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>${jsr.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>${commons.validator.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+			<version>${shiro.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.3m</version>
 		</dependency>
 
 	</dependencies>

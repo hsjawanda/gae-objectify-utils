@@ -3,7 +3,6 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -26,39 +25,24 @@ public class Passwords {
 
 	private int minLowerChars, minUpperChars, minSpecialChars, minDigits, minLength;
 
-	private static int _minLoChars = 0, _minUpChars = 0, _minSpChars = 0, _minNumbers = 0,
-			_minLength = 8;
+	private static int _minLength = 8;
 
 	private static String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 			+ "0123456789@!#$%*";
 
 	private static CharMatcher validMatcher = CharMatcher.anyOf(validChars);
 
-	private static Passwords instance;
-
 	private Passwords() {
 	}
 
 	@Builder
-	private Passwords(int minLowerChars, int minUpperChars, int minSpecialChars, int minDigits,
-			int minLength) {
-		this.minLowerChars = Math.max(0, minLowerChars);
-		this.minUpperChars = Math.max(0, minUpperChars);
-		this.minSpecialChars = Math.max(0, minSpecialChars);
-		this.minDigits = Math.max(0, minDigits);
-		this.minLength = Math.max(8, minLength);
-	}
-
-	public static Passwords getInstance() {
-		if (null == instance) {
-			instance = new Passwords();
-			instance.minLowerChars = _minLoChars;
-			instance.minUpperChars = _minUpChars;
-			instance.minSpecialChars = _minSpChars;
-			instance.minDigits = _minNumbers;
-			instance.minLength = _minLength;
-		}
-		return instance;
+	private Passwords(Long minLowerChars, Long minUpperChars, Long minSpecialChars, Long minDigits,
+			Long minLength) {
+		this.minLowerChars = null == minLowerChars ? 1 : (int) Math.max(0L, minLowerChars);
+		this.minUpperChars = null == minUpperChars ? 1 : (int) Math.max(0L, minUpperChars);
+		this.minSpecialChars = null == minSpecialChars ? 1 : (int) Math.max(0L, minSpecialChars);
+		this.minDigits = null == minDigits ? 1 : (int) Math.max(0L, minDigits);
+		this.minLength = null == minLength ? _minLength : (int) Math.max(_minLength, minLength);
 	}
 
 	public ImmutablePair<Boolean, String> isValidPassword(String pwd) {
@@ -119,32 +103,4 @@ public class Passwords {
 		return RandomStringUtils.random(length, validChars);
 	}
 
-	public static void setMinLowerChars(int minNum) {
-		checkArgument(minNum >= _minLoChars,
-				"Minimum number of lower-case characters has to be >= " + _minLoChars);
-		_minLoChars = minNum;
-	}
-
-	public static void setMinUpperChars(int minNum) {
-		checkArgument(minNum >= _minUpChars,
-				"Minimum number of upper-case characters has to be >= " + _minUpChars);
-		_minUpChars = minNum;
-	}
-
-	public static void setMinSpecialChars(int minNum) {
-		checkArgument(minNum >= _minSpChars,
-				"Minimum number of special characters has to be >= " + _minSpChars);
-		_minSpChars = minNum;
-	}
-
-	public static void setMinNumbers(int minNum) {
-		checkArgument(minNum >= 0,
-				"Minimum number of digit characters has to be >= " + _minNumbers);
-		_minNumbers = minNum;
-	}
-
-	public static void setMinLength(int minNum) {
-		checkArgument(minNum >= _minLength, "Minimum length has to be >= " + _minLength);
-		_minLength = minNum;
-	}
 }

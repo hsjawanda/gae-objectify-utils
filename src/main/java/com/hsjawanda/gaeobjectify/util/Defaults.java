@@ -18,4 +18,7 @@ public class Defaults {
 	private Defaults() {
 	}
 
+	public static <T> T orDefault(T obj, T defaultValue) {
+		return null == obj ? defaultValue : obj;
+	}
 }

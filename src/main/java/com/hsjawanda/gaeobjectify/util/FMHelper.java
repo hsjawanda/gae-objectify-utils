@@ -5,6 +5,9 @@ package com.hsjawanda.gaeobjectify.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,27 +65,44 @@ public class FMHelper {
 
 	public static boolean processTemplate(String tmpl, HttpServletResponse res,
 			Map<String, Object> args) {
+		PrintWriter pw = null;
+		try {
+			pw = res.getWriter();
+		} catch (IOException e) {
+			log.log(Level.WARNING, "Couldn't get writer from HttpServletResponse...", e);
+		}
+		return processTemplate(tmpl, pw, args, res.getCharacterEncoding());
+	}
+
+	public static boolean processTemplate(String tmpl, Writer writer, Map<String, Object> args,
+			String charEncoding) {
 		if (null == config) {
 			String msg = "FreeMarker has not been configured properly yet.";
 			log.log(Level.SEVERE, msg);
 			throw new IllegalStateException(msg);
 		}
+		if (null == writer)
+			return false;
 		Template template = null;
 		try {
 			template = config.getTemplate(tmpl);
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "Failed to get template '" + tmpl + "'.", e);
+			log.log(Level.SEVERE, "Failed to get template '" + tmpl + "'...", e);
 			return false;
 		}
 		try {
-			Environment env = template.createProcessingEnvironment(args, res.getWriter());
-			env.setOutputEncoding(res.getCharacterEncoding());
+			Environment env = template.createProcessingEnvironment(args, writer);
+			env.setOutputEncoding(charEncoding);
 			env.process();
 		} catch (TemplateException | IOException e) {
 			log.log(Level.WARNING, "Failed to process template '" + tmpl + "'.", e);
 			return false;
 		}
 		return true;
+	}
+
+	public static boolean processTemplate(String tmpl, PrintWriter pw, Map<String, Object> args) {
+		return processTemplate(tmpl, pw, args, StandardCharsets.UTF_8.name());
 	}
 
 	public static TemplateHashModel getEnum(Class<? extends Enum<?>> clazz) {

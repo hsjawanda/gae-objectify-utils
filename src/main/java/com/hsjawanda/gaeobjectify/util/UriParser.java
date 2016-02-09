@@ -56,7 +56,7 @@ public class UriParser {
 	public UriInfo parse(HttpServletRequest req, boolean debug) {
 		if (null == req)
 			return parse(EMPTY, debug);
-		return parse(req.getRequestURI(), debug);
+		return parse(req.getPathInfo(), debug);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class UriParser {
 	 * {@code value} in the {@code uri} will have the empty {@code String} as its value.
 	 *
 	 * @param uri
-	 *            the {@code uri} to parse.
+	 *            the {@code uri} to parse (typically obtained by {@code request.getPathInfo()}).
 	 * @param debug
 	 *            if {@code true}, debug information will be logged.
 	 * @return a {@code UriInfo} object representing data from the {@code uri}. Never {@code null}.

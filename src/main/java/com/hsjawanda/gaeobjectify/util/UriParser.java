@@ -24,8 +24,6 @@ public class UriParser {
 
 	private static final Logger log = Logger.getLogger(UriParser.class.getName());
 
-	private boolean consumeMapping = true;
-
 	private boolean hasAction;
 
 	private static Splitter splitter = Splitter.on('/').omitEmptyStrings();
@@ -78,28 +76,22 @@ public class UriParser {
 		uri = trimToEmpty(uri);
 		List<String> parts = splitter.splitToList(uri);
 		if (debug) {
-			log.info("Parts of URI: " + parts);
-		}
-		if (this.consumeMapping && !parts.isEmpty()) {
-			parts = parts.subList(1, parts.size());
-			if (debug) {
-				log.info("After consuming, parts: " + parts);
-			}
+			log.info("Parts of pathInfo: " + parts);
 		}
 		String action = EMPTY;
 		if (this.hasAction && !parts.isEmpty()) {
 			action = parts.get(0).toLowerCase();
 			parts = parts.subList(1, parts.size());
 			if (debug) {
-				log.info("After action, parts: " + parts);
+				log.info("After consuming action, remaining parts: " + parts);
 			}
 		}
 		UriInfo info = new UriInfo(action);
-		info.setParams(mapList(parts));
+		info.setParams(listToMap(parts));
 		return info;
 	}
 
-	protected Map<String, String> mapList(List<String> parts) {
+	protected Map<String, String> listToMap(List<String> parts) {
 		int size = parts.size();
 		int capacity = size / 2;
 		if (size % 2 == 1) {
@@ -122,8 +114,6 @@ public class UriParser {
 
 	public static class Builder {
 
-		private boolean _consumeMapping = true;
-
 		private boolean _hasAction = true;
 
 		private Builder() {
@@ -131,15 +121,9 @@ public class UriParser {
 
 		public UriParser build() {
 			UriParser parser = new UriParser();
-			parser.consumeMapping = this._consumeMapping;
 			parser.hasAction = this._hasAction;
 			return parser;
 		}
-
-//		public Builder setConsumeMapping(boolean consume) {
-//			this._consumeMapping = consume;
-//			return this;
-//		}
 
 		public Builder setHasAction(boolean action) {
 			this._hasAction = action;

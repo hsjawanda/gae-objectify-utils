@@ -45,6 +45,8 @@ public class Constants {
 
 	public static final String HOMEPAGE = "/";
 
+	public static final String TASK_HEADER_NAME = "X-AppEngine-QueueName";
+
 	private Constants() {
 	}
 

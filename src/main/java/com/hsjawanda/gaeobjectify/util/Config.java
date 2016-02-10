@@ -6,11 +6,16 @@ package com.hsjawanda.gaeobjectify.util;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
+import com.hsjawanda.gaeobjectify.collections.NonNullList;
 
 
 /**
@@ -25,6 +30,8 @@ public class Config {
 
 	protected static final String propFilename = "config";
 
+	protected static Set<String> bundleFilenames = Sets.newHashSet("keys", "config");
+
 	protected static String keysFailureReason = EMPTY;
 
 	protected static String propFailureReason = EMPTY;
@@ -33,26 +40,38 @@ public class Config {
 
 	protected static ResourceBundle rbProp = null;
 
+	protected static List<ResourceBundle> bundles = NonNullList.empty(2);
+
 	protected static boolean loaded = false;
 
 	static {
-		try {
-			rbKeys = ResourceBundle.getBundle(keysFilename);
-			loaded = true;
-		} catch (MissingResourceException e) {
-			keysFailureReason = "Couldn't find resource bundle: " + keysFilename;
-			log.warning(keysFailureReason);
+		for (String bundleFilename : bundleFilenames) {
+			try {
+				bundles.add(ResourceBundle.getBundle(bundleFilename));
+				loaded = true;
+			} catch (MissingResourceException e) {
+				log.warning("Couldn't find resource bundle: " + bundleFilename);
+			}
 		}
-		try {
-			rbProp = ResourceBundle.getBundle(propFilename);
-			loaded = true;
-		} catch (MissingResourceException e) {
-			propFailureReason = "Couldn't find resource bundle: " + propFilename;
-			log.warning(propFailureReason);
-		} catch (Exception e) {
-			propFailureReason = "Unexpected error (" + e.getMessage() + ")";
-			log.warning(propFailureReason);
-		}
+//		try {
+//			rbKeys = ResourceBundle.getBundle(keysFilename);
+//			bundles.add(rbKeys);
+//			loaded = true;
+//		} catch (MissingResourceException e) {
+//			keysFailureReason = "Couldn't find resource bundle: " + keysFilename;
+//			log.warning(keysFailureReason);
+//		}
+//		try {
+//			rbProp = ResourceBundle.getBundle(propFilename);
+//			bundles.add(rbProp);
+//			loaded = true;
+//		} catch (MissingResourceException e) {
+//			propFailureReason = "Couldn't find resource bundle: " + propFilename;
+//			log.warning(propFailureReason);
+//		} catch (Exception e) {
+//			propFailureReason = "Unexpected error (" + e.getMessage() + ")";
+//			log.warning(propFailureReason);
+//		}
 	}
 
 	public static Optional<String> get(String key) {
@@ -60,28 +79,45 @@ public class Config {
 			return Optional.absent();
 		String retVal = null;
 		if (loaded) {
-			if (null != rbKeys) {
+			for (ResourceBundle rb : bundles) {
 				try {
-					retVal = rbKeys.getString(key);
+					retVal = rb.getString(key);
+					break;
 				} catch (MissingResourceException e) {
-					log.info("Key '" + key + "' not found in bundle '" + keysFilename + "'");
-//					log.log(Level.WARNING, "Error getting from rbKeys...", e);
-				}
-			} else {
-				log.warning("Failed to get from rbKeys: " + keysFailureReason);
-			}
-			if (null == retVal) {
-				if (null != rbProp) {
-					try {
-						retVal = rbProp.getString(key);
-					} catch (Exception e) {
-						log.info("Key '" + key + "' not found in bundle '" + propFilename + "'");
-//						log.log(Level.WARNING, "Error getting from rbProp...", e);
-					}
-				} else {
-					log.warning("Failed to get from rbProp: " + propFailureReason);
+					// Do nothing
+				} catch (Exception e) {
+					log.log(Level.WARNING, "Error getting value for key '" + key + "'", e);
 				}
 			}
+//			if (null != rbKeys) {
+//				try {
+//					retVal = rbKeys.getString(key);
+//				} catch (MissingResourceException e) {
+//					// Do nothing
+//				} catch (Exception e) {
+//					log.log(Level.WARNING, "Error getting value for key '" + key + "' in '"
+//							+ keysFilename + "'...", e);
+//				}
+//			} else {
+//				log.warning("Failed to get from rbKeys: " + keysFailureReason);
+//			}
+//			if (null == retVal) {
+//				if (null != rbProp) {
+//					try {
+//						retVal = rbProp.getString(key);
+//					} catch (MissingResourceException e) {
+//						// Do nothing
+//					} catch (Exception e) {
+//						log.log(Level.WARNING, "Error getting value for key '" + key + "' in '"
+//								+ propFilename + "'...", e);
+//					}
+//				} else {
+//					log.warning("Failed to get from rbProp: " + propFailureReason);
+//				}
+//			}
+		}
+		if (null == retVal) {
+			log.warning("Couldn't find any value for key '" + key + "'");
 		}
 		return Optional.fromNullable(retVal);
 	}

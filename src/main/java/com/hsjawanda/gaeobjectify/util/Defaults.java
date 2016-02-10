@@ -3,6 +3,9 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import java.text.SimpleDateFormat;
+
+
 /**
  * @author harsh.deep
  *
@@ -14,6 +17,9 @@ public class Defaults {
 	public static final int pgNum = 1;
 
 	public static final int itemsPerPage = 10;
+
+	public static final SimpleDateFormat dateFmt = new SimpleDateFormat(
+			"EEE dd MMM yyyy HH:mm:ss.SSS zzz");
 
 	private Defaults() {
 	}

@@ -128,6 +128,28 @@ public class Config {
 		return get(key.name());
 	}
 
+	/**
+	 * Get the value corresponding to {@code key}.
+	 *
+	 * @param key
+	 *            the key to get value for
+	 * @return the value, or the empty string if no value was found
+	 */
+	public static String getOrEmpty(String key) {
+		return get(key).or(EMPTY);
+	}
+
+	/**
+	 * Get the value corresponding to {@code key}.
+	 *
+	 * @param key
+	 *            the {@code key} to get value for
+	 * @return the value, or {@code null} if no value was found
+	 */
+	public static String getOrNull(String key) {
+		return get(key).orNull();
+	}
+
 	public static Long getAsLong(Keys key) {
 		return StringHelper.getAsLong(get(key).orNull());
 	}

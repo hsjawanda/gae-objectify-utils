@@ -5,11 +5,18 @@ package com.hsjawanda.gaeobjectify.web;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 
 
 /**
@@ -31,32 +38,49 @@ public class BaseServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
 	 * javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-//		super.doGet(req, resp);
 		initialize(resp);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
 	 * javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-//		super.doPost(req, resp);
 		initialize(resp);
 	}
 
 	private void initialize(HttpServletResponse resp) {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+	}
+
+	protected static void loginWithNewSession(AuthenticationToken token, Subject subject) {
+		Session origSess = subject.getSession();
+
+		Map<Object, Object> attributes = new LinkedHashMap<>();
+		Collection<Object> keys = origSess.getAttributeKeys();
+		for (Object key : keys) {
+			Object value = origSess.getAttribute(key);
+			if (null != value) {
+				attributes.put(key, value);
+			}
+		}
+		origSess.stop();
+		subject.login(token);
+		Session newSess = subject.getSession();
+		for (Object key : attributes.keySet()) {
+			newSess.setAttribute(key, attributes.get(key));
+		}
 	}
 
 }

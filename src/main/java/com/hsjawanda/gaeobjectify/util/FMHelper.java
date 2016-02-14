@@ -101,7 +101,7 @@ public class FMHelper {
 		return true;
 	}
 
-	public static boolean processTemplate(String tmpl, PrintWriter pw, Map<String, Object> args) {
+	public static boolean processTemplate(String tmpl, Writer pw, Map<String, Object> args) {
 		return processTemplate(tmpl, pw, args, StandardCharsets.UTF_8.name());
 	}
 

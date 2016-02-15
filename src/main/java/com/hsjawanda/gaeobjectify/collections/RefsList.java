@@ -16,6 +16,7 @@ import java.util.ListIterator;
 import com.googlecode.objectify.Ref;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
 
+
 /**
  * @author Harshdeep Jawanda <hsjawanda@gmail.com>
  *
@@ -24,14 +25,27 @@ public class RefsList<E> implements List<E> {
 
 	private List<Ref<E>> wrapped;
 
-	public RefsList(List<Ref<E>> toWrap) {
-		checkNotNull(toWrap);
+	protected RefsList(List<Ref<E>> toWrap) {
 		this.wrapped = new ArrayList<>(toWrap);
 
 	}
 
 	public RefsList() {
 		this.wrapped = new ArrayList<>();
+	}
+
+	public static <T> RefsList<T> wrap(List<Ref<T>> toWrap) {
+		if (null == toWrap)
+			return new RefsList<>();
+		RefsList<T> refsList = new RefsList<>();
+		refsList.wrapped = toWrap;
+		return refsList;
+	}
+
+	public static <T> RefsList<T> newList(List<Ref<T>> toCopy) {
+		if (null == toCopy)
+			return new RefsList<>();
+		return new RefsList<>(toCopy);
 	}
 
 	/**
@@ -216,8 +230,8 @@ public class RefsList<E> implements List<E> {
 	 * @see java.util.List#iterator()
 	 */
 	@Override
-	public RefsIterator<E> iterator() {
-		return new RefsIterator<>(this.wrapped.iterator());
+	public Iterator<E> iterator() {
+		return (Iterator<E>) listIterator();
 	}
 
 	/**
@@ -256,7 +270,8 @@ public class RefsList<E> implements List<E> {
 	 */
 	@Override
 	public E remove(int index) {
-		return this.wrapped.remove(index).get();
+		Ref<E> ref = this.wrapped.remove(index);
+		return null != ref ? ref.get() : null;
 	}
 
 	/**

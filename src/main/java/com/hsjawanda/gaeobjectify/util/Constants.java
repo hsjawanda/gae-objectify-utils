@@ -25,6 +25,8 @@ public class Constants {
 
 	public static final String notBlank = " can't be null, empty or whitespace.";
 
+	public static final String notNull = " can't be null.";
+
 	public static final int logRounds = 12;
 
 	public static final int gaeStringLength = 500;

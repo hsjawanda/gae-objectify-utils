@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Logger;
 
+import com.hsjawanda.gaeobjectify.util.Constants;
+
 
 /**
  * @author harsh.deep
@@ -49,10 +51,9 @@ public class NonNullList<E> implements List<E> {
 	}
 
 	public static <T> NonNullList<T> wrap(List<T> toWrap) {
-		int size = checkNotNull(toWrap).size();
+		int size = checkNotNull(toWrap, "toWrap" + Constants.notNull).size();
 		for (int i = 0; i < size; i++) {
-			if (null == toWrap.get(i))
-				throw new IllegalArgumentException("The list to wrap cannot contain nulls.");
+			checkNotNull(toWrap.get(i), "The list to wrap cannot contain nulls.");
 		}
 		return new NonNullList<>(toWrap);
 	}

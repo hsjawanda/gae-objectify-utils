@@ -12,14 +12,15 @@ import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
 
 
 /**
- * @author harsh.deep
+ * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
+ * @param <E>
  */
 public class RefsListIterator<E> implements ListIterator<E> {
 
 	private ListIterator<Ref<E>> wrapped;
 
-	public RefsListIterator(ListIterator<Ref<E>> toWrap) {
+	RefsListIterator(ListIterator<Ref<E>> toWrap) {
 		checkNotNull(toWrap);
 		this.wrapped = toWrap;
 	}
@@ -45,9 +46,7 @@ public class RefsListIterator<E> implements ListIterator<E> {
 	@Override
 	public E next() {
 		Ref<E> ref = this.wrapped.next();
-		if (null != ref)
-			return ref.get();
-		return null;
+		return null != ref ? ref.get() : null;
 	}
 
 	@Override
@@ -58,9 +57,7 @@ public class RefsListIterator<E> implements ListIterator<E> {
 	@Override
 	public E previous() {
 		Ref<E> ref = this.wrapped.previous();
-		if (null != ref)
-			return ref.get();
-		return null;
+		return null != ref ? ref.get() : null;
 	}
 
 	@Override

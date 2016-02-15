@@ -11,8 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.NotImplementedException;
-
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
@@ -30,6 +29,8 @@ public class EntityCollector<K, V> {
 
 	protected List<Ref<V>> entityRefs;
 
+	protected List<Ref<V>> refsToLoad;
+
 	protected Map<K, V> entityMap;
 
 	protected KeyGenerator<K, V> keyGen;
@@ -37,6 +38,8 @@ public class EntityCollector<K, V> {
 	protected boolean entityMapModified = true;
 
 	protected boolean hasEntityAnnotation = true;
+
+	protected boolean refsLoaded = false;
 
 	Class<V> cls;
 
@@ -49,9 +52,19 @@ public class EntityCollector<K, V> {
 		return ec;
 	}
 
+	public static <K, V> EntityCollector<K, V> instance(Class<V> cls, KeyGenerator<K, V> keyGen,
+			List<Ref<V>> refsToLoad) {
+		EntityCollector<K, V> ec = instance(cls, keyGen);
+		ec.refsToLoad = refsToLoad;
+		return ec;
+	}
+
 	public void add(V entity) {
 		if (null == entity)
 			return;
+		if (!this.refsLoaded) {
+			loadRefs();
+		}
 		if (null == this.entityMap) {
 			allocateMap();
 		}
@@ -68,6 +81,9 @@ public class EntityCollector<K, V> {
 	public V removeByKey(K key) {
 		if (null == key || null == this.entityMap)
 			return null;
+		if (!this.refsLoaded) {
+			loadRefs();
+		}
 		V removedEntity = this.entityMap.remove(key);
 		if (null != removedEntity) {
 			this.entityMapModified = true;
@@ -75,13 +91,15 @@ public class EntityCollector<K, V> {
 		return removedEntity;
 	}
 
-	public List<Ref<V>> asRefs() {
+	public List<Ref<V>> preSaveAction() {
 		if (!this.cls.isAnnotationPresent(Entity.class))
 			throw new UnsupportedOperationException("The class " + this.cls.getName()
 					+ " doesn't have Entity annotation, therefore a List<Ref<"
 					+ this.cls.getSimpleName() + ">> can't be generated.");
-		if (null == this.entityMap || this.entityMap.size() < 1)
+		if (null == this.entityMap || this.entityMap.isEmpty())
 			return Collections.emptyList();
+		if (!this.refsLoaded)
+			return this.refsToLoad;
 		if (this.entityMapModified) {
 			if (null == this.entityRefs) {
 				this.entityRefs = new ArrayList<>(this.entityMap.size());
@@ -103,6 +121,9 @@ public class EntityCollector<K, V> {
 			return Collections.emptyList();
 		if (null == this.entityList) {
 			this.entityList = new ArrayList<>(this.entityMap.size());
+		}
+		if (!this.refsLoaded) {
+			loadRefs();
 		}
 		if (this.entityMapModified) {
 			this.entityList.clear();
@@ -130,7 +151,7 @@ public class EntityCollector<K, V> {
 				this.entityMap.put(this.keyGen.keyFor(entity), entity);
 			}
 		}
-		throw new NotImplementedException("Not yet implemented.");
+//		throw new NotImplementedException("Not yet implemented.");
 	}
 
 	public void loadFromEntities(List<V> entities) {
@@ -144,6 +165,23 @@ public class EntityCollector<K, V> {
 				this.entityMap.put(this.keyGen.keyFor(entity), entity);
 			}
 		}
+	}
+
+//	protected void refsToLoad(List<Ref<V>> refsToLoad) {
+//		this.refsToLoad = refsToLoad;
+//	}
+
+	protected void loadRefs() {
+		if (null == this.entityMap) {
+			allocateMap();
+		}
+		Map<Key<V>, V> entities = GaeDataUtil.getByRefs(this.refsToLoad);
+		for (Key<V> key : entities.keySet()) {
+			V entity = entities.get(key);
+			this.entityMap.put(this.keyGen.keyFor(entity), entity);
+		}
+		this.entityMapModified = true;
+		this.refsLoaded = true;
 	}
 
 	protected void allocateMap() {

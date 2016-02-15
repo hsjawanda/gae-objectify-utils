@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,6 +15,7 @@ import javax.annotation.Nullable;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Range;
 
 
 /**
@@ -22,11 +24,13 @@ import com.google.common.base.CaseFormat;
  */
 public final class TasksHelper {
 
+	private static final Logger log = Logger.getLogger(TasksHelper.class.getName());
+
 	public static final String TASK_MAPPING = "tasks.mapping";
 
 	public static final String MAPPING = Config.get(TASK_MAPPING).or("/tasks");
 
-	public static final long MAX_DELAY = 60 * 1000L;
+	public static final Range<Long> DELAY_RANGE = Range.closed(1L, 60 * 60 * 1000L);
 
 	protected static final SimpleDateFormat TASK_DATE = new SimpleDateFormat(
 			"yyyy-MM-dd_HH-mm-ss_SSS");
@@ -38,7 +42,8 @@ public final class TasksHelper {
 	private TasksHelper() {
 	}
 
-	public static String normalizedTaskName(Class<? extends GaeTask> clazz) {
+	@SuppressWarnings("null")
+	public static @Nonnull String normalizedTaskName(@Nonnull Class<? extends GaeTask> clazz) {
 		return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, clazz.getSimpleName());
 	}
 
@@ -46,11 +51,14 @@ public final class TasksHelper {
 		return Constants.pathJoiner.join(MAPPING, name);
 	}
 
-	public static void addToQueue(@Nonnull Queue queueName, @Nonnull String taskName,
+	public static void addToQueue(@Nonnull Queue queue, @Nonnull String taskName,
 			@Nullable Map<String, String> stringParams, @Nullable Map<String, byte[]> byteParams,
 			long delayMillis) {
+		StringBuilder name = new StringBuilder(30).append(taskName).append('_')
+				.append(TasksHelper.TASK_DATE.format(new Date()));
 		TaskOptions taskOptions = TaskOptions.Builder.withUrl(taskUrl(taskName))
-				.taskName(taskName + "_" + TasksHelper.TASK_DATE.format(new Date()));
+				.taskName(name.toString());
+		log.info("Adding task with name: '" + name + "' of length " + name.length());
 		if (null != stringParams) {
 			for (String key : stringParams.keySet()) {
 				taskOptions = taskOptions.param(key, stringParams.get(key));
@@ -61,10 +69,10 @@ public final class TasksHelper {
 				taskOptions = taskOptions.param(key, byteParams.get(key));
 			}
 		}
-		if (delayMillis > 0) {
-			taskOptions = taskOptions.countdownMillis(Math.min(MAX_DELAY, delayMillis));
+		if (DELAY_RANGE.contains(delayMillis)) {
+			taskOptions = taskOptions.countdownMillis(delayMillis);
 		}
-		queueName.add(taskOptions);
+		queue.add(taskOptions);
 	}
 
 }

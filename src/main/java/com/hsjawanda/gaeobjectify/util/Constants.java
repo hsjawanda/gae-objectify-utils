@@ -49,6 +49,10 @@ public class Constants {
 
 	public static final String TASK_HEADER_NAME = "X-AppEngine-QueueName";
 
+	public static final String FM_USER_UID = "userUid";
+
+	public static final String FM_ACTION = "action";
+
 	protected Constants() {
 	}
 

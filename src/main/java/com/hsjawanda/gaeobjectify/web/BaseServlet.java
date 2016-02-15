@@ -45,7 +45,7 @@ public class BaseServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		initialize(resp);
+		this.initialize(resp);
 	}
 
 	/*
@@ -57,14 +57,14 @@ public class BaseServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		initialize(resp);
+		this.initialize(resp);
 	}
 
 	private void initialize(HttpServletResponse resp) {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 	}
 
-	protected static void loginWithNewSession(AuthenticationToken token, Subject subject) {
+	public static void loginWithNewSession(AuthenticationToken token, Subject subject) {
 		Session origSess = subject.getSession();
 
 		Map<Object, Object> attributes = new LinkedHashMap<>();

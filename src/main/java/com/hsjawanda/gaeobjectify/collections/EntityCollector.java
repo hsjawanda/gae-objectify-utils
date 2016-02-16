@@ -60,11 +60,11 @@ public class EntityCollector<K, V> {
 	}
 
 	public void add(V entity) {
-		if (null == entity)
-			return;
 		if (!this.refsLoaded) {
 			loadRefs();
 		}
+		if (null == entity)
+			return;
 		if (null == this.entityMap) {
 			allocateMap();
 		}
@@ -73,17 +73,38 @@ public class EntityCollector<K, V> {
 	}
 
 	public boolean containsValue(V entity) {
+		if (!this.refsLoaded) {
+			loadRefs();
+		}
 		if (null != this.entityMap)
 			return this.entityMap.containsValue(entity);
 		return false;
 	}
 
-	public V removeByKey(K key) {
-		if (null == key || null == this.entityMap)
-			return null;
+	public boolean containsKey(K key) {
 		if (!this.refsLoaded) {
 			loadRefs();
 		}
+		if (null != this.entityMap)
+			return this.entityMap.containsKey(key);
+		return false;
+	}
+
+	public boolean isEmpty() {
+		if (!this.refsLoaded) {
+			loadRefs();
+		}
+		if (null == this.entityMap)
+			return true;
+		return this.entityMap.isEmpty();
+	}
+
+	public V removeByKey(K key) {
+		if (!this.refsLoaded) {
+			loadRefs();
+		}
+		if (null == key || null == this.entityMap)
+			return null;
 		V removedEntity = this.entityMap.remove(key);
 		if (null != removedEntity) {
 			this.entityMapModified = true;
@@ -91,15 +112,15 @@ public class EntityCollector<K, V> {
 		return removedEntity;
 	}
 
-	public List<Ref<V>> preSaveAction() {
+	public List<Ref<V>> preSaveAction() throws UnsupportedOperationException {
 		if (!this.cls.isAnnotationPresent(Entity.class))
 			throw new UnsupportedOperationException("The class " + this.cls.getName()
 					+ " doesn't have Entity annotation, therefore a List<Ref<"
 					+ this.cls.getSimpleName() + ">> can't be generated.");
-		if (null == this.entityMap || this.entityMap.isEmpty())
-			return Collections.emptyList();
 		if (!this.refsLoaded)
 			return this.refsToLoad;
+		if (null == this.entityMap || this.entityMap.isEmpty())
+			return Collections.emptyList();
 		if (this.entityMapModified) {
 			if (null == this.entityRefs) {
 				this.entityRefs = new ArrayList<>(this.entityMap.size());
@@ -117,13 +138,13 @@ public class EntityCollector<K, V> {
 	}
 
 	public List<V> asList() {
+		if (!this.refsLoaded) {
+			loadRefs();
+		}
 		if (null == this.entityMap || this.entityMap.isEmpty())
 			return Collections.emptyList();
 		if (null == this.entityList) {
 			this.entityList = new ArrayList<>(this.entityMap.size());
-		}
-		if (!this.refsLoaded) {
-			loadRefs();
 		}
 		if (this.entityMapModified) {
 			this.entityList.clear();
@@ -135,24 +156,27 @@ public class EntityCollector<K, V> {
 		return this.entityList;
 	}
 
-	public Map<K, V> asMap() {
+	public Map<K, V> asReadOnlyMap() {
+		if (!this.refsLoaded) {
+			loadRefs();
+		}
 		return Collections.unmodifiableMap(this.entityMap);
 	}
 
-	public void loadFromEntityRefs(List<Ref<V>> refs) {
-		if (null != refs) {
-			allocateMap();
-			this.entityMap.clear();
-			for (Ref<V> ref : refs) {
-				if (null == ref) {
-					continue;
-				}
-				V entity = ref.get();
-				this.entityMap.put(this.keyGen.keyFor(entity), entity);
-			}
-		}
-//		throw new NotImplementedException("Not yet implemented.");
-	}
+//	public void loadFromEntityRefs(List<Ref<V>> refs) {
+//		if (null != refs) {
+//			allocateMap();
+//			this.entityMap.clear();
+//			for (Ref<V> ref : refs) {
+//				if (null == ref) {
+//					continue;
+//				}
+//				V entity = ref.get();
+//				this.entityMap.put(this.keyGen.keyFor(entity), entity);
+//			}
+//		}
+////		throw new NotImplementedException("Not yet implemented.");
+//	}
 
 	public void loadFromEntities(List<V> entities) {
 		if (null != entities && entities.size() > 0) {

@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +30,8 @@ public class BaseServlet extends HttpServlet {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private static Logger log = Logger.getLogger(BaseServlet.class.getName());
 
 	protected static final String charEncoding = StandardCharsets.UTF_8.name();
 
@@ -72,6 +75,7 @@ public class BaseServlet extends HttpServlet {
 		for (Object key : keys) {
 			Object value = origSess.getAttribute(key);
 			if (null != value) {
+				log.info(key + " : " + value);
 				attributes.put(key, value);
 			}
 		}

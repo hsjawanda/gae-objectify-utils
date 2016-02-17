@@ -7,11 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.google.common.collect.Range;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import com.google.common.collect.Range;
 
 
 /**
@@ -23,6 +23,12 @@ public class PagingData<T> {
 
 	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(PagingData.class.getName());
+
+	public static final String PG_NUM = "pgNum";
+
+	public static final String ITEMS_PER_PAGE = "ipp";
+
+	public static final String FM_PD = "pd";
 
 	private List<T> results;
 
@@ -109,7 +115,7 @@ public class PagingData<T> {
 	public void setTotalResults(int totalResults) {
 		if (totalResults >= 0) {
 			this.totalResults = totalResults;
-			calcTotalPages();
+			this.calcTotalPages();
 		}
 	}
 

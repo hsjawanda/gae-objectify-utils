@@ -37,10 +37,8 @@ public class BCryptCredentialsMatcher implements CredentialsMatcher {
 		checkNotNull(token);
 		checkNotNull(info);
 		checkArgument(token instanceof UsernamePasswordToken, "token does not have any password");
-		log.info("doCredentialsMatch() called...");
 		String password = StringHelper.toString(((UsernamePasswordToken) token).getPassword());
 		String hashedPasswd = StringHelper.toString(info.getCredentials());
-		log.info("Got all the info");
 		boolean authenticated = BCrypt.checkpw(password, hashedPasswd);
 		log.info("Password matched: " + authenticated);
 		return authenticated;

@@ -50,8 +50,13 @@ public class ObjectifyDao<T> {
 	public Optional<T> getByWebKey(String webKey) {
 		if (isBlank(webKey))
 			return Optional.absent();
-		Key<T> key = Key.create(webKey);
-		return getByKey(key);
+		Key<T> key = null;
+		try {
+			key = Key.create(webKey);
+		} catch (Exception e) {
+			this.log.log(Level.WARNING, "Error creating webKey from '" + webKey + "'. Stacktrace:", e);
+		}
+		return this.getByKey(key);
 	}
 
 	public Optional<T> getByRef(Ref<T> entityRef) {
@@ -76,7 +81,7 @@ public class ObjectifyDao<T> {
 			this.log.warning("Error creating key: " + e.getMessage());
 			return Optional.absent();
 		}
-		return getByKey(key);
+		return this.getByKey(key);
 	}
 
 	public Map<String, T> getByStringIds(Iterable<String> ids) {
@@ -89,7 +94,7 @@ public class ObjectifyDao<T> {
 		Key<T> key = null;
 		try {
 			key = Key.create(this.cls, id);
-			return getByKey(key);
+			return this.getByKey(key);
 		} catch (Exception e) {
 			this.log.log(Level.WARNING, "Unexpected exception getting Optional<"
 					+ this.cls.getSimpleName() + "> from long id", e);
@@ -129,7 +134,7 @@ public class ObjectifyDao<T> {
 	}
 
 	public String getWebKeyFor(T pojo) {
-		Key<T> key = getKeyFromPojo(pojo);
+		Key<T> key = this.getKeyFromPojo(pojo);
 		return (null == key) ? EMPTY : key.toWebSafeString();
 	}
 
@@ -154,7 +159,7 @@ public class ObjectifyDao<T> {
 	}
 
 	public Optional<Key<T>> saveEntity(T entity) throws SaveException {
-		Optional<Result<Key<T>>> result = saveEntityAsync(entity);
+		Optional<Result<Key<T>>> result = this.saveEntityAsync(entity);
 		if (result.isPresent())
 			return Optional.fromNullable(result.get().now());
 		else
@@ -182,7 +187,7 @@ public class ObjectifyDao<T> {
 	public boolean saveEntities(@SuppressWarnings("unchecked") T... entities) {
 		if (null == entities)
 			return true;
-		return saveEntities(Arrays.asList(entities));
+		return this.saveEntities(Arrays.asList(entities));
 	}
 
 	public boolean saveEntities(Iterable<T> entities) {
@@ -225,7 +230,7 @@ public class ObjectifyDao<T> {
 
 	public void deferredDeleteById(String id) {
 		if (isNotBlank(id)) {
-			Key<T> key = keyFor(id);
+			Key<T> key = this.keyFor(id);
 			if (null != key) {
 				ofy().defer().delete().key(key);
 			}
@@ -244,18 +249,18 @@ public class ObjectifyDao<T> {
 
 	public void deferredDeleteByRef(Ref<T> ref) {
 		if (null != ref) {
-			deferredDeleteByKey(ref.getKey());
+			this.deferredDeleteByKey(ref.getKey());
 		}
 	}
 
 	public boolean deleteEntity(T entity) {
 		if (null == entity)
 			return true;
-		Key<T> key = getKeyFromPojo(entity);
+		Key<T> key = this.getKeyFromPojo(entity);
 		if (null == key)
 			return true;
 		else
-			return deleteByKey(key);
+			return this.deleteByKey(key);
 	}
 
 	public boolean deleteByKey(Key<T> key) {
@@ -273,13 +278,13 @@ public class ObjectifyDao<T> {
 	public boolean deleteByRef(Ref<T> ref) {
 		if (null == ref)
 			return true;
-		return deleteByKey(ref.key());
+		return this.deleteByKey(ref.key());
 	}
 
 	public boolean deleteByWebKey(String webKey) {
 		if (isBlank(webKey))
 			return true;
-		return deleteByKey(Key.<T> create(webKey));
+		return this.deleteByKey(Key.<T> create(webKey));
 	}
 
 	public boolean deleteEntityAsync(T pojo) {
@@ -300,7 +305,7 @@ public class ObjectifyDao<T> {
 	}
 
 	public boolean deleteEntities(@SuppressWarnings("unchecked") T... entities) {
-		return deleteEntities(Arrays.asList(entities));
+		return this.deleteEntities(Arrays.asList(entities));
 	}
 
 	public List<T> queryByType(Filter... filters) {

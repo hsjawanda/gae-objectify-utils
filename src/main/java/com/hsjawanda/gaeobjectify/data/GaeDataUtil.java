@@ -20,6 +20,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Result;
 import com.googlecode.objectify.SaveException;
+import com.googlecode.objectify.VoidWork;
 import com.googlecode.objectify.cmd.Query;
 import com.hsjawanda.gaeobjectify.models.GaeEntity;
 import com.hsjawanda.gaeobjectify.util.PagingData;
@@ -149,6 +150,28 @@ public class GaeDataUtil {
 			log.log(Level.WARNING, "Exception saving entities.", e);
 			return false;
 		}
+	}
+
+	@SafeVarargs
+	public static <T extends GaeEntity> boolean saveEntitiesTransactional(final T... entities) {
+		try {
+			ofy().transact(new VoidWork() {
+
+				@Override
+				public void vrun() {
+					try {
+						log.info("About to save " + entities.length + " entities transactionally.");
+						ofy().save().entities(entities).now();
+					} catch (Exception e) {
+						log.log(Level.WARNING,
+								"Error saving entities transactionally. Stacktrace below:", e);
+					}
+				}
+			});
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Exception saving entities transactionally", e);
+		}
+		return false;
 	}
 
 	public static <T extends GaeEntity> boolean saveEntities(Iterable<T> entities) {

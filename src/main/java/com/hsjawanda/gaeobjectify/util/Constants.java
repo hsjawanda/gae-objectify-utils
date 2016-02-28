@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -47,6 +48,8 @@ public class Constants {
 
 	public static final Range<Double> longRange = Range.closed(-180.0, 180.0);
 
+	public static final String UTF_8 = StandardCharsets.UTF_8.name();
+
 	public static final String HOMEPAGE = "/";
 
 	public static final String TASK_HEADER_NAME = "X-AppEngine-QueueName";
@@ -54,6 +57,8 @@ public class Constants {
 	public static final String FM_USER_UID = "userUid";
 
 	public static final String FM_ACTION = "action";
+
+	public static final String FM_ENCODED_URI = "encodedUri";
 
 	protected Constants() {
 	}

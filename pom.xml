@@ -10,7 +10,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<appengine.target.version>1.9.30</appengine.target.version>
+		<appengine.target.version>1.9.32</appengine.target.version>
 		<commons.validator.version>1.5.0</commons.validator.version>
 		<junit.version>4.10</junit.version>
 		<lombok.version>1.16.6</lombok.version>

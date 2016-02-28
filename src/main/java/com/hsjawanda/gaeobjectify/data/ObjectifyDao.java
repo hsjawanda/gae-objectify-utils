@@ -5,6 +5,7 @@ package com.hsjawanda.gaeobjectify.data;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.googlecode.objectify.ObjectifyService.ofy;
+import static java.util.logging.Level.WARNING;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -54,7 +55,7 @@ public class ObjectifyDao<T> {
 		try {
 			key = Key.create(webKey);
 		} catch (Exception e) {
-			this.log.log(Level.WARNING, "Error creating webKey from '" + webKey + "'. Stacktrace:", e);
+			this.log.log(WARNING, "Error creating webKey from '" + webKey + "'. Stacktrace:", e);
 		}
 		return this.getByKey(key);
 	}
@@ -62,7 +63,14 @@ public class ObjectifyDao<T> {
 	public Optional<T> getByRef(Ref<T> entityRef) {
 		if (null == entityRef)
 			return Optional.absent();
-		return Optional.fromNullable(ofy().load().ref(entityRef).now());
+		T retVal = null;
+		try {
+			retVal = ofy().load().ref(entityRef).now();
+		} catch (Exception e) {
+			this.log.log(WARNING, "Error loading entity from Ref<" + this.cls.getClass().getName()
+					+ ">. Stacktrace:", e);
+		}
+		return Optional.fromNullable(retVal);
 	}
 
 	public Map<Key<T>, T> getByRefs(Iterable<Ref<T>> entities) {

@@ -36,9 +36,9 @@ public class UtilitiesTest {
 
 	@Test
 	public void testPlaintext2Html() {
-		String retVal = WebUtil.plaintext2Html("<p>Arbit string <b>of</b>" + System.lineSeparator()
-				+ System.lineSeparator()
-				+ "text. <em>What</em> to<br/> <strong>do</strong> with it?");
+		String retVal = WebUtil.plaintext2Html(
+				"<p>Arbit string <b>of</b>" + System.lineSeparator() + System.lineSeparator()
+						+ "text. <em>What</em> to<br/> <strong>do</strong> with it?");
 //		System.out.println(retVal);
 		assertEquals("<p>Arbit string <b>of</b></p><p>text. <em>What</em> to<br> "
 				+ "<strong>do</strong> with it?</p>", retVal);
@@ -48,7 +48,7 @@ public class UtilitiesTest {
 	public void testAddPassThruParameters() {
 		String baseUrl = "/mapping/action";
 		String fullUrl = "action/ipp/50/pgnum/2/arbit";
-		UriParser parser = UriParser.builder().setHasAction(true).build();
+		UriParser parser = UriParser.instance("/mapping", true);
 		UriInfo info = parser.parse(fullUrl, false);
 		String resultUrl = WebUtil.addPassThruParams(info, baseUrl, "ipp", "pgNum", "arbit");
 		assertEquals("/mapping/action/ipp/50/pgNum/2/arbit/", resultUrl);

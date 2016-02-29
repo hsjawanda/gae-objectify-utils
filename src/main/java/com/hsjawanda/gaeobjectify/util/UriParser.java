@@ -3,7 +3,9 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.HashMap;
@@ -24,11 +26,22 @@ public class UriParser {
 
 	private static final Logger log = Logger.getLogger(UriParser.class.getName());
 
+	private String mapping;
+
 	private boolean hasAction;
 
 	private static Splitter splitter = Splitter.on('/').omitEmptyStrings();
 
 	private UriParser() {
+	}
+
+	public static UriParser instance(String mapping, boolean hasAction)
+			throws IllegalArgumentException {
+		checkArgument(isNotBlank(mapping), "mapping" + Constants.notBlank);
+		UriParser parser = new UriParser();
+		parser.mapping = mapping.trim();
+		parser.hasAction = hasAction;
+		return parser;
 	}
 
 	/**
@@ -54,7 +67,7 @@ public class UriParser {
 	public UriInfo parse(HttpServletRequest req, boolean debug) {
 		if (null == req)
 			return parse(EMPTY, debug);
-		return parse(req.getPathInfo(), debug);
+		return parse(req.getRequestURI().replace(this.mapping, EMPTY), debug);
 	}
 
 	/**
@@ -108,26 +121,26 @@ public class UriParser {
 		return retMap;
 	}
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-
-		private boolean _hasAction = true;
-
-		private Builder() {
-		}
-
-		public UriParser build() {
-			UriParser parser = new UriParser();
-			parser.hasAction = this._hasAction;
-			return parser;
-		}
-
-		public Builder setHasAction(boolean action) {
-			this._hasAction = action;
-			return this;
-		}
-	}
+//	public static Builder builder() {
+//		return new Builder();
+//	}
+//
+//	public static class Builder {
+//
+//		private boolean _hasAction = true;
+//
+//		private Builder() {
+//		}
+//
+//		public UriParser build() {
+//			UriParser parser = new UriParser();
+//			parser.hasAction = this._hasAction;
+//			return parser;
+//		}
+//
+//		public Builder setHasAction(boolean action) {
+//			this._hasAction = action;
+//			return this;
+//		}
+//	}
 }

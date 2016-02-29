@@ -20,7 +20,7 @@ import com.hsjawanda.gaeobjectify.util.UriParser;
  */
 public class UriParserTests {
 
-	UriParser actionParser = UriParser.builder().setHasAction(true).build();
+	UriParser actionParser = UriParser.instance(EMPTY, true);
 
 	@Before
 	public void setUp() throws Exception {
@@ -80,8 +80,7 @@ public class UriParserTests {
 
 	@Test
 	public void testParseMixedCaseTwoKeyValue() {
-		UriInfo info = this.actionParser.parse("/mapping/ACTion/Key1/ValuE1/kEY2/VALUE2",
-				false);
+		UriInfo info = this.actionParser.parse("/mapping/ACTion/Key1/ValuE1/kEY2/VALUE2", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
 		assertTrue(info.containsParam("key1"));
 		assertTrue(info.containsParam("key2"));

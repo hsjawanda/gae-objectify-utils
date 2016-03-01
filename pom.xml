@@ -17,6 +17,7 @@
 		<freemarker.version>2.3.20</freemarker.version>
 		<jackson.version>2.6.1</jackson.version>
 		<joda.money.version>0.10.0</joda.money.version>
+		<jsoup.version>1.8.3</jsoup.version>
 		<jsr.version>3.0.1</jsr.version>
 		<guava.version>19.0</guava.version>
 		<shiro.version>1.2.4</shiro.version>
@@ -131,6 +132,12 @@
 			<groupId>org.mindrot</groupId>
 			<artifactId>jbcrypt</artifactId>
 			<version>0.3m</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>${jsoup.version}</version>
 		</dependency>
 
 	</dependencies>

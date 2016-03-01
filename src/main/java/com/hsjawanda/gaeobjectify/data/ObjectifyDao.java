@@ -328,6 +328,16 @@ public class ObjectifyDao<T> {
 		return qry.list();
 	}
 
+	public List<T> filteredQuery(Map<String, Object> filters) {
+		Query<T> qry = ofy().load().type(this.cls);
+		if (null != filters) {
+			for (String condition : filters.keySet()) {
+				qry = qry.filter(condition, filters.get(condition));
+			}
+		}
+		return qry.list();
+	}
+
 	public Ref<T> getNullableRefFromPojo(T entity) {
 		Ref<T> ref = null;
 		if (null != entity) {

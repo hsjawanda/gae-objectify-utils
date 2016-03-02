@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import lombok.Builder;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +14,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableListIterator;
-
-import lombok.Builder;
 
 
 /**
@@ -50,7 +49,7 @@ public class Passwords {
 		StringBuilder failureReason = new StringBuilder(
 				"Invalid password. Doesn't meet the following requirement(s): ");
 		if (pwd.length() < this.minLength) {
-			addReason("minimum length", this.minLength, failureReason);
+			this.addReason("minimum length", this.minLength, failureReason);
 			return ImmutablePair.of(Boolean.FALSE, failureReason.toString());
 		}
 		int loChars = 0, upChars = 0, spChars = 0, numbers = 0, invalidChars = 0;
@@ -72,19 +71,19 @@ public class Passwords {
 			}
 		}
 		if (loChars < this.minLowerChars) {
-			addReason("minimum lower-case characters", this.minLowerChars, failureReason);
+			this.addReason("minimum lower-case characters", this.minLowerChars, failureReason);
 		}
 		if (upChars < this.minUpperChars) {
-			addReason("minimum upper-case characters", this.minUpperChars, failureReason);
+			this.addReason("minimum upper-case characters", this.minUpperChars, failureReason);
 		}
 		if (spChars < this.minSpecialChars) {
-			addReason("minimum special characters", this.minSpecialChars, failureReason);
+			this.addReason("minimum special characters", this.minSpecialChars, failureReason);
 		}
 		if (numbers < this.minDigits) {
-			addReason("minimum numbers", this.minDigits, failureReason);
+			this.addReason("minimum numbers", this.minDigits, failureReason);
 		}
 		if (invalidChars > 0) {
-			addReason("contains invalid characters (allowed: " + validChars + ")", 0,
+			this.addReason("contains invalid characters (allowed: " + validChars + ")", 0,
 					failureReason);
 		}
 		if (loChars >= this.minLowerChars && upChars >= this.minUpperChars
@@ -96,6 +95,10 @@ public class Passwords {
 
 	private void addReason(String partReason, int num, StringBuilder failureReason) {
 		failureReason.append(partReason).append(" (").append(num).append("); ");
+	}
+
+	public String genRandomPassword() {
+		return RandomStringUtils.random(this.minLength + 5, validChars);
 	}
 
 	public static String genRandom() {

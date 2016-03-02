@@ -50,7 +50,7 @@ public class Config {
 				bundles.add(ResourceBundle.getBundle(bundleFilename));
 				loaded = true;
 			} catch (MissingResourceException e) {
-				log.warning("Couldn't find resource bundle: " + bundleFilename);
+				log.info("Couldn't find resource bundle: " + bundleFilename);
 			}
 		}
 //		try {

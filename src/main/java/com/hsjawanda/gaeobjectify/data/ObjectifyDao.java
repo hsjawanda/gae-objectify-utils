@@ -316,7 +316,7 @@ public class ObjectifyDao<T> {
 		return this.deleteEntities(Arrays.asList(entities));
 	}
 
-	public List<T> queryByType(Filter... filters) {
+	public List<T> filteredQuery(Filter... filters) {
 		Query<T> qry = ofy().load().type(this.cls);
 		if (null != filters) {
 			for (Filter filter : filters) {

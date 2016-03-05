@@ -8,13 +8,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import org.apache.commons.lang3.NotImplementedException;
-
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.hsjawanda.gaeobjectify.collections.NonNullList;
 import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
@@ -29,12 +25,10 @@ import lombok.experimental.Accessors;
  * @author harsh.deep
  *
  */
-@Entity
 @Data
 @Accessors(chain = true, fluent = true)
 public class Tag implements GaeEntity {
 
-	@Id
 	@Setter(value = AccessLevel.NONE)
 	protected String name;
 
@@ -42,7 +36,7 @@ public class Tag implements GaeEntity {
 	protected String displayName;
 
 	@Setter(value = AccessLevel.NONE)
-	protected List<String> ids = NonNullList.empty();
+	protected Set<String> ids = new LinkedHashSet<>();
 
 	public static final String PREFIX = EMPTY;
 
@@ -74,9 +68,9 @@ public class Tag implements GaeEntity {
 		return this;
 	}
 
-	public void changeDisplayName(String newDispName) {
-		throw new NotImplementedException("Not yet implemented!");
-	}
+//	public void changeDisplayName(String newDispName) {
+//		throw new NotImplementedException("Not yet implemented!");
+//	}
 
 	public static String normalizeName(String dispName) {
 		return normalizeName(PREFIX, dispName);
@@ -87,5 +81,27 @@ public class Tag implements GaeEntity {
 		prefix = trimToNull(prefix);
 		return SplitJoin.join(normalizeSpace(prefix),
 				normalizeSpace(dispName).toLowerCase().replace(' ', '-'));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Tag))
+			return false;
+		Tag other = (Tag) obj;
+		if (this.name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!this.name.equals(other.name))
+			return false;
+		return true;
 	}
 }

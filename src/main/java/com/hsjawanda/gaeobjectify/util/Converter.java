@@ -15,8 +15,9 @@ import com.hsjawanda.gaeobjectify.collections.KeyGenerator;
 
 
 /**
- * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
+ * Utilities for doing conversions.
  *
+ * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  */
 public class Converter {
 
@@ -26,6 +27,17 @@ public class Converter {
 	protected Converter() {
 	}
 
+	/**
+	 * Convert a {@code Map} to a {@code List}, returning the {@code values} in the {@code Map} in
+	 * the returned list.
+	 *
+	 * @param map
+	 *            the {@code map} to use.
+	 * @param existingList
+	 *            use this {@code List} instead of allocating a new one (it will be {@code clear()}
+	 *            -ed). If {@code null}, a new {@code List} is allocated.
+	 * @return the {@code values} in the {@code Map} as a list.
+	 */
 	public static <K, V> List<V> mapToList(Map<K, V> map, List<V> existingList) {
 		List<V> retVal = existingList;
 		if (null != map && !map.isEmpty()) {
@@ -44,10 +56,34 @@ public class Converter {
 		return retVal;
 	}
 
+	/**
+	 * Same as {@link #mapToList(Map, List)}, except that a new {@code List} is always allocated.
+	 *
+	 * @see #mapToList(Map, List)
+	 *
+	 * @param map
+	 * @return
+	 */
 	public static <K, V> List<V> mapToList(Map<K, V> map) {
 		return mapToList(map, null);
 	}
 
+	/**
+	 * The reverse of {@link #mapToList(Map, List)}. A {@link KeyGenerator} has to be supplied to
+	 * generate the keys corresponding to the elements of {@code list}.
+	 *
+	 * @param list
+	 *            the {@link List} to use.
+	 * @param keyGen
+	 *            the {@link KeyGenerator} to use for generating keys corresponding to the
+	 *            {@code values} in {@code list}. Cannot be {@code null}.
+	 * @param existingMap
+	 *            use this {@link Map} instead of allocating a new one (it will be {@code clear()}
+	 *            -ed). If {@code null}, a new {@code Map} is allocated.
+	 * @return the converted {@code Map}.
+	 * @throws NullPointerException
+	 *             if {@code keyGen} is {@code null}.
+	 */
 	public static <K, V> Map<K, V> listToMap(List<V> list, KeyGenerator<K, V> keyGen,
 			Map<K, V> existingMap) throws NullPointerException {
 		checkNotNull(keyGen, "keyGen" + Constants.notNull);
@@ -65,6 +101,16 @@ public class Converter {
 		return retVal;
 	}
 
+	/**
+	 * Same as {@link #listToMap(List, KeyGenerator, Map)}, except that a new {@code Map} is always
+	 * allocated.
+	 *
+	 * @see #listToMap(List, KeyGenerator, Map)
+	 *
+	 * @param list
+	 * @param keyGen
+	 * @return
+	 */
 	public static <K, V> Map<K, V> listToMap(List<V> list, KeyGenerator<K, V> keyGen) {
 		return listToMap(list, keyGen, null);
 	}

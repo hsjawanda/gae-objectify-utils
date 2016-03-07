@@ -4,7 +4,6 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import lombok.Builder;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +13,8 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableListIterator;
+
+import lombok.Builder;
 
 
 /**
@@ -26,8 +27,8 @@ public class Passwords {
 
 	private static int _minLength = 8;
 
-	private static String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-			+ "0123456789@!#$%*";
+	private static String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+			+ "0123456789@!#$%*^";
 
 	private static CharMatcher validMatcher = CharMatcher.anyOf(validChars);
 
@@ -49,7 +50,7 @@ public class Passwords {
 		StringBuilder failureReason = new StringBuilder(
 				"Invalid password. Doesn't meet the following requirement(s): ");
 		if (pwd.length() < this.minLength) {
-			this.addReason("minimum length", this.minLength, failureReason);
+			addReason("minimum length", this.minLength, failureReason);
 			return ImmutablePair.of(Boolean.FALSE, failureReason.toString());
 		}
 		int loChars = 0, upChars = 0, spChars = 0, numbers = 0, invalidChars = 0;
@@ -71,19 +72,19 @@ public class Passwords {
 			}
 		}
 		if (loChars < this.minLowerChars) {
-			this.addReason("minimum lower-case characters", this.minLowerChars, failureReason);
+			addReason("minimum lower-case characters", this.minLowerChars, failureReason);
 		}
 		if (upChars < this.minUpperChars) {
-			this.addReason("minimum upper-case characters", this.minUpperChars, failureReason);
+			addReason("minimum upper-case characters", this.minUpperChars, failureReason);
 		}
 		if (spChars < this.minSpecialChars) {
-			this.addReason("minimum special characters", this.minSpecialChars, failureReason);
+			addReason("minimum special characters", this.minSpecialChars, failureReason);
 		}
 		if (numbers < this.minDigits) {
-			this.addReason("minimum numbers", this.minDigits, failureReason);
+			addReason("minimum numbers", this.minDigits, failureReason);
 		}
 		if (invalidChars > 0) {
-			this.addReason("contains invalid characters (allowed: " + validChars + ")", 0,
+			addReason("contains invalid characters (allowed: " + validChars + ")", 0,
 					failureReason);
 		}
 		if (loChars >= this.minLowerChars && upChars >= this.minUpperChars

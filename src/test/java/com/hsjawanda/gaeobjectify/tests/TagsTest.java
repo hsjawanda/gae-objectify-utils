@@ -72,7 +72,7 @@ public class TagsTest {
 			counter++;
 		}
 		assertEquals(2, counter);
-		Tag contentTag1 = contentTags.getTag(contentTag1Display);
+		Tag contentTag1 = contentTags.tagFor(contentTag1Display);
 		assertNotNull(contentTag1);
 		assertEquals(normalizeSpace(contentTag1Display), contentTag1.displayName());
 	}

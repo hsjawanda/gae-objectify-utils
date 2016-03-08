@@ -45,7 +45,7 @@ public class TagStore {
 
 	@Id
 	@Setter(AccessLevel.NONE)
-	private String tagType;
+	private String storeName;
 
 	@Ignore
 	private Map<String, Tag> tags = new LinkedHashMap<>(10);
@@ -62,9 +62,9 @@ public class TagStore {
 	private TagStore() {
 	}
 
-	TagStore(String tagType) {
+	TagStore(String storeName) {
 		this();
-		this.tagType = normalizeTagType(tagType);
+		this.storeName = normalizeTagType(storeName);
 	}
 
 	public Tag addTag(String displayName) {
@@ -74,14 +74,14 @@ public class TagStore {
 			tag = new Tag(displayName);
 			this.tags.put(tagNormalize, tag);
 			this.modified = true;
-//			DAO.deferredSaveEntity(this);
+			DAO.deferredSaveEntity(this);
 		} else {
 			tag = this.tags.get(tagNormalize);
 		}
 		return tag;
 	}
 
-	public Tag getTag(String displayName) {
+	public Tag tagFor(String displayName) {
 		return this.tags.get(Tag.normalizeName(displayName));
 	}
 
@@ -89,11 +89,11 @@ public class TagStore {
 		Tag tag = addTag(tagDisplayName);
 		tag.addId(entity.getId());
 		this.modified = true;
-//		DAO.deferredSaveEntity(this);
+		DAO.deferredSaveEntity(this);
 		return tag;
 	}
 
-	public Set<String> getTaggedWithIds(String tagDisplayName) {
+	public Set<String> entitiesWithTag(String tagDisplayName) {
 		String tagNormalized = Tag.normalizeName(tagDisplayName);
 		if (this.tags.containsKey(tagNormalized))
 			return Collections.unmodifiableSet(this.tags.get(tagNormalized).ids());
@@ -112,7 +112,7 @@ public class TagStore {
 
 	public void save() {
 		if (this.modified) {
-			log.info("About to save TagStore '" + this.tagType + "'");
+			log.info("About to save TagStore '" + this.storeName + "'");
 			DAO.deferredSaveEntity(this);
 		}
 		this.modified = false;

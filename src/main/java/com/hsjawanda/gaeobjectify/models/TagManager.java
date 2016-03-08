@@ -23,13 +23,8 @@ public class TagManager {
 	private static Map<String, TagStore> stores = new HashMap<>();
 
 	public static TagStore getStore(String tagType) {
-//		Stopwatch timer = Stopwatch.createStarted();
 		final String tagTypeNormalized = TagStore.normalizeTagType(tagType);
-//		long normalizationTime = timer.elapsed(TimeUnit.MICROSECONDS);
 		if (stores.containsKey(tagTypeNormalized)) {
-			// log.info("Time to retrieve (found) TagStore for key '" + tagType + "': "
-			// + timer.stop().elapsed(TimeUnit.MICROSECONDS)
-			// + " microsec. Normalization time: " + normalizationTime + " microsec");
 			log.info("Fetching TagStore from MEMORY for tagType: " + tagTypeNormalized);
 			return stores.get(tagTypeNormalized);
 		} else {
@@ -39,19 +34,16 @@ public class TagManager {
 				public TagStore run() {
 					TagStore aggre = TagStore.DAO.getById(tagTypeNormalized).orNull();
 					if (null == aggre) {
-						log.info("Created a NEW TagStore for tagType: " + tagTypeNormalized);
+						log.info("Creating a NEW TagStore for tagType: " + tagTypeNormalized);
 						aggre = new TagStore(tagTypeNormalized);
 						TagStore.DAO.saveEntity(aggre);
 					} else {
-						log.info("Fetching TagStore from DS for tagType: " + tagTypeNormalized);
+						log.info("Fetched TagStore from DS for tagType: " + tagTypeNormalized);
 					}
 					return aggre;
 				}
 			});
 			stores.put(tagTypeNormalized, theStore);
-//			log.info("Time to retrieve (retrieved) TagStore for key '" + tagType + "': "
-//					+ timer.stop().elapsed(TimeUnit.MICROSECONDS)
-//					+ " microsec. Normalization time: " + normalizationTime + " microsec");
 			return theStore;
 		}
 	}

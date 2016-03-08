@@ -10,12 +10,10 @@ import com.google.common.collect.Range;
 
 
 /**
- * @author Harsh.Deep
+ * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
  */
 public class UniqueIdGenerator {
-
-	public static final int TAB_RADIX = 36;
 
 	public static final int UID_RADIX = 36;
 
@@ -44,10 +42,10 @@ public class UniqueIdGenerator {
 		}
 	}
 
-	public UniqueIdGenerator() {
-	}
-
 	private static SecureRandom random = new SecureRandom();
+
+	private UniqueIdGenerator() {
+	}
 
 	public static String next() {
 		return new BigInteger(130, random).toString(UID_RADIX);
@@ -61,10 +59,6 @@ public class UniqueIdGenerator {
 		return asString(bigNumber(), MAX_RADIX);
 	}
 
-//	public static BigInteger tabId() {
-//		return new BigInteger(31, random);
-//	}
-
 	public static BigInteger mediumNumber() {
 		return new BigInteger(64, random);
 	}
@@ -72,14 +66,6 @@ public class UniqueIdGenerator {
 	public static String medium() {
 		return asString(mediumNumber(), MAX_RADIX);
 	}
-
-//	public static int tabIdAsInt() {
-//		return tabId().intValue();
-//	}
-//
-//	public static String tabIdAsString() {
-//		return tabId().toString(TAB_RADIX);
-//	}
 
 	public static String asString(BigInteger bigInt, int radix) {
 		if (!radixRange.contains(radix)) {

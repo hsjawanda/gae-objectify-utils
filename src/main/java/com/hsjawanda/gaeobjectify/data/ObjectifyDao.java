@@ -54,10 +54,11 @@ public class ObjectifyDao<T> {
 		Key<T> key = null;
 		try {
 			key = Key.create(webKey);
+			return this.getByKey(key);
 		} catch (Exception e) {
 			this.log.log(WARNING, "Error creating webKey from '" + webKey + "'. Stacktrace:", e);
+			return Optional.absent();
 		}
-		return this.getByKey(key);
 	}
 
 	public Optional<T> getByRef(Ref<T> entityRef) {

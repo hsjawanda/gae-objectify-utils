@@ -93,7 +93,7 @@ public class UriParser {
 		}
 		String action = EMPTY;
 		if (this.hasAction && !parts.isEmpty()) {
-			action = parts.get(0).toLowerCase();
+			action = parts.get(0)/*.toLowerCase()*/;
 			parts = parts.subList(1, parts.size());
 			if (debug) {
 				log.info("After consuming action, remaining parts: " + parts);

@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -65,8 +66,12 @@ public class Emailer {
 				mesg.setText(trimToEmpty(data.getBody()));
 			}
 			Transport.send(mesg);
+		} catch (SendFailedException e) {
+			log.log(Level.WARNING, "Email sending failed. Stacktrace:", e);
 		} catch (MessagingException e) {
 			log.log(Level.WARNING, "Exception while sending email.", e);
+		} catch (Exception e) {
+			log.log(Level.WARNING, "General exception catching while sending email. Stacktrace:", e);
 		}
 	}
 

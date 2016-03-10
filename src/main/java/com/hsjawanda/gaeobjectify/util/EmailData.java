@@ -8,9 +8,11 @@ import java.util.List;
 import javax.mail.internet.InternetAddress;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Singular;
+import lombok.ToString;
 
 
 /**
@@ -19,6 +21,8 @@ import lombok.Singular;
  */
 @Builder
 @Getter
+@EqualsAndHashCode
+@ToString
 public class EmailData {
 
 	@NonNull

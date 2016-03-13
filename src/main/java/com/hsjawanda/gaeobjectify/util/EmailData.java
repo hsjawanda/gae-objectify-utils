@@ -3,6 +3,8 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.util.List;
 
 import javax.mail.internet.InternetAddress;
@@ -38,5 +40,21 @@ public class EmailData {
 
 	public static EmailData empty() {
 		return builder().build();
+	}
+
+	public String getSubj(String defaultSubj) {
+		return defaultString(this.subj, defaultSubj);
+	}
+
+	public String getSubj() {
+		return getSubj("(No subject)");
+	}
+
+	public String getBody(String defaultBody) {
+		return defaultString(this.body, defaultBody);
+	}
+
+	public String getBody() {
+		return getBody("(No body)");
 	}
 }

@@ -96,6 +96,10 @@ public class Config {
 		return get(key).or(EMPTY);
 	}
 
+	public static <T extends Enum<?>> String getOrEmpty(T key) {
+		return get(key).or(EMPTY);
+	}
+
 	/**
 	 * Get the value corresponding to {@code key}.
 	 *
@@ -104,6 +108,10 @@ public class Config {
 	 * @return the value, or {@code null} if no value was found
 	 */
 	public static String getOrNull(String key) {
+		return get(key).orNull();
+	}
+
+	public static <T extends Enum<?>> String getOrNull(T key) {
 		return get(key).orNull();
 	}
 

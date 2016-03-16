@@ -110,7 +110,7 @@
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-labs</artifactId>
-			<version>1.9.32</version>
+			<version>${appengine.target.version}</version>
 		</dependency>
 
 		<dependency>

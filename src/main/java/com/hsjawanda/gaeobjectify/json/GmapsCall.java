@@ -41,6 +41,10 @@ public class GmapsCall {
 
 	private String name;
 
+	private String keyword;
+
+	private boolean rankByDistance = false;
+
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private Map<String, Object> params;
@@ -54,12 +58,13 @@ public class GmapsCall {
 		return this;
 	}
 
-	public void type(GmapsPlaceType type) {
+	public GmapsCall type(GmapsPlaceType type) {
 		if (null != type) {
 			this.type = type.toString();
 		} else {
 			this.type = null;
 		}
+		return this;
 	}
 
 	public GmapsCall radius(int radius) {
@@ -74,18 +79,30 @@ public class GmapsCall {
 	 * @return a read-only {@code Map} view.
 	 */
 	public Map<String, Object> asMap() {
+		int reqdParams = null == this.name ? 0 : 1;
+		reqdParams += null == this.keyword ? 0 : 1;
+		reqdParams += null == this.type ? 0 : 1;
+		if (this.rankByDistance && reqdParams == 0)
+			throw new IllegalStateException("When rankByDistance is set, one or more of name, "
+					+ "keyword and type must be specified as well");
 		if (null == this.params) {
-			this.params = new LinkedHashMap<>(3);
+			this.params = new LinkedHashMap<>(6);
 		}
 		this.params.clear();
 		if (null != this.location) {
 			this.params.put("location", this.location);
 		}
-		if (null != this.radius) {
+		if (null != this.radius && !this.rankByDistance) {
 			this.params.put("radius", this.radius);
 		}
 		if (null != this.type) {
 			this.params.put("type", this.type);
+		}
+		if (null != this.keyword) {
+			this.params.put("keyword", this.keyword);
+		}
+		if (this.rankByDistance) {
+			this.params.put("rankby", "distance");
 		}
 		if (isNotBlank(this.name)) {
 			this.params.put("name", this.name);

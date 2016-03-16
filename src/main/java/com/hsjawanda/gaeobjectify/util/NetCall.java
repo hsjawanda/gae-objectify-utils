@@ -28,6 +28,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -53,6 +54,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.net.MediaType;
 import com.hsjawanda.gaeobjectify.json.GcmMessage;
 import com.hsjawanda.gaeobjectify.json.GcmResponse;
+import com.hsjawanda.gaeobjectify.json.GmapsCall;
+import com.hsjawanda.gaeobjectify.json.GmapsNearbyResponse;
 
 
 /**
@@ -196,7 +199,39 @@ public class NetCall {
 		return gcmFactory;
 	}
 
-//	public static JsonNode
+	public static GmapsNearbyResponse gmapsCall(String urlStr, Map<String, Object> params, boolean debug)
+			throws JsonProcessingException, IOException {
+		HttpRequestFactory factory = getRequestFactory();
+		GenericUrl url = new GenericUrl(urlStr);
+		url.putAll(params);
+		url.put("key", Config.get(Keys.GOOG_SERVER_API_KEY).or(EMPTY));
+		try {
+			HttpRequest req = factory.buildGetRequest(url);
+			HttpResponse res = req.execute();
+			String response = IOUtils.toString(res.getContent());
+			GmapsNearbyResponse nearbyData = mapper.readValue(response, GmapsNearbyResponse.class);
+			if (debug) {
+				log.info("Reply to " + url + System.lineSeparator() + "is: " + nearbyData);
+			}
+			return nearbyData;
+		} catch (JsonProcessingException e) {
+			log.log(Level.WARNING, "Error parsing response of GMaps api call. Stacktrace:", e);
+			throw e;
+		} catch (IOException e) {
+			log.log(Level.WARNING, "Error making GMaps api call. Stacktrace:", e);
+			throw e;
+		}
+	}
+
+	public static GmapsNearbyResponse gmapsCall(String urlStr, GmapsCall params, boolean debug)
+			throws JsonProcessingException, IOException {
+		return gmapsCall(urlStr, params.asMap(), debug);
+	}
+
+	public static GmapsNearbyResponse gmapsCall(String urlStr, GmapsCall params)
+			throws JsonProcessingException, IOException {
+		return gmapsCall(urlStr, params, false);
+	}
 
 	public static JsonFactory getJsonFactory() {
 		return jacksonFactory;

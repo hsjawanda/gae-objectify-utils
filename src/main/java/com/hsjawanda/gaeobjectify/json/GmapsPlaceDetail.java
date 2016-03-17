@@ -22,7 +22,11 @@ public class GmapsPlaceDetail {
 
 	private List<GmapsAddrComponent> address_components;
 
+	private String name;
+
 	private String formatted_address;
+
+	private String adr_address;
 
 	private String formatted_phone_number;
 
@@ -37,6 +41,8 @@ public class GmapsPlaceDetail {
 	private List<String> types;
 
 	private int utc_offset;
+
+	private String website;
 
 	private String vicinity;
 

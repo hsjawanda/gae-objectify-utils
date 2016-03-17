@@ -28,7 +28,6 @@ import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -36,6 +35,7 @@ import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpBackOffUnsuccessfulResponseHandler;
+import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMediaType;
 import com.google.api.client.http.HttpRequest;
@@ -54,8 +54,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.net.MediaType;
 import com.hsjawanda.gaeobjectify.json.GcmMessage;
 import com.hsjawanda.gaeobjectify.json.GcmResponse;
-import com.hsjawanda.gaeobjectify.json.GmapsCall;
-import com.hsjawanda.gaeobjectify.json.GmapsNearbyResponse;
 
 
 /**
@@ -92,9 +90,9 @@ public class NetCall {
 
 	private static JacksonFactory jacksonFactory = new JacksonFactory();
 
-	private static final ObjectMapper mapper = new ObjectMapper();
+	public static final ObjectMapper mapper = new ObjectMapper();
 
-	private static final ObjectMapper mapperPretty = new ObjectMapper();
+	public static final ObjectMapper mapperPretty = new ObjectMapper();
 
 	static {
 		mapper.setSerializationInclusion(Include.NON_ABSENT);
@@ -199,39 +197,81 @@ public class NetCall {
 		return gcmFactory;
 	}
 
-	public static GmapsNearbyResponse gmapsCall(String urlStr, Map<String, Object> params, boolean debug)
-			throws JsonProcessingException, IOException {
-		HttpRequestFactory factory = getRequestFactory();
-		GenericUrl url = new GenericUrl(urlStr);
-		url.putAll(params);
-		url.put("key", Config.get(Keys.GOOG_SERVER_API_KEY).or(EMPTY));
+	public static HttpResponse callResponse(GenericUrl url, HttpRequestFactory factory,
+			String httpMethod, HttpContent content) throws IOException {
+		factory = null == factory ? getRequestFactory() : factory;
+//		if (httpMethod.equals(HttpMethods.POST) && null == content) {
+//		}
 		try {
-			HttpRequest req = factory.buildGetRequest(url);
-			HttpResponse res = req.execute();
-			String response = IOUtils.toString(res.getContent());
-			GmapsNearbyResponse nearbyData = mapper.readValue(response, GmapsNearbyResponse.class);
-			if (debug) {
-				log.info("Reply to " + url + System.lineSeparator() + "is: " + nearbyData);
-			}
-			return nearbyData;
-		} catch (JsonProcessingException e) {
-			log.log(Level.WARNING, "Error parsing response of GMaps api call. Stacktrace:", e);
-			throw e;
+			HttpRequest req = factory.buildRequest(httpMethod, url, content);
+			HttpResponse response = req.execute();
+			return response;
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Error making GMaps api call. Stacktrace:", e);
+			int size = content == null ? 100 : 200;
+			StringBuilder mesg = new StringBuilder(size);
+			mesg.append("Error making call to").append(System.lineSeparator()).append("      URL: ")
+					.append(System.lineSeparator()).append("  Method: ").append(httpMethod);
+			if (content != null) {
+				mesg.append(System.lineSeparator()).append("Content: ").append(content.toString());
+			}
+			log.log(Level.WARNING, mesg.toString(), e);
 			throw e;
 		}
 	}
 
-	public static GmapsNearbyResponse gmapsCall(String urlStr, GmapsCall params, boolean debug)
-			throws JsonProcessingException, IOException {
-		return gmapsCall(urlStr, params.asMap(), debug);
+	public static String toString(HttpResponse res, boolean debug) throws IOException {
+		if (null == res)
+			return EMPTY;
+		try {
+			String response = IOUtils.toString(res.getContent());
+			if (debug) {
+				Object responseObj = mapper.readValue(response, Object.class);
+				log.info("Response: " + mapperPretty.writeValueAsString(responseObj));
+			}
+			return response;
+		} catch (IOException e) {
+			log.log(Level.WARNING, "Exception converting HttpResponse to String. Stacktrace:", e);
+			throw e;
+		}
 	}
 
-	public static GmapsNearbyResponse gmapsCall(String urlStr, GmapsCall params)
-			throws JsonProcessingException, IOException {
-		return gmapsCall(urlStr, params, false);
+	public static String toString(HttpResponse res) throws IOException {
+		return toString(res, false);
 	}
+
+//	public static GmapsNearbyResponse gmapsCall(String urlStr, Map<String, Object> params,
+//			boolean debug) throws JsonProcessingException, IOException {
+//		HttpRequestFactory factory = getRequestFactory();
+//		GenericUrl url = new GenericUrl(urlStr);
+//		url.putAll(params);
+//		url.put("key", Config.get(Keys.GOOG_SERVER_API_KEY).or(EMPTY));
+//		try {
+//			HttpRequest req = factory.buildGetRequest(url);
+//			HttpResponse res = req.execute();
+//			String response = IOUtils.toString(res.getContent());
+//			GmapsNearbyResponse nearbyData = mapper.readValue(response, GmapsNearbyResponse.class);
+//			if (debug) {
+//				log.info("Reply to " + url + System.lineSeparator() + "is: " + nearbyData);
+//			}
+//			return nearbyData;
+//		} catch (JsonProcessingException e) {
+//			log.log(Level.WARNING, "Error parsing response of GMaps api call. Stacktrace:", e);
+//			throw e;
+//		} catch (IOException e) {
+//			log.log(Level.WARNING, "Error making GMaps api call. Stacktrace:", e);
+//			throw e;
+//		}
+//	}
+//
+//	public static GmapsNearbyResponse gmapsCall(String urlStr, GmapsCall params, boolean debug)
+//			throws JsonProcessingException, IOException {
+//		return gmapsCall(urlStr, params.asMap(), debug);
+//	}
+//
+//	public static GmapsNearbyResponse gmapsCall(String urlStr, GmapsCall params)
+//			throws JsonProcessingException, IOException {
+//		return gmapsCall(urlStr, params, false);
+//	}
 
 	public static JsonFactory getJsonFactory() {
 		return jacksonFactory;

@@ -43,6 +43,8 @@ public class GmapsCall {
 
 	private String keyword;
 
+	private String placeId;
+
 	private boolean rankByDistance = false;
 
 	@Getter(AccessLevel.NONE)
@@ -97,6 +99,9 @@ public class GmapsCall {
 		}
 		if (null != this.type) {
 			this.params.put("type", this.type);
+		}
+		if (null != this.placeId) {
+			this.params.put("placeid", this.placeId);
 		}
 		if (null != this.keyword) {
 			this.params.put("keyword", this.keyword);

@@ -6,7 +6,6 @@ package com.hsjawanda.gaeobjectify.json;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 
@@ -16,10 +15,9 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GmapsDetailResponse extends GmapsResponse {
+public class GmapsResponse {
 
-	private GmapsPlaceDetail result;
+	protected String status;
 
 }

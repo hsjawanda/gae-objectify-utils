@@ -17,9 +17,9 @@ import com.googlecode.objectify.annotation.Id;
 public abstract class UniqueStringProperty<T> {
 
 	@Id
-	private String id;
+	private String	id;
 
-	private Ref<T> reference;
+	private Ref<T>	reference;
 
 	protected UniqueStringProperty() {
 	}
@@ -41,7 +41,7 @@ public abstract class UniqueStringProperty<T> {
 	public Optional<T> getReferenced() {
 		if (null == this.reference)
 			return Optional.absent();
-		return Optional.of(this.reference.get());
+		return Optional.fromNullable(this.reference.get());
 	}
 
 	/**

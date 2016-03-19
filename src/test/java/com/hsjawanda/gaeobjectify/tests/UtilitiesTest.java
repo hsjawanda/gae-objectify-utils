@@ -5,10 +5,15 @@ package com.hsjawanda.gaeobjectify.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+import com.hsjawanda.gaeobjectify.util.Constants;
+import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.UriInfo;
 import com.hsjawanda.gaeobjectify.util.UriParser;
 import com.hsjawanda.gaeobjectify.util.WebUtil;
@@ -53,6 +58,19 @@ public class UtilitiesTest {
 		String resultUrl = WebUtil.addPassThruParams(info, baseUrl, "ipp", "pgNum", "arbit");
 		assertEquals("/mapping/action/ipp/50/pgNum/2/arbit/", resultUrl);
 		// System.out.println("Result: " + resultUrl);
+	}
+
+	@Test
+	public void testCompactList() {
+		List<String> addrList = Lists.newArrayList("S.C.O 37", "Opposite E.S.I Hospital",
+				"Cellulosics Road", "Phase 7", "Industrial Area", "Sector 73");
+		List<String> unchangingAddrList = Lists.newArrayList(addrList);
+//		Holdall.printList(unchangingAddrList);
+		Holdall.compactList(addrList, 4);
+//		System.out.println(EMPTY);
+//		Holdall.printList(addrList);
+		assertEquals(Constants.ADDR_JOIN.join(unchangingAddrList),
+				Constants.ADDR_JOIN.join(addrList));
 	}
 
 }

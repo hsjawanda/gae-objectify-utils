@@ -6,6 +6,9 @@ package com.hsjawanda.gaeobjectify.util;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -17,12 +20,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpResponse;
-import com.google.common.base.Splitter;
-import com.hsjawanda.gaeobjectify.json.GmapsAddrComponent;
 import com.hsjawanda.gaeobjectify.json.GmapsCall;
 import com.hsjawanda.gaeobjectify.json.GmapsDetailResponse;
 import com.hsjawanda.gaeobjectify.json.GmapsNearbyResponse;
 import com.hsjawanda.gaeobjectify.json.GmapsPlaceDetail;
+import com.hsjawanda.gaeobjectify.models.GenericAddress;
+import com.hsjawanda.gaeobjectify.models.GenericAddress.Field;
 
 
 /**
@@ -31,9 +34,9 @@ import com.hsjawanda.gaeobjectify.json.GmapsPlaceDetail;
  */
 public class GMaps {
 
-	private static final Logger log = Logger.getLogger(GMaps.class.getName());
+	private static final Logger	log		= Logger.getLogger(GMaps.class.getName());
 
-	private static final String API_KEY = Config.get(Keys.GOOG_SERVER_API_KEY).or(EMPTY);
+	private static final String	API_KEY	= Config.get(Keys.GOOG_SERVER_API_KEY).or(EMPTY);
 
 	private GMaps() {
 	}
@@ -61,58 +64,33 @@ public class GMaps {
 		return placeDetails(params, false);
 	}
 
-	public static void parseDetailAddress(GmapsPlaceDetail deets) {
-		int subLocalityLevels = 5, additional = 2;
-		int addrPartsCapacity = subLocalityLevels + additional;
-		String[] addrParts = new String[addrPartsCapacity];
-//		GmapsCall params = new GmapsCall().placeId(googPlaceId);
-//		try {
-//			GmapsDetailResponse deets = GMaps.placeDetails(params, true);
-		GmapsPlaceDetail placeDeets = deets;
-//			Merchant merch = Merchant.builder().name(placeDeets.getName())
-//					.website(placeDeets.getWebsite()).build();
-//			AddressMerchantBuilder addrB = AddressMerchant.builder();
-		for (GmapsAddrComponent addrComponent : placeDeets.getAddress_components()) {
-			if (addrComponent.getTypes().contains("administrative_area_level_1")) {
-				System.out.println("state: " + addrComponent.getLong_name());
-			} else if (addrComponent.getTypes().contains("country")) {
-				System.out.println("country: " + addrComponent.getLong_name());
-			} else if (addrComponent.getTypes().contains("locality")) {
-				System.out.println("city: " + addrComponent.getLong_name());
-			} else if (addrComponent.getTypes().contains("street_number")) {
-				addrParts[0] = addrComponent.getLong_name();
-			} else if (addrComponent.getTypes().contains("route")) {
-				addrParts[1] = addrComponent.getLong_name();
-			} else {
-				for (String type : addrComponent.getTypes()) {
-					if (type.startsWith("sublocality_level_")) {
-						for (int i = subLocalityLevels; i > 0; i--) {
-							if (type.equals("sublocality_level_" + i)) {
-								addrParts[subLocalityLevels - i + additional] = addrComponent
-										.getLong_name();
-								break;
-							}
-						}
-						break;
-					}
-				}
-			}
+	public static GenericAddress parseDetailAddr(GmapsPlaceDetail deets, boolean debug) {
+		GenericAddress addr = new GenericAddress();
+		List<String> addrWhole = Constants.ADDR_SPLIT.splitToList(deets.getFormatted_address());
+		System.out.println("addrWhole: " + addrWhole);
+		List<String> addrLineParts = Collections.emptyList();
+		List<GenericAddress.Field> addrLineFields = GenericAddress.Field.getAddrLines();
+		int fixedParts = 3/* , extraLines = addrWhole.size() - addrLineFields.size() - fixedParts */;
+		if (addrWhole.size() > fixedParts) {
+			addrLineParts = new LinkedList<>(addrWhole.subList(0, addrWhole.size() - fixedParts));
 		}
-		for (int i = 0; i < addrPartsCapacity; i++) {
-			if (addrParts[i] != null) {
-				System.out.println("addrLine: " + addrParts[i]);
-			}
+		Holdall.compactList(addrLineParts, addrLineFields.size());
+		Iterator<String> addrLineItr = addrLineParts.iterator();
+		Iterator<Field> addrFieldsItr = addrLineFields.iterator();
+		while (addrLineItr.hasNext()) {
+			addr.set(addrFieldsItr.next(), addrLineItr.next());
 		}
-		Splitter addrSplitter = Splitter.on(", ").omitEmptyStrings().trimResults();
-		List<String> addrList = addrSplitter.splitToList(deets.getFormatted_address());
-		System.out.println("From splitter: " + addrList.subList(0, addrList.size() - 3));
-//			AddressMerchant addr = addrB.build();
-//			this.log.info("Address: " + addr);
-//			merch.setAddr(addrB.build());
-//		} catch (JsonParseException e) {
-//		} catch (JsonProcessingException e) {
-//		} catch (IOException e) {
-//		}
+		addr.set(Field.CITY, addrWhole.get(addrWhole.size() - 3));
+		addr.set(Field.STATE, addrWhole.get(addrWhole.size() - 2));
+		addr.set(Field.COUNTRY, addrWhole.get(addrWhole.size() - 1));
+		if (debug) {
+			log.info("Address: " + System.lineSeparator() + addr.plainText());
+		}
+		return addr;
+	}
+
+	public static GenericAddress parseDetailAddr(GmapsPlaceDetail deets) {
+		return parseDetailAddr(deets, false);
 	}
 
 	public static GmapsNearbyResponse nearbySearch(Map<String, Object> params, boolean debug)

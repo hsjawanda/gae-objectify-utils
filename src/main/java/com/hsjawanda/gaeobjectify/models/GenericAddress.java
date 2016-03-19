@@ -6,8 +6,10 @@ package com.hsjawanda.gaeobjectify.models;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import com.hsjawanda.gaeobjectify.util.Constants;
@@ -82,8 +84,35 @@ public class GenericAddress {
 		return this.details.get(field);
 	}
 
+	public String plainText() {
+		StringBuilder addr = new StringBuilder(100);
+		for (Field lineField : Field.values()) {
+			String val = get(lineField);
+			if (null != val) {
+				addr.append(val);
+				if (lineField != Field.COUNTRY) {
+					addr.append(',').append(System.lineSeparator());
+				}
+			}
+		}
+		return addr.toString();
+	}
+
 	public enum Field {
-		LINE1, LINE2, LINE3, LINE4, CITY, POSTAL_CODE, POSTAL_CODE_EXTN, COUNTRY,
+		LINE1, LINE2, LINE3, LINE4, CITY, STATE, POSTAL_CODE, POSTAL_CODE_EXTN, COUNTRY;
+
+		private static final List<Field> addrLineFields = new ArrayList<>(Field.values().length);
+
+		public static List<Field> getAddrLines() {
+			if (addrLineFields.size() == 0) {
+				for (Field field : Field.values()) {
+					if (field.name().startsWith("LINE")) {
+						addrLineFields.add(field);
+					}
+				}
+			}
+			return addrLineFields;
+		}
 	}
 
 }

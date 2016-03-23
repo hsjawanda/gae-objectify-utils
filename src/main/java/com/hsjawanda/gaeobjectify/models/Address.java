@@ -96,7 +96,7 @@ public class Address<T> extends DatedEntity {
 	public Address<T> addAddrLine(String addrLine) {
 		if (this.addrLines.size() >= maxAddrLines)
 			return this;
-		this.addrLines.add(abbreviate(addrLine, Constants.gaeStringLength));
+		this.addrLines.add(abbreviate(addrLine, Constants.GAE_STRING_LENGTH));
 		return this;
 	}
 

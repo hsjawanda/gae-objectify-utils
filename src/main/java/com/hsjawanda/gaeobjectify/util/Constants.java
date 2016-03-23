@@ -3,6 +3,8 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -32,7 +34,12 @@ public class Constants {
 
 	public static final int						logRounds			= 12;
 
-	public static final int						gaeStringLength		= 500;
+	public static final int						GAE_STRING_LENGTH	= 500;
+
+	public static final Splitter				GAE_STRING_SPLITTER	= Splitter
+			.fixedLength(GAE_STRING_LENGTH);
+
+	public static final Joiner					GAE_STRING_JOINER	= Joiner.on(EMPTY);
 
 	public static final String					servletMapping		= "servletMapping";
 

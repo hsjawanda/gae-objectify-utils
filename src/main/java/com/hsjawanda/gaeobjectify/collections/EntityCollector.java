@@ -213,4 +213,8 @@ public class EntityCollector<K, V> {
 			this.entityMap = new LinkedHashMap<>(INITIAL_CAPACITY);
 		}
 	}
+
+	public int size() {
+		return null == this.entityMap ? 0 : this.entityMap.size();
+	}
 }

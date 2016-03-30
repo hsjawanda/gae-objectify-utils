@@ -8,6 +8,8 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.googlecode.objectify.annotation.Entity;
+
 
 /**
  * @author Harshdeep Jawanda <hsjawanda@gmail.com>
@@ -78,5 +80,13 @@ public final class Holdall {
 				System.out.println(String.format("%5d: %s", counter++, element));
 			}
 		}
+	}
+
+	public static <T> void checkIfObjectifyEntity(Class<T> cls)
+			throws UnsupportedOperationException {
+		if (!cls.isAnnotationPresent(Entity.class))
+			throw new UnsupportedOperationException("The class " + cls.getName()
+					+ " doesn't have the annotation " + Entity.class.getName()
+					+ " and therefore can't be used with this operation.");
 	}
 }

@@ -10,11 +10,12 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.Entity;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
+import com.hsjawanda.gaeobjectify.util.Holdall;
 
 
 /**
@@ -22,6 +23,8 @@ import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
  *
  */
 public class EntityCollector<K, V> {
+
+	private static final Logger log = Logger.getLogger(EntityCollector.class.getName());
 
 	private static final int INITIAL_CAPACITY = 3;
 
@@ -113,23 +116,24 @@ public class EntityCollector<K, V> {
 	}
 
 	public List<Ref<V>> preSaveAction() throws UnsupportedOperationException {
-		if (!this.cls.isAnnotationPresent(Entity.class))
-			throw new UnsupportedOperationException("The class " + this.cls.getName()
-					+ " doesn't have Entity annotation, therefore a List<Ref<"
-					+ this.cls.getSimpleName() + ">> can't be generated.");
+		Holdall.checkIfObjectifyEntity(this.cls);
 		if (!this.refsLoaded)
 			return this.refsToLoad;
 		if (null == this.entityMap || this.entityMap.isEmpty())
 			return Collections.emptyList();
 		if (this.entityMapModified) {
 			if (null == this.entityRefs) {
-				this.entityRefs = new ArrayList<>(this.entityMap.size());
+				this.entityRefs = NonNullList.empty(this.entityMap.size());
 			}
 			this.entityRefs.clear();
 			for (K key : this.entityMap.keySet()) {
-				Ref<V> ref = GaeDataUtil.getNullableRefFromPojo(this.entityMap.get(key));
-				if (null != ref) {
-					this.entityRefs.add(ref);
+				V value = this.entityMap.get(key);
+				Ref<V> ref = GaeDataUtil.getNullableRefFromPojo(value);
+				this.entityRefs.add(ref);
+				if (null == ref) {
+					GaeDataUtil.deferredDeleteEntity(value);
+					log.warning("Couldn't create valid Ref, so deleting this entity: " + value);
+					this.entityMap.remove(key);
 				}
 			}
 			this.entityMapModified = false;
@@ -163,21 +167,6 @@ public class EntityCollector<K, V> {
 		return Collections.unmodifiableMap(this.entityMap);
 	}
 
-//	public void loadFromEntityRefs(List<Ref<V>> refs) {
-//		if (null != refs) {
-//			allocateMap();
-//			this.entityMap.clear();
-//			for (Ref<V> ref : refs) {
-//				if (null == ref) {
-//					continue;
-//				}
-//				V entity = ref.get();
-//				this.entityMap.put(this.keyGen.keyFor(entity), entity);
-//			}
-//		}
-////		throw new NotImplementedException("Not yet implemented.");
-//	}
-
 	public void loadFromEntities(List<V> entities) {
 		if (null != entities && entities.size() > 0) {
 			allocateMap();
@@ -190,10 +179,6 @@ public class EntityCollector<K, V> {
 			}
 		}
 	}
-
-//	protected void refsToLoad(List<Ref<V>> refsToLoad) {
-//		this.refsToLoad = refsToLoad;
-//	}
 
 	protected void loadRefs() {
 		if (null == this.entityMap) {

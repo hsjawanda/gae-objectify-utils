@@ -354,7 +354,8 @@ public class ObjectifyDao<T> {
 		return ref;
 	}
 
-	public void getPaginatedEntities(PagingData<T> pd, Filter... filters) {
+	public void getPaginatedEntities(PagingData<T> pd, Iterable<? extends Filter> filters,
+			List<String> sorts) {
 		checkNotNull(pd, "The PagingData object can't be null.");
 		Query<T> qry = ofy().load().type(this.cls);
 		if (null != filters) {
@@ -364,12 +365,27 @@ public class ObjectifyDao<T> {
 				}
 			}
 		}
+		if (null != sorts) {
+			for (String sort : sorts) {
+				if (isNotBlank(sort)) {
+					qry = qry.order(sort);
+				}
+			}
+		}
 		if (pd.isGenTotalResults()) {
 			qry = qry.limit(pd.getCountLimit());
 			pd.setTotalResults(qry.count());
 		}
 		qry = qry.offset(pd.getOffset()).limit(pd.getItemsPerPage());
 		pd.setResults(qry.list());
+	}
+
+	public void getPaginatedEntities(PagingData<T> pd, Filter... filters) {
+		getPaginatedEntities(pd, Arrays.asList(filters), null);
+	}
+
+	public void getPaginatedEntities(PagingData<T> pd, Iterable<? extends Filter> filters) {
+		getPaginatedEntities(pd, filters, null);
 	}
 
 }

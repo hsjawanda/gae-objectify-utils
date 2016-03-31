@@ -213,4 +213,11 @@ public class EntityCollector<K, V> {
 			this.entityMap = new LinkedHashMap<>(INITIAL_CAPACITY);
 		}
 	}
+
+	public void clear() {
+		if (null != this.entityMap) {
+			this.entityMap.clear();
+			this.entityMapModified = true;
+		}
+	}
 }

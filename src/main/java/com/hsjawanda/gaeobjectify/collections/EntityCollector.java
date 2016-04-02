@@ -203,4 +203,11 @@ public class EntityCollector<K, V> {
 	public int size() {
 		return null == this.entityMap ? 0 : this.entityMap.size();
 	}
+
+	public void clear() {
+		if (null != this.entityMap) {
+			this.entityMap.clear();
+			this.entityMapModified = true;
+		}
+	}
 }

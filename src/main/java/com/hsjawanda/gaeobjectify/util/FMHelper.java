@@ -30,13 +30,13 @@ import freemarker.template.TemplateModelException;
  */
 public class FMHelper {
 
-	private static final Logger log = Logger.getLogger(FMHelper.class.getName());
+	private static final Logger		log		= Logger.getLogger(FMHelper.class.getName());
 
-	private static File docRoot;
+	private static File				docRoot;
 
-	private static Configuration config;
+	private static Configuration	config;
 
-	private static BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
+	private static BeansWrapper		wrapper	= BeansWrapper.getDefaultInstance();
 
 	private FMHelper() {
 	}
@@ -63,17 +63,6 @@ public class FMHelper {
 		config.setDefaultEncoding("UTF-8");
 	}
 
-	public static boolean processTemplate(String tmpl, HttpServletResponse res,
-			Map<String, Object> args) {
-		PrintWriter pw = null;
-		try {
-			pw = res.getWriter();
-		} catch (IOException e) {
-			log.log(Level.WARNING, "Couldn't get writer from HttpServletResponse...", e);
-		}
-		return processTemplate(tmpl, pw, args, res.getCharacterEncoding());
-	}
-
 	public static boolean processTemplate(String tmpl, Writer writer, Map<String, Object> args,
 			String charEncoding) {
 		if (null == config) {
@@ -87,7 +76,7 @@ public class FMHelper {
 		try {
 			template = config.getTemplate(tmpl);
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "Failed to get template '" + tmpl + "'...", e);
+			log.log(Level.SEVERE, "Failed to get template '" + tmpl + "'. Stacktrace:", e);
 			return false;
 		}
 		try {
@@ -95,10 +84,22 @@ public class FMHelper {
 			env.setOutputEncoding(charEncoding);
 			env.process();
 		} catch (TemplateException | IOException e) {
-			log.log(Level.WARNING, "Failed to process template '" + tmpl + "'.", e);
+			log.log(Level.WARNING, "Failed to process template '" + tmpl + "'. Stacktrace:", e);
 			return false;
 		}
 		return true;
+	}
+
+	public static boolean processTemplate(String tmpl, HttpServletResponse res,
+			Map<String, Object> args) {
+		PrintWriter pw = null;
+		try {
+			pw = res.getWriter();
+			return processTemplate(tmpl, pw, args, res.getCharacterEncoding());
+		} catch (IOException e) {
+			log.log(Level.WARNING, "Couldn't get writer from HttpServletResponse. Stacktrace:", e);
+			return false;
+		}
 	}
 
 	public static boolean processTemplate(String tmpl, Writer pw, Map<String, Object> args) {

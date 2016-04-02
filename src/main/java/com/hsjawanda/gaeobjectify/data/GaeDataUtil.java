@@ -114,13 +114,6 @@ public class GaeDataUtil {
 			return Optional.fromNullable(result.get().now());
 		else
 			return Optional.absent();
-		// try {
-		// return Optional.fromNullable(ofy().save().entity(entity).now());
-		// } catch (Exception e) {
-		// log.log(Level.WARNING, "Failed to save entity: " + entity.toString(),
-		// e);
-		// return Optional.absent();
-		// }
 	}
 
 	public static <T> Optional<Result<Key<T>>> saveEntityAsync(T entity) throws SaveException {
@@ -163,8 +156,8 @@ public class GaeDataUtil {
 						log.info("About to save " + entities.length + " entities transactionally.");
 						ofy().save().entities(entities).now();
 					} catch (Exception e) {
-						log.log(Level.WARNING,
-								"Error saving entities transactionally. Stacktrace below:", e);
+						log.log(Level.WARNING, "Error saving entities transactionally. Stacktrace:",
+								e);
 					}
 				}
 			});

@@ -132,7 +132,8 @@ public class EntityCollector<K, V> {
 				this.entityRefs.add(ref);
 				if (null == ref) {
 					GaeDataUtil.deferredDeleteEntity(value);
-					log.warning("Couldn't create valid Ref, so deleting this entity: " + value);
+					log.warning("Couldn't create valid Ref, so deleting this entity:"
+							+ System.lineSeparator() + value);
 					this.entityMap.remove(key);
 				}
 			}

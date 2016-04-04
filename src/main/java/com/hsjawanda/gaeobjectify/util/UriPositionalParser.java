@@ -46,18 +46,22 @@ public class UriPositionalParser {
 						part.substring(1, part.length() - 1)));
 			}
 		}
-//		log.info("matchAgainst: " + parser.matchAgainst);
+		log.info("matchAgainst: " + parser.matchAgainst);
 		return parser;
 	}
 
 	public Optional<PositionalUriInfo> parse(String uri, boolean debug)
 			throws IllegalArgumentException {
 		checkArgument(isNotBlank(uri), "uri" + Constants.notBlank);
+		log.info("parse(): matchAgainst: " + this.matchAgainst + "; specifierParts: "
+				+ this.specifierParts);
 		List<String> uriParts = Constants.PATH_SPLITTER.splitToList(uri);
-		checkArgument(uriParts.size() >= this.minLength, "The size of the uri (" + uriParts.size()
-				+ ") has to be " + "at least as much as that of the specifier (" + this.minLength
-				+ ").");
 		int counter = 0;
+		if (uriParts.size() != this.specifierParts.size()) {
+			log.warning("The size of the uri (" + uriParts.size() + ") doesn't match that of the "
+					+ "specifier (" + this.specifierParts.size() + ").");
+			return Optional.absent();
+		}
 		Map<String, String> arguments = new HashMap<>(this.matchAgainst.size());
 		for (int i = 0; i < uriParts.size(); i++) {
 			PositionalMatch match = this.matchAgainst.get(counter);
@@ -71,7 +75,7 @@ public class UriPositionalParser {
 			}
 		}
 		PositionalUriInfo info = new PositionalUriInfo();
-//		log.info("arguments: " + arguments);
+		log.info("arguments: " + arguments);
 		info.setParams(arguments);
 		return Optional.of(info);
 	}

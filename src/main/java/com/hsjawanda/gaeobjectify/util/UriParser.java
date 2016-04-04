@@ -15,8 +15,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.base.Splitter;
-
 
 /**
  * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
@@ -29,8 +27,6 @@ public class UriParser {
 	private String mapping;
 
 	private boolean hasAction;
-
-	private static Splitter splitter = Splitter.on('/').omitEmptyStrings();
 
 	private UriParser() {
 	}
@@ -87,7 +83,7 @@ public class UriParser {
 	 */
 	public UriInfo parse(String uri, boolean debug) {
 		uri = trimToEmpty(uri);
-		List<String> parts = splitter.splitToList(uri);
+		List<String> parts = Constants.PATH_SPLITTER.splitToList(uri);
 		if (debug) {
 			log.info("Parts of pathInfo: " + parts);
 		}

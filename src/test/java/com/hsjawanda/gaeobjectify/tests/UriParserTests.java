@@ -10,8 +10,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Optional;
+import com.hsjawanda.gaeobjectify.util.PositionalUriInfo;
 import com.hsjawanda.gaeobjectify.util.UriInfo;
 import com.hsjawanda.gaeobjectify.util.UriParser;
+import com.hsjawanda.gaeobjectify.util.UriPositionalParser;
 
 
 /**
@@ -20,7 +23,7 @@ import com.hsjawanda.gaeobjectify.util.UriParser;
  */
 public class UriParserTests {
 
-	UriParser actionParser = UriParser.instance(EMPTY, true);
+	UriParser actionParser = UriParser.instance("/", true);
 
 	@Before
 	public void setUp() throws Exception {
@@ -44,35 +47,35 @@ public class UriParserTests {
 
 	@Test
 	public void testParseEmptyAction() {
-		UriInfo info = this.actionParser.parse("/mapping", false);
+		UriInfo info = this.actionParser.parse("", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
 		assertEquals(EMPTY, info.action);
 	}
 
 	@Test
 	public void testParseWithTrailingSlash() {
-		UriInfo info = this.actionParser.parse("/mapping/action/", false);
+		UriInfo info = this.actionParser.parse("/action/", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
 		assertEquals("action", info.action);
 	}
 
 	@Test
 	public void testParseWithoutTrailingSlash() {
-		UriInfo info = this.actionParser.parse("/mapping/action", false);
+		UriInfo info = this.actionParser.parse("/action", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
 		assertEquals("action", info.action);
 	}
 
 	@Test
 	public void testParseMixedCaseAction() {
-		UriInfo info = this.actionParser.parse("/mapping/ACTion", false);
+		UriInfo info = this.actionParser.parse("/ACTion", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
-		assertEquals("action", info.action);
+		assertEquals("ACTion", info.action);
 	}
 
 	@Test
 	public void testParseMixedCaseOneKeyValue() {
-		UriInfo info = this.actionParser.parse("/mapping/ACTion/Key1/ValuE1", false);
+		UriInfo info = this.actionParser.parse("/ACTion/Key1/ValuE1", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
 		assertTrue(info.containsParam("key1"));
 		assertEquals("ValuE1", info.getParam("key1").orNull());
@@ -80,7 +83,7 @@ public class UriParserTests {
 
 	@Test
 	public void testParseMixedCaseTwoKeyValue() {
-		UriInfo info = this.actionParser.parse("/mapping/ACTion/Key1/ValuE1/kEY2/VALUE2", false);
+		UriInfo info = this.actionParser.parse("/ACTion/Key1/ValuE1/kEY2/VALUE2", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
 		assertTrue(info.containsParam("key1"));
 		assertTrue(info.containsParam("key2"));
@@ -90,11 +93,31 @@ public class UriParserTests {
 
 	@Test
 	public void testParseMissingLastValue() {
-		UriInfo info = this.actionParser.parse("/mapping/ACTion/Key1/ValuE1/kEY2", false);
+		UriInfo info = this.actionParser.parse("/ACTion/Key1/ValuE1/kEY2", false);
 		assertNotNull("The UriInfo object was unexpectedly null.", info);
 		assertTrue(info.containsParam("key1"));
 		assertTrue(info.containsParam("key2"));
 		assertEquals(EMPTY, info.getParam("key2").orNull());
+	}
+
+	@Test
+	public void testParsePositionalUri() {
+		UriPositionalParser positionalParser = UriPositionalParser
+				.instance("/photos/{profile}/{photoId}");
+		Optional<PositionalUriInfo> info = positionalParser.parse("/photos/hsjawanda/lfauouekllfl",
+				false);
+		assertTrue(info.isPresent());
+		assertEquals("hsjawanda", info.get().getParam("profile").get());
+		assertEquals("lfauouekllfl", info.get().getParam("photoId").get());
+	}
+
+	@Test
+	public void testParsePositionalUriMismatch() {
+		UriPositionalParser positionalParser = UriPositionalParser
+				.instance("/photos/{profile}/{photoId}");
+		Optional<PositionalUriInfo> info = positionalParser.parse("/photosa/hsjawanda/lfauouekllfl",
+				false);
+		assertFalse(info.isPresent());
 	}
 
 }

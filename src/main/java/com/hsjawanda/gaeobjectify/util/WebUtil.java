@@ -38,7 +38,7 @@ public class WebUtil {
 		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
 	}
 
-	public static String addPassThruParams(UriInfo info, String baseUrl, String... paramNames) {
+	public static String addPassThruParams(AbstractUriInfo info, String baseUrl, String... paramNames) {
 		StringBuilder retUrl = new StringBuilder(60);
 		if (baseUrl.endsWith("/")) {
 			baseUrl = baseUrl.substring(0, baseUrl.length() - 1);

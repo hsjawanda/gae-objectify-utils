@@ -47,7 +47,7 @@ public class UriParser {
 	 *            the request object
 	 * @return see {@link #parse(String, boolean)}
 	 */
-	public UriInfo parse(HttpServletRequest req) {
+	public KeyValueUriInfo parse(HttpServletRequest req) {
 		return this.parse(req, false);
 	}
 
@@ -60,7 +60,7 @@ public class UriParser {
 	 *            if {@code true}, debug information will be logged.
 	 * @return see {@link #parse(String, boolean)}.
 	 */
-	public UriInfo parse(HttpServletRequest req, boolean debug) {
+	public KeyValueUriInfo parse(HttpServletRequest req, boolean debug) {
 		if (null == req)
 			return parse(EMPTY, debug);
 		return parse(req.getRequestURI().replace(this.mapping, EMPTY), debug);
@@ -68,20 +68,20 @@ public class UriParser {
 
 	/**
 	 * <p>
-	 * Parse the URI and create a {@link UriInfo} object with the appropriate values.
+	 * Parse the URI and create a {@link KeyValueUriInfo} object with the appropriate values.
 	 *
 	 * <p>
 	 * The {@code action} and {@code param}s (not the values of the {@code param}s) in the returned
-	 * {@link UriInfo} object will be lower-cased. Any {@code param} without a corresponding
+	 * {@link KeyValueUriInfo} object will be lower-cased. Any {@code param} without a corresponding
 	 * {@code value} in the {@code uri} will have the empty {@code String} as its value.
 	 *
 	 * @param uri
 	 *            the {@code uri} to parse (typically obtained by {@code request.getPathInfo()}).
 	 * @param debug
 	 *            if {@code true}, debug information will be logged.
-	 * @return a {@code UriInfo} object representing data from the {@code uri}. Never {@code null}.
+	 * @return a {@code KeyValueUriInfo} object representing data from the {@code uri}. Never {@code null}.
 	 */
-	public UriInfo parse(String uri, boolean debug) {
+	public KeyValueUriInfo parse(String uri, boolean debug) {
 		uri = trimToEmpty(uri);
 		List<String> parts = Constants.PATH_SPLITTER.splitToList(uri);
 		if (debug) {
@@ -95,7 +95,7 @@ public class UriParser {
 				log.info("After consuming action, remaining parts: " + parts);
 			}
 		}
-		UriInfo info = new UriInfo(action);
+		KeyValueUriInfo info = new KeyValueUriInfo(action);
 		info.setParams(listToMap(parts));
 		return info;
 	}

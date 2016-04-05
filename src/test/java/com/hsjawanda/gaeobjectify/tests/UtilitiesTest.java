@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
-import com.hsjawanda.gaeobjectify.util.UriInfo;
+import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
 import com.hsjawanda.gaeobjectify.util.UriParser;
 import com.hsjawanda.gaeobjectify.util.WebUtil;
 
@@ -54,7 +54,7 @@ public class UtilitiesTest {
 		String baseUrl = "/mapping/action";
 		String fullUrl = "action/ipp/50/pgnum/2/arbit";
 		UriParser parser = UriParser.instance("/mapping", true);
-		UriInfo info = parser.parse(fullUrl, false);
+		KeyValueUriInfo info = parser.parse(fullUrl, false);
 		String resultUrl = WebUtil.addPassThruParams(info, baseUrl, "ipp", "pgNum", "arbit");
 		assertEquals("/mapping/action/ipp/50/pgNum/2/arbit/", resultUrl);
 		// System.out.println("Result: " + resultUrl);

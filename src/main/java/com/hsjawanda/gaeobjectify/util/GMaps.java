@@ -70,7 +70,7 @@ public class GMaps {
 		System.out.println("addrWhole: " + addrWhole);
 		List<String> addrLineParts = Collections.emptyList();
 		List<GenericAddress.Field> addrLineFields = GenericAddress.Field.getAddrLines();
-		int fixedParts = 3/* , extraLines = addrWhole.size() - addrLineFields.size() - fixedParts */;
+		int fixedParts = 3;
 		if (addrWhole.size() > fixedParts) {
 			addrLineParts = new LinkedList<>(addrWhole.subList(0, addrWhole.size() - fixedParts));
 		}

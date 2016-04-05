@@ -21,20 +21,21 @@ import com.google.common.base.Optional;
  * @author Harshdeep Jawanda <hsjawanda@gmail.com>
  *
  */
-public class UriPositionalParser {
+public class PositionalUriParser {
 
-	private static Logger		log			= Logger.getLogger(UriPositionalParser.class.getName());
+	private static Logger			log				= Logger
+			.getLogger(PositionalUriParser.class.getName());
 
-	List<String>				specifierParts;
+	List<String>					specifierParts;
 
-	private List<PositionalMatch>	matchAgainst		= new ArrayList<>();
+	private List<PositionalMatch>	matchAgainst	= new ArrayList<>();
 
-	private UriPositionalParser() {
+	private PositionalUriParser() {
 	}
 
-	public static UriPositionalParser instance(String specifier) throws IllegalArgumentException {
+	public static PositionalUriParser instance(String specifier) throws IllegalArgumentException {
 		checkArgument(isNotBlank(specifier), "specifier" + Constants.notBlank);
-		UriPositionalParser parser = new UriPositionalParser();
+		PositionalUriParser parser = new PositionalUriParser();
 		parser.specifierParts = Constants.PATH_SPLITTER.splitToList(specifier);
 		for (int i = 0; i < parser.specifierParts.size(); i++) {
 			String part = parser.specifierParts.get(i);
@@ -50,8 +51,6 @@ public class UriPositionalParser {
 	public Optional<PositionalUriInfo> parse(String uri, boolean debug)
 			throws IllegalArgumentException {
 		checkArgument(isNotBlank(uri), "uri" + Constants.notBlank);
-//		log.info("parse(): matchAgainst: " + this.matchAgainst + "; specifierParts: "
-//				+ this.specifierParts);
 		List<String> uriParts = Constants.PATH_SPLITTER.splitToList(uri);
 		int counter = 0;
 		if (uriParts.size() != this.specifierParts.size()) {

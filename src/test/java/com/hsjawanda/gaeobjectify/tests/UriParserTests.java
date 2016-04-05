@@ -14,7 +14,7 @@ import com.google.common.base.Optional;
 import com.hsjawanda.gaeobjectify.util.PositionalUriInfo;
 import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
 import com.hsjawanda.gaeobjectify.util.UriParser;
-import com.hsjawanda.gaeobjectify.util.UriPositionalParser;
+import com.hsjawanda.gaeobjectify.util.PositionalUriParser;
 
 
 /**
@@ -102,7 +102,7 @@ public class UriParserTests {
 
 	@Test
 	public void testParsePositionalUri() {
-		UriPositionalParser positionalParser = UriPositionalParser
+		PositionalUriParser positionalParser = PositionalUriParser
 				.instance("/photos/{profile}/{photoId}");
 		Optional<PositionalUriInfo> info = positionalParser.parse("/photos/hsjawanda/lfauouekllfl",
 				false);
@@ -113,7 +113,7 @@ public class UriParserTests {
 
 	@Test
 	public void testParsePositionalUriMismatch() {
-		UriPositionalParser positionalParser = UriPositionalParser
+		PositionalUriParser positionalParser = PositionalUriParser
 				.instance("/photos/{profile}/{photoId}");
 		Optional<PositionalUriInfo> info = positionalParser.parse("/photosa/hsjawanda/lfauouekllfl",
 				false);

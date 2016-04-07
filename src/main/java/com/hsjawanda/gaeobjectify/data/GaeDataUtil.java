@@ -222,7 +222,7 @@ public class GaeDataUtil {
 			ofy().delete().key(key).now();
 			return true;
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to delete entity: " + key + " ...", e);
+			log.log(Level.WARNING, "Failed to delete entity with key: " + key, e);
 			return false;
 		}
 	}

@@ -5,6 +5,7 @@ package com.hsjawanda.gaeobjectify.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Collections;
@@ -18,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.hsjawanda.gaeobjectify.util.Constants;
 
 
@@ -65,4 +69,20 @@ public class BlobstoreHelper {
 		}
 		return null == retVal ? Collections.<BlobKey> emptyList() : retVal;
 	}
+
+	public static String getImageUrl(BlobKey key, int size, boolean crop) {
+		if (null == key)
+			return EMPTY;
+		ImagesService imgSvc = ImagesServiceFactory.getImagesService();
+		ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(key).crop(crop);
+		if (size > 0) {
+			options = options.imageSize(size);
+		}
+		return imgSvc.getServingUrl(options);
+	}
+
+	public static String getImageUrl(BlobKey key) {
+		return getImageUrl(key, -1, false);
+	}
+
 }

@@ -25,8 +25,8 @@ import com.google.common.collect.Range;
 public class Constants {
 
 	@SuppressWarnings("unused")
-	private static final Logger					log					= Logger.getLogger(Constants.class
-																			.getName());
+	private static final Logger					log					= Logger
+			.getLogger(Constants.class.getName());
 
 	public static final String					notBlank			= " can't be null, empty or whitespace.";
 
@@ -37,7 +37,7 @@ public class Constants {
 	public static final int						GAE_STRING_LENGTH	= 500;
 
 	public static final Splitter				GAE_STRING_SPLITTER	= Splitter
-																			.fixedLength(GAE_STRING_LENGTH);
+			.fixedLength(GAE_STRING_LENGTH);
 
 	public static final Joiner					GAE_STRING_JOINER	= Joiner.on(EMPTY);
 
@@ -52,8 +52,7 @@ public class Constants {
 	public static final Joiner					pathJoiner			= Joiner.on('/').skipNulls();
 
 	static Splitter								PATH_SPLITTER		= Splitter.on('/')
-																			.omitEmptyStrings()
-																			.trimResults();
+			.omitEmptyStrings().trimResults();
 
 	public static final Joiner					commaJoiner			= Joiner.on(", ").skipNulls();
 
@@ -76,8 +75,9 @@ public class Constants {
 	public static final Joiner					ADDR_JOIN			= Joiner.on(", ").skipNulls();
 
 	public static final Splitter				ADDR_SPLIT			= Splitter.on(", ")
-																			.omitEmptyStrings()
-																			.trimResults();
+			.omitEmptyStrings().trimResults();
+
+	public static final String					URI_WEB_KEY			= "webkey";
 
 	protected Constants() {
 	}

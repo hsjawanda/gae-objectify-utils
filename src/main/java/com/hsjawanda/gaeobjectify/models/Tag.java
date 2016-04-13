@@ -11,14 +11,14 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
-import com.hsjawanda.gaeobjectify.util.Constants;
-import com.hsjawanda.gaeobjectify.util.SplitJoin;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
+import com.hsjawanda.gaeobjectify.util.Constants;
+import com.hsjawanda.gaeobjectify.util.SplitJoin;
 
 
 /**
@@ -83,25 +83,4 @@ public class Tag implements GaeEntity {
 				normalizeSpace(dispName).toLowerCase().replace(' ', '-'));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Tag))
-			return false;
-		Tag other = (Tag) obj;
-		if (this.name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!this.name.equals(other.name))
-			return false;
-		return true;
-	}
 }

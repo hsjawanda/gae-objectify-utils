@@ -12,9 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import com.hsjawanda.gaeobjectify.models.UniqueIndex;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
+import com.hsjawanda.gaeobjectify.util.SplitJoin;
 import com.hsjawanda.gaeobjectify.util.UriParser;
 import com.hsjawanda.gaeobjectify.util.WebUtil;
 
@@ -65,12 +67,17 @@ public class UtilitiesTest {
 		List<String> addrList = Lists.newArrayList("S.C.O 37", "Opposite E.S.I Hospital",
 				"Cellulosics Road", "Phase 7", "Industrial Area", "Sector 73");
 		List<String> unchangingAddrList = Lists.newArrayList(addrList);
-//		Holdall.printList(unchangingAddrList);
 		Holdall.compactList(addrList, 4);
-//		System.out.println(EMPTY);
-//		Holdall.printList(addrList);
 		assertEquals(Constants.ADDR_JOIN.join(unchangingAddrList),
 				Constants.ADDR_JOIN.join(addrList));
+	}
+
+	@Test
+	public void testUniqueIndexIdGen() {
+		String id1 = UniqueIndex.genIdFor("  ", " 5");
+		assertEquals("5", id1);
+		String id2 = UniqueIndex.genIdFor(" Content    Type for", "abc");
+		assertEquals("Content Type for" + SplitJoin.token + "abc", id2);
 	}
 
 }

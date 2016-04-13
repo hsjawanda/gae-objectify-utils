@@ -161,10 +161,27 @@ public class GaeDataUtil {
 					}
 				}
 			});
+			return true;
+//			Boolean success = ofy().transact(new Work<Boolean>() {
+//
+//				@Override
+//				public Boolean run() {
+//					try {
+//						log.info("About to save " + entities.length + " entities transactionally.");
+//						ofy().save().entities(entities).now();
+//						return true;
+//					} catch (Exception e) {
+//						log.log(Level.WARNING, "Error saving entities transactionally. Stacktrace:",
+//								e);
+//						return false;
+//					}
+//				}
+//			});
+//			return success.booleanValue();
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Exception saving entities transactionally", e);
+			return false;
 		}
-		return false;
 	}
 
 	public static <T extends GaeEntity> boolean saveEntities(Iterable<T> entities) {

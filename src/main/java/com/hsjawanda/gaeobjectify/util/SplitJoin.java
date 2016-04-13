@@ -10,12 +10,12 @@ import com.google.common.base.Splitter;
 
 
 /**
- * @author harsh.deep
+ * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
  */
 public class SplitJoin {
 
-	protected static String token = ":::";
+	public static String token = ":::";
 
 	protected static Joiner joiner = Joiner.on(token).skipNulls();
 

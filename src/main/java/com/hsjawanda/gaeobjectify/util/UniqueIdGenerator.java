@@ -3,6 +3,8 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -65,6 +67,11 @@ public class UniqueIdGenerator {
 
 	public static String medium() {
 		return asString(mediumNumber(), MAX_RADIX);
+	}
+
+	public static String custom(int numBits) throws IllegalArgumentException {
+		checkArgument(numBits > 0, "numBits must be > 0");
+		return asString(new BigInteger(numBits, random), MAX_RADIX);
 	}
 
 	public static String asString(BigInteger bigInt, int radix) {

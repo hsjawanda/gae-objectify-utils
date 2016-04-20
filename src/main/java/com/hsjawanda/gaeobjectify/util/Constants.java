@@ -56,6 +56,9 @@ public class Constants {
 
 	public static final Joiner					commaJoiner			= Joiner.on(", ").skipNulls();
 
+	public static final Splitter				COMMA_SPLITTER		= Splitter.on(",")
+			.omitEmptyStrings().trimResults();
+
 	public static final Range<Double>			latRange			= Range.closed(-90.0, 90.0);
 
 	public static final Range<Double>			longRange			= Range.closed(-180.0, 180.0);

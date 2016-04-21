@@ -14,7 +14,7 @@ import com.hsjawanda.gaeobjectify.models.UniqueStringProperty;
 
 
 /**
- * @author harsh.deep
+ * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
  */
 public class IndexProperty<T extends UniqueStringProperty<K>, K> implements Work<Key<T>> {

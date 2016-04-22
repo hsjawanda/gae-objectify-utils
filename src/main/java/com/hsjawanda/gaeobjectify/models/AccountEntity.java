@@ -7,6 +7,10 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -39,25 +43,35 @@ import com.hsjawanda.gaeobjectify.util.Validators;
 @Data
 public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 
+	private static Logger			log				= Logger.getLogger(AccountEntity.class
+															.getName());
+
 	@Setter(AccessLevel.NONE)
 	@JsonIgnore
-	protected String hashedPassword;
+	protected String				hashedPassword;
 
 	@Index(IfTrue.class)
-	protected boolean suspended = false;
+	protected boolean				suspended		= false;
 
 	@Index(IfFalse.class)
-	protected boolean emailVerified = false;
+	protected boolean				emailVerified	= false;
 
 	@Setter(AccessLevel.NONE)
-	protected Ref<T> email;
+	protected Ref<T>				email;
 
-	public static final Passwords PWDS = Passwords.builder()
-			.minLowerChars(Config.getAsLong(PasswordKeys.PASSWORDS_MIN_LOWER))
-			.minUpperChars(Config.getAsLong(PasswordKeys.PASSWORDS_MIN_UPPER))
-			.minDigits(Config.getAsLong(PasswordKeys.PASSWORDS_MIN_DIGITS))
-			.minSpecialChars(Config.getAsLong(PasswordKeys.PASSWORDS_MIN_SPECIAL))
-			.minLength(Config.getAsLong(PasswordKeys.PASSWORDS_MIN_LENGTH)).build();
+	public static final Passwords	PWDS			= Passwords
+															.builder()
+															.minLowerChars(
+																	Config.getAsLong(PasswordKeys.PASSWORDS_MIN_LOWER))
+															.minUpperChars(
+																	Config.getAsLong(PasswordKeys.PASSWORDS_MIN_UPPER))
+															.minDigits(
+																	Config.getAsLong(PasswordKeys.PASSWORDS_MIN_DIGITS))
+															.minSpecialChars(
+																	Config.getAsLong(PasswordKeys.PASSWORDS_MIN_SPECIAL))
+															.minLength(
+																	Config.getAsLong(PasswordKeys.PASSWORDS_MIN_LENGTH))
+															.build();
 
 	protected void hashAndSetPassword(String plaintext) {
 		this.hashedPassword = BCrypt.hashpw(plaintext, BCrypt.gensalt(Constants.logRounds));
@@ -115,13 +129,49 @@ public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 		if (null == key)
 			throw new NotUniqueException("The email '" + uniqEntity.getId()
 					+ "' is already in use for another " + clazz.getSimpleName() + ".");
+		log.info("Successfully created " + clazz.getSimpleName() + " with key: " + key);
 		GaeDataUtil.deleteEntity(this.email);
 		this.email = Ref.create(key);
+		log.info("Set Ref on current object.");
 		return (K) this;
 	}
 
+	/**
+	 * @return {@code null} if email is not set; {@code EMPTY} if email
+	 *         {@code Ref<T>} is invalid; or the email.
+	 */
 	public String getEmail() {
-		return null == this.email ? EMPTY : this.email.get().getId();
+		if (null == this.email)
+			return null;
+		T email = this.email.get();
+		this.email.getValue();
+		if (null != email)
+			return email.getId();
+		else
+			return EMPTY;
+	}
+
+	/**
+	 * @return {@code true} if success, {@code false} otherwise. Success is if
+	 *         the email {@code Ref<T>} is invalid, could be removed and saved
+	 *         back successfully. Success is also if the email was valid and/or
+	 *         not set at all.
+	 */
+	public boolean unsetEmail() {
+		if (null == this.email)
+			return true;
+		T email = this.email.get();
+		if (null == email) {
+			this.email = null;
+			try {
+				GaeDataUtil.deferredSaveEntity(this);
+				return true;
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Failed to save from AccountEntity.getEmail()", e);
+				return false;
+			}
+		} else
+			return true;
 	}
 
 	public abstract K setEmail(String inputEmail) throws InvalidFormatException, NotUniqueException;

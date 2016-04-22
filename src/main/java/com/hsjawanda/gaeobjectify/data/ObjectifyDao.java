@@ -86,11 +86,11 @@ public class ObjectifyDao<T> {
 		Key<T> key = null;
 		try {
 			key = Key.create(this.cls, id);
+			return this.getByKey(key);
 		} catch (Exception e) {
 			this.log.warning("Error creating key: " + e.getMessage());
 			return Optional.absent();
 		}
-		return this.getByKey(key);
 	}
 
 	public Map<String, T> getByStringIds(Iterable<String> ids) {
@@ -354,8 +354,19 @@ public class ObjectifyDao<T> {
 		return ref;
 	}
 
+	/**
+	 * @param pd
+	 *            the {@link PagingData} object that specifies paging-related
+	 *            options, including the cursor
+	 * @param filters
+	 *            the {@link Filter}s to use. Can be {@code null}.
+	 * @param sorts
+	 *            the sorting to use. Can be {@code null}.
+	 * @throws NullPointerException
+	 *             if {@code pd} is {@code null}
+	 */
 	public void getPaginatedEntities(PagingData<T> pd, Iterable<? extends Filter> filters,
-			List<String> sorts) {
+			Iterable<String> sorts) throws NullPointerException {
 		checkNotNull(pd, "The PagingData object can't be null.");
 		Query<T> qry = ofy().load().type(this.cls);
 		if (null != filters) {

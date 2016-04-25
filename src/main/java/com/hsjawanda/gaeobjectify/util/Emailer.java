@@ -132,4 +132,8 @@ public class Emailer {
 		}
 		return retVal;
 	}
+
+	public static String normalizeEmail(String email) {
+		return trimToEmpty(email).toLowerCase();
+	}
 }

@@ -8,7 +8,10 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import javax.mail.internet.InternetAddress;
@@ -83,6 +86,10 @@ public class Constants {
 	public static final Joiner					NAME_JOINER			= Joiner.on(' ').skipNulls();
 
 	public static final String					URI_WEB_KEY			= "webkey";
+
+	public static final TimeZone				IST					= TimeZone.getTimeZone("IST");
+
+	public static final Calendar				INDIAN_CAL			= new GregorianCalendar(IST);
 
 	protected Constants() {
 	}

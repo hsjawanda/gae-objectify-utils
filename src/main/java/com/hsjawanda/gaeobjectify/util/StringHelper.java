@@ -23,7 +23,7 @@ public class StringHelper {
 	}
 
 	@Nonnull
-	@SuppressWarnings("null")
+//	@SuppressWarnings("null")
 	public static String toString(Object obj) {
 		if (null == obj)
 			return EMPTY;

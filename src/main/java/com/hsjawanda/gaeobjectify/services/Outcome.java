@@ -7,6 +7,7 @@ import com.hsjawanda.gaeobjectify.util.Config;
 
 public class Outcome {
 
+	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(Outcome.class.getName());
 
 	public static final Outcome	SUCCESS					= new Outcome("SUCCESS");
@@ -15,14 +16,19 @@ public class Outcome {
 
 	public static final Outcome	FAIL_ENTITY_NOT_FOUND	= new Outcome("FAIL_ENTITY_NOT_FOUND");
 
+	public static final Outcome	FAIL_INTERNAL_ERROR		= new Outcome("FAIL_INTERNAL_ERROR");
+
+	public static final Outcome	FAIL_INVALID_INPUT		= new Outcome("FAIL_INVALID_INPUT");
+
 	public static final Outcome	FAIL_TOKEN_EXPIRED		= new Outcome("FAIL_TOKEN_EXPIRED");
 
 	public static final Outcome	FAIL_TOKEN_INVALID		= new Outcome("FAIL_TOKEN_INVALID");
 
+	public static final Outcome FAIL_UNIQUE_VIOLATION	= new Outcome("FAIL_UNIQUE_VIOLATION");
+
 	protected String			name;
 
 	protected Outcome(String name) {
-		log.info("name of Outcome: " + name);
 		this.name = name;
 	}
 

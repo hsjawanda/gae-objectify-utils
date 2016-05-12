@@ -80,6 +80,8 @@ public class Constants {
 	public static final Splitter				ADDR_SPLIT			= Splitter.on(", ")
 			.omitEmptyStrings().trimResults();
 
+	public static final Joiner					NAME_JOINER			= Joiner.on(' ').skipNulls();
+
 	public static final String					URI_WEB_KEY			= "webkey";
 
 	protected Constants() {

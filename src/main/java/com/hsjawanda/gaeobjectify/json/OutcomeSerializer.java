@@ -7,17 +7,27 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hsjawanda.gaeobjectify.services.Outcome;
+
 
 public class OutcomeSerializer extends JsonSerializer<Outcome> {
 
-	private static final Logger log = Logger.getLogger(OutcomeSerializer.class.getName());
+	@SuppressWarnings("unused")
+	private static final Logger			log		= Logger
+			.getLogger(OutcomeSerializer.class.getName());
+
+	private static final SimpleModule	module	= new SimpleModule().addSerializer(Outcome.class,
+			new OutcomeSerializer());
 
 	@Override
 	public void serialize(Outcome value, JsonGenerator gen, SerializerProvider serializers)
 			throws IOException, JsonProcessingException {
-		log.info("value: " + value + "; toString(): " + value.toString());
 		gen.writeString(value.toString());
+	}
+
+	public static SimpleModule getModule() {
+		return module;
 	}
 
 }

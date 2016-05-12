@@ -3,6 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.leftPad;
 
 
@@ -23,6 +24,20 @@ public class Tracer {
 			System.out.println(leftPad(Integer.toString(i), 3) + ". " + elements[i]);
 		}
 		System.out.flush();
+	}
+
+	public static String callerLocation(int stackFrameNum) {
+		stackFrameNum = Math.max(1, stackFrameNum + 1);
+		StackTraceElement[] stackTrace = new Exception().getStackTrace();
+		String location = EMPTY;
+		if (null != stackTrace && stackTrace.length >= stackFrameNum) {
+			location = stackTrace[stackFrameNum].toString();
+		}
+		return location;
+	}
+
+	public static String callerLocation() {
+		return callerLocation(1);
 	}
 
 }

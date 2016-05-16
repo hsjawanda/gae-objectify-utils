@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ public class StringHelper {
 	}
 
 	@Nonnull
-//	@SuppressWarnings("null")
+	@SuppressWarnings("null")
 	public static String toString(Object obj) {
 		if (null == obj)
 			return EMPTY;
@@ -55,6 +56,36 @@ public class StringHelper {
 			log.log(Level.WARNING, "Exception converting '" + stringValue + "' to Long...", e);
 		}
 		return null;
+	}
+
+	public static long getAsLong(String stringValue, long defaultValue) {
+		if (isNotBlank(stringValue)) {
+			try {
+				return Long.parseLong(stringValue);
+			} catch (NumberFormatException e) {
+				log.warning(
+						"Exception converting '" + stringValue + "' to long: " + e.getMessage());
+			} catch (Exception e) {
+				log.log(Level.WARNING,
+						"Exception converting '" + stringValue + "' to long. Stacktrace:", e);
+			}
+		}
+		return defaultValue;
+	}
+
+	public static int getAsInt(String stringValue, int defaultValue) {
+		if (isNotBlank(stringValue)) {
+			try {
+				return Integer.parseInt(stringValue);
+			} catch (NumberFormatException e) {
+				log.warning(
+						"Exception converting '" + stringValue + "' to int: " + e.getMessage());
+			} catch (Exception e) {
+				log.log(Level.WARNING,
+						"Exception converting '" + stringValue + "' to int. Stacktrace:", e);
+			}
+		}
+		return defaultValue;
 	}
 
 	public static Double getAsDouble(String stringValue) {

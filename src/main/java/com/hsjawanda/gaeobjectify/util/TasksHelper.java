@@ -42,7 +42,7 @@ public final class TasksHelper {
 	private TasksHelper() {
 	}
 
-//	@SuppressWarnings("null")
+	@SuppressWarnings("null")
 	public static @Nonnull String normalizedTaskName(@Nonnull Class<? extends GaeTask> clazz) {
 		return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, clazz.getSimpleName());
 	}

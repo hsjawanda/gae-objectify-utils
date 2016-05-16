@@ -40,4 +40,12 @@ public class Tracer {
 		return callerLocation(1);
 	}
 
+	public static StackTraceElement getStackFrame(int stackFrameNum) {
+		stackFrameNum = Math.max(1, stackFrameNum + 1);
+		StackTraceElement[] stackTrace = new Exception().getStackTrace();
+		if (null != stackTrace && stackTrace.length >= stackFrameNum)
+			return stackTrace[stackFrameNum];
+		return null;
+	}
+
 }

@@ -123,6 +123,14 @@ public class Config {
 		return StringHelper.getAsLong(get(key).orNull());
 	}
 
+	public static long getAsLong(String key, long defaultValue) {
+		return StringHelper.getAsLong(get(key).orNull(), defaultValue);
+	}
+
+	public static int getAsInt(String key, int defaultValue) {
+		return StringHelper.getAsInt(get(key).orNull(), defaultValue);
+	}
+
 	public static <T extends Enum<?>> Boolean getAsBoolean(T key) {
 		return StringHelper.getAsBoolean(get(key).orNull());
 	}

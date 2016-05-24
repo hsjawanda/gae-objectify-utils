@@ -12,6 +12,8 @@ public class Outcome {
 
 	public static final Outcome	SUCCESS					= new Outcome("SUCCESS");
 
+	public static final Outcome SUCCESS_NO_RESULTS		= new Outcome("SUCCESS_NO_RESULTS");
+
 	public static final Outcome	FAIL					= new Outcome("FAIL");
 
 	public static final Outcome	FAIL_ENTITY_NOT_FOUND	= new Outcome("FAIL_ENTITY_NOT_FOUND");

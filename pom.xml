@@ -5,7 +5,7 @@
 	<groupId>com.hsjawanda.gaeobjectify</groupId>
 	<artifactId>gaeobjectify-utils</artifactId>
 	<packaging>jar</packaging>
-	<version>0.8-SNAPSHOT</version>
+	<version>0.8.0</version>
 	<name>gae-objectify-utils</name>
 	<url>http://maven.apache.org</url>
 

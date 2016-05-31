@@ -25,7 +25,7 @@ public class Pager<T> {
 
 	public static Range<Integer>	PER_PAGE_RANGE	= Range.closed(5, 100);
 
-	private int						pageNum			= 1;
+	private int						pageNum			= PAGE_NUM_MIN;
 
 	private int						itemsPerPage	= 20;
 

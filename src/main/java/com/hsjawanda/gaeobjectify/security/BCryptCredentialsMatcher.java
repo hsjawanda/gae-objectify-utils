@@ -33,14 +33,15 @@ public class BCryptCredentialsMatcher implements CredentialsMatcher {
 	 * authc.AuthenticationToken, org.apache.shiro.authc.AuthenticationInfo)
 	 */
 	@Override
-	public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
+	public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info)
+			throws NullPointerException, IllegalArgumentException {
 		checkNotNull(token);
 		checkNotNull(info);
 		checkArgument(token instanceof UsernamePasswordToken, "token does not have any password");
 		String password = StringHelper.toString(((UsernamePasswordToken) token).getPassword());
 		String hashedPasswd = StringHelper.toString(info.getCredentials());
 		boolean authenticated = BCrypt.checkpw(password, hashedPasswd);
-		log.info("Password matched: " + authenticated);
+		log.fine("Password matched: " + authenticated);
 		return authenticated;
 	}
 

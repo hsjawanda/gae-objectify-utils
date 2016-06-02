@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.mindrot.jbcrypt.BCrypt;
@@ -41,6 +42,7 @@ import com.hsjawanda.gaeobjectify.util.Validators;
  *
  */
 @Data
+@Accessors(chain = true)
 public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 
 	private static Logger			log				= Logger.getLogger(AccountEntity.class

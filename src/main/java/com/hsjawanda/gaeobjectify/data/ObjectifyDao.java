@@ -33,7 +33,7 @@ import com.hsjawanda.gaeobjectify.util.PagingData;
  */
 public class ObjectifyDao<T> {
 
-	private Class<T> cls;
+	protected Class<T> cls;
 
 	protected final Logger log;
 

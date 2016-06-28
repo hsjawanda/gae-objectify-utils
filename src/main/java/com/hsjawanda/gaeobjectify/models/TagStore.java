@@ -106,7 +106,7 @@ public class TagStore {
 	}
 
 	public static String normalizeTagType(String tagType) {
-		checkArgument(isNotBlank(tagType), "tagType" + Constants.notBlank);
+		checkArgument(isNotBlank(tagType), "tagType" + Constants.NOT_BLANK);
 		return normalizeSpace(tagType).toLowerCase().replace(' ', '-');
 	}
 

@@ -43,7 +43,7 @@ public abstract class BaseTask {
 	 *            {@code value} is {@code null}.
 	 */
 	public void param(String key, String value) {
-		checkArgument(isNotBlank(key), "key" + Constants.notBlank);
+		checkArgument(isNotBlank(key), "key" + Constants.NOT_BLANK);
 		checkState(!this.finalized, this.finalizedErrMsg);
 		if (null == value) {
 			this.stringParams.remove(key);
@@ -62,7 +62,7 @@ public abstract class BaseTask {
 	 *            {@code value} is {@code null}.
 	 */
 	public void param(String key, byte[] value) {
-		checkArgument(isNotBlank(key), "key" + Constants.notBlank);
+		checkArgument(isNotBlank(key), "key" + Constants.NOT_BLANK);
 		checkState(!this.finalized, this.finalizedErrMsg);
 		if (null == value) {
 			this.byteParams.remove(key);

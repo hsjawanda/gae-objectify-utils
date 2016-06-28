@@ -51,7 +51,7 @@ public class NonNullList<E> implements List<E> {
 	}
 
 	public static <T> NonNullList<T> wrap(List<T> toWrap) {
-		int size = checkNotNull(toWrap, "toWrap" + Constants.notNull).size();
+		int size = checkNotNull(toWrap, "toWrap" + Constants.NOT_NULL).size();
 		for (int i = 0; i < size; i++) {
 			checkNotNull(toWrap.get(i), "The list to wrap cannot contain nulls.");
 		}

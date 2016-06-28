@@ -34,7 +34,7 @@ public class PositionalUriParser {
 	}
 
 	public static PositionalUriParser instance(String specifier) throws IllegalArgumentException {
-		checkArgument(isNotBlank(specifier), "specifier" + Constants.notBlank);
+		checkArgument(isNotBlank(specifier), "specifier" + Constants.NOT_BLANK);
 		PositionalUriParser parser = new PositionalUriParser();
 		parser.specifierParts = Constants.PATH_SPLITTER.splitToList(specifier);
 		for (int i = 0; i < parser.specifierParts.size(); i++) {
@@ -50,7 +50,7 @@ public class PositionalUriParser {
 
 	public Optional<PositionalUriInfo> parse(String uri, boolean debug)
 			throws IllegalArgumentException {
-		checkArgument(isNotBlank(uri), "uri" + Constants.notBlank);
+		checkArgument(isNotBlank(uri), "uri" + Constants.NOT_BLANK);
 		List<String> uriParts = Constants.PATH_SPLITTER.splitToList(uri);
 		int counter = 0;
 		if (uriParts.size() != this.specifierParts.size()) {

@@ -33,7 +33,7 @@ public class UriParser {
 
 	public static UriParser instance(String mapping, boolean hasAction)
 			throws IllegalArgumentException {
-		checkArgument(isNotBlank(mapping), "mapping" + Constants.notBlank);
+		checkArgument(isNotBlank(mapping), "mapping" + Constants.NOT_BLANK);
 		UriParser parser = new UriParser();
 		parser.mapping = mapping.trim();
 		parser.hasAction = hasAction;

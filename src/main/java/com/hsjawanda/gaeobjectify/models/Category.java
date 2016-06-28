@@ -53,7 +53,7 @@ public class Category implements GaeEntity, StringIdEntity {
 
 	public static Optional<Category> getFor(String namespace, String displayName, boolean createNew)
 			throws IllegalArgumentException {
-		checkArgument(isNotBlank(displayName), "displayName" + Constants.notBlank);
+		checkArgument(isNotBlank(displayName), "displayName" + Constants.NOT_BLANK);
 		String preparedId = prepareId(namespace, displayName);
 		Optional<Category> catOpt = DAO.getById(preparedId);
 		if (!catOpt.isPresent() && createNew) {
@@ -66,7 +66,7 @@ public class Category implements GaeEntity, StringIdEntity {
 
 	private static String prepareId(String namespace, String displayName)
 			throws IllegalArgumentException {
-		checkArgument(isNotBlank(displayName), "displayName" + Constants.notBlank);
+		checkArgument(isNotBlank(displayName), "displayName" + Constants.NOT_BLANK);
 		String normalizedName = Slugs.toSlug(normalizeSpace(displayName));
 		return SplitJoin.join(normalizeNamespace(namespace), normalizedName);
 	}

@@ -399,4 +399,8 @@ public class ObjectifyDao<T> {
 		getPaginatedEntities(pd, filters, null);
 	}
 
+	public void getPaginatedEntities(PagingData<T> pd, Filter filter, String sort) {
+		getPaginatedEntities(pd, Arrays.asList(filter), Arrays.asList(sort));
+	}
+
 }

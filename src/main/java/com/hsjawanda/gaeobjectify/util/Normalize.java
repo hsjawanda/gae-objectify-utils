@@ -27,7 +27,7 @@ public class Normalize {
 	}
 
 	public String role(String role) throws NullPointerException {
-		role = checkNotNull(normalizeSpace(role), "role" + Constants.notNull);
+		role = checkNotNull(normalizeSpace(role), "role" + Constants.NOT_NULL);
 		return role.toLowerCase().replaceAll("[^-\\p{Alnum} ]", "").replace(' ', '-')
 				.replaceAll("-{2,}", "-");
 	}

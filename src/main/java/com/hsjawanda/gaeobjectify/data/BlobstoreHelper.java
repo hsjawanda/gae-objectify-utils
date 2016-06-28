@@ -45,7 +45,7 @@ public class BlobstoreHelper {
 	}
 
 	public static List<BlobKey> extractBlobKeys(HttpServletRequest req, String fieldName) {
-		checkArgument(isNotBlank(fieldName), "fieldName" + Constants.notBlank);
+		checkArgument(isNotBlank(fieldName), "fieldName" + Constants.NOT_BLANK);
 		Map<String, List<BlobKey>> blobs = extractBlobKeys(req);
 		List<BlobKey> retVal = blobs.get(fieldName);
 		return null == retVal ? Collections.<BlobKey> emptyList() : retVal;
@@ -54,7 +54,7 @@ public class BlobstoreHelper {
 	public static List<BlobKey> extractBlobKeys(Map<String, List<BlobKey>> blobs,
 			String fieldNameStem) {
 		checkNotNull(blobs);
-		checkArgument(isNotBlank(fieldNameStem), "fieldNameStem" + Constants.notBlank);
+		checkArgument(isNotBlank(fieldNameStem), "fieldNameStem" + Constants.NOT_BLANK);
 		List<BlobKey> retVal = null;
 		for (int i = 0; true; i++) {
 			List<BlobKey> blobKeys = blobs.get(fieldNameStem + i);

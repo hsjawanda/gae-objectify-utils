@@ -73,14 +73,14 @@ public class GenericAddress {
 	}
 
 	public GenericAddress set(Field field, String value) {
-		checkNotNull(field, "field" + Constants.notNull);
+		checkNotNull(field, "field" + Constants.NOT_NULL);
 		value = trimToNull(value);
 		this.details.put(field, value);
 		return this;
 	}
 
 	public String get(Field field) {
-		checkNotNull(field, "field" + Constants.notNull);
+		checkNotNull(field, "field" + Constants.NOT_NULL);
 		return this.details.get(field);
 	}
 

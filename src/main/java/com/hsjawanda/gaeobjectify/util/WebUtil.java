@@ -66,7 +66,7 @@ public class WebUtil {
 		return complete.append("<p>").append(retVal).append("</p>").toString();
 	}
 
-	public static String getServerURL(HttpServletRequest req) {
+	public static String getServerUrl(HttpServletRequest req) {
 		return req.getRequestURL().toString().replace(req.getRequestURI(), EMPTY);
 	}
 }

@@ -28,19 +28,19 @@ import com.google.common.collect.Range;
 public class Constants {
 
 	@SuppressWarnings("unused")
-	private static final Logger					log					= Logger
-			.getLogger(Constants.class.getName());
+	private static final Logger					log					= Logger.getLogger(Constants.class
+																			.getName());
 
-	public static final String					notBlank			= " can't be null, empty or whitespace.";
+	public static final String					NOT_BLANK			= " can't be null, empty or whitespace.";
 
-	public static final String					notNull				= " can't be null.";
+	public static final String					NOT_NULL			= " can't be null.";
 
 	public static final int						logRounds			= 12;
 
 	public static final int						GAE_STRING_LENGTH	= 500;
 
 	public static final Splitter				GAE_STRING_SPLITTER	= Splitter
-			.fixedLength(GAE_STRING_LENGTH);
+																			.fixedLength(GAE_STRING_LENGTH);
 
 	public static final Joiner					GAE_STRING_JOINER	= Joiner.on(EMPTY);
 
@@ -55,12 +55,14 @@ public class Constants {
 	public static final Joiner					pathJoiner			= Joiner.on('/').skipNulls();
 
 	static Splitter								PATH_SPLITTER		= Splitter.on('/')
-			.omitEmptyStrings().trimResults();
+																			.omitEmptyStrings()
+																			.trimResults();
 
 	public static final Joiner					commaJoiner			= Joiner.on(", ").skipNulls();
 
 	public static final Splitter				COMMA_SPLITTER		= Splitter.on(",")
-			.omitEmptyStrings().trimResults();
+																			.omitEmptyStrings()
+																			.trimResults();
 
 	public static final Range<Double>			latRange			= Range.closed(-90.0, 90.0);
 
@@ -78,10 +80,13 @@ public class Constants {
 
 	public static final String					FM_ENCODED_URI		= "encodedUri";
 
+	public static final String					FM_SERVER_URL		= "serverUrl";
+
 	public static final Joiner					ADDR_JOIN			= Joiner.on(", ").skipNulls();
 
 	public static final Splitter				ADDR_SPLIT			= Splitter.on(", ")
-			.omitEmptyStrings().trimResults();
+																			.omitEmptyStrings()
+																			.trimResults();
 
 	public static final Joiner					NAME_JOINER			= Joiner.on(' ').skipNulls();
 
@@ -90,6 +95,8 @@ public class Constants {
 	public static final TimeZone				IST					= TimeZone.getTimeZone("IST");
 
 	public static final Calendar				INDIAN_CAL			= new GregorianCalendar(IST);
+
+	public static final String					CRON_HEADER			= "X-Appengine-Cron";
 
 	protected Constants() {
 	}

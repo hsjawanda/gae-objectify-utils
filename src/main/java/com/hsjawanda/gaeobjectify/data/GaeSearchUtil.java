@@ -170,7 +170,7 @@ public class GaeSearchUtil {
 			String propertyName) {
 		checkNotNull(centre);
 		checkArgument(radius > 0.0d, "radius has to be > 0.0");
-		checkArgument(isNotBlank(propertyName), "propertyName" + Constants.notBlank);
+		checkArgument(isNotBlank(propertyName), "propertyName" + Constants.NOT_BLANK);
 		String distance = String.format("distance(%s, geopoint(%f, %f))", propertyName,
 				centre.getLatitude(), centre.getLongitude());
 		SortExpression se = SortExpression.newBuilder().setExpression(distance)

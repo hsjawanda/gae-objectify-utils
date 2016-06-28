@@ -77,7 +77,7 @@ public class Tag implements GaeEntity {
 	}
 
 	protected static String normalizeName(String prefix, String dispName) {
-		dispName = checkNotNull(trimToNull(dispName), "dispName" + Constants.notBlank);
+		dispName = checkNotNull(trimToNull(dispName), "dispName" + Constants.NOT_BLANK);
 		prefix = trimToNull(prefix);
 		return SplitJoin.join(normalizeSpace(prefix),
 				normalizeSpace(dispName).toLowerCase().replace(' ', '-'));

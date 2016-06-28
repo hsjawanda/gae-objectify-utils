@@ -6,6 +6,7 @@ package com.hsjawanda.gaeobjectify.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -104,6 +105,13 @@ public class FMHelper {
 
 	public static boolean processTemplate(String tmpl, Writer pw, Map<String, Object> args) {
 		return processTemplate(tmpl, pw, args, StandardCharsets.UTF_8.name());
+	}
+
+	public static String processTemplate(String tmpl, Map<String, Object> args, int initialCapacity) {
+		initialCapacity = Math.max(initialCapacity, 50);
+		StringWriter sw = new StringWriter(initialCapacity);
+		processTemplate(tmpl, sw, args);
+		return sw.toString();
 	}
 
 	public static TemplateHashModel getEnum(Class<? extends Enum<?>> clazz) {

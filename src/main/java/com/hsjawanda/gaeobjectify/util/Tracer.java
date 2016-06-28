@@ -16,14 +16,18 @@ public class Tracer {
 	protected Tracer() {
 	}
 
-	public static void partialTrace(int startFrame, int numToPrint) {
+	public static String partialTrace(Exception e, int startFrame, int numToPrint) {
 		startFrame = Math.max(1, startFrame + 1);
-		Exception e = new Exception("Just tracing");
-		StackTraceElement[] elements = e.getStackTrace();
-		for (int i = startFrame; i < startFrame + numToPrint && i < elements.length; i++) {
-			System.out.println(leftPad(Integer.toString(i), 3) + ". " + elements[i]);
+		if (null == e) {
+			e = new Exception("Just tracing");
 		}
-		System.out.flush();
+		StackTraceElement[] elements = e.getStackTrace();
+		StringBuilder trace = new StringBuilder(500);
+		for (int i = startFrame; i < startFrame + numToPrint && i < elements.length; i++) {
+			trace.append(leftPad(Integer.toString(i), 3)).append(". ").append(elements[i])
+					.append(System.lineSeparator());
+		}
+		return trace.toString();
 	}
 
 	public static String callerLocation(int stackFrameNum) {

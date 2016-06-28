@@ -22,7 +22,7 @@ public class TagStoreDao extends ObjectifyDao<TagStore> {
 //			@Override
 //			public TagAggregator run() {
 //				String tagCat = trimToNull(tagCategory);
-//				checkNotNull(tagCat, "tagCategory" + Constants.notBlank);
+//				checkNotNull(tagCat, "tagCategory" + Constants.NOT_BLANK);
 //				TagAggregator aggre = getById(tagCat).orNull();
 //				if (null == aggre) {
 //					aggre = new TagAggregator(tagCat);

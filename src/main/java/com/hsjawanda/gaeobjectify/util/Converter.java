@@ -86,7 +86,7 @@ public class Converter {
 	 */
 	public static <K, V> Map<K, V> listToMap(List<V> list, KeyGenerator<K, V> keyGen,
 			Map<K, V> existingMap) throws NullPointerException {
-		checkNotNull(keyGen, "keyGen" + Constants.notNull);
+		checkNotNull(keyGen, "keyGen" + Constants.NOT_NULL);
 		Map<K, V> retVal = existingMap;
 		if (null != list && !list.isEmpty()) {
 			if (null != retVal) {

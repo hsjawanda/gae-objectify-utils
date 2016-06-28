@@ -63,7 +63,7 @@ public class UniqueIndex {
 	}
 
 	public UniqueIndex setRefWebKey(String refWebKey) throws IllegalArgumentException {
-		checkArgument(isNotBlank(refWebKey), "refWebKey" + Constants.notBlank);
+		checkArgument(isNotBlank(refWebKey), "refWebKey" + Constants.NOT_BLANK);
 		this.refWebKey = refWebKey;
 		return this;
 	}
@@ -80,7 +80,7 @@ public class UniqueIndex {
 	}
 
 	private static Triple<String, String, String> getTriple(String namespace, String value) {
-		checkArgument(isNotBlank(value), "value" + Constants.notBlank);
+		checkArgument(isNotBlank(value), "value" + Constants.NOT_BLANK);
 		namespace = trimToNull(normalizeSpace(namespace));
 		value = normalizeSpace(value);
 		String id = SplitJoin.join(namespace, value); // TODO: slug-ify value??

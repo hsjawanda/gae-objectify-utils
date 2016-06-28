@@ -25,7 +25,7 @@ public class Errors {
 	}
 
 	public Errors add(String key, Object value) {
-		checkArgument(isNotBlank(key), "key" + Constants.notBlank);
+		checkArgument(isNotBlank(key), "key" + Constants.NOT_BLANK);
 		this.errors.put(key.trim().toLowerCase(), value);
 		return this;
 	}

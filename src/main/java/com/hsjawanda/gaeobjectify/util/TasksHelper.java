@@ -24,11 +24,12 @@ import com.google.common.collect.Range;
  */
 public final class TasksHelper {
 
-	private static final Logger log = Logger.getLogger(TasksHelper.class.getName());
+	@SuppressWarnings("unused")
+	private static final Logger LOG = Logger.getLogger(TasksHelper.class.getName());
 
 	public static final String TASK_MAPPING = "tasks.mapping";
 
-	public static final String MAPPING = Config.get(TASK_MAPPING).or("/tasks");
+	public static final String MAPPING = Config.get(TASK_MAPPING).or("/task");
 
 	public static final Range<Long> DELAY_RANGE = Range.closed(1L, 60 * 60 * 1000L);
 
@@ -58,7 +59,7 @@ public final class TasksHelper {
 				.append(TasksHelper.TASK_DATE.format(new Date()));
 		TaskOptions taskOptions = TaskOptions.Builder.withUrl(taskUrl(taskName))
 				.taskName(name.toString());
-		log.info("Adding task with name: '" + name + "' of length " + name.length());
+//		LOG.info("Adding task with name: '" + name + "' of length " + name.length());
 		if (null != stringParams) {
 			for (String key : stringParams.keySet()) {
 				taskOptions = taskOptions.param(key, stringParams.get(key));

@@ -5,9 +5,12 @@ package com.hsjawanda.gaeobjectify.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.common.base.Optional;
 import com.googlecode.objectify.annotation.Entity;
 
 
@@ -17,8 +20,7 @@ import com.googlecode.objectify.annotation.Entity;
  */
 public final class Holdall {
 
-	@SuppressWarnings("unused")
-	private static Logger log = Logger.getLogger(Holdall.class.getName());
+	private static Logger LOG = Logger.getLogger(Holdall.class.getName());
 
 	private Holdall() {
 	}
@@ -89,4 +91,25 @@ public final class Holdall {
 					+ " doesn't have the annotation " + Entity.class.getName()
 					+ " and therefore can't be used with this operation.");
 	}
+
+	public static void sleep(long millis) {
+		if (millis < 1)
+			return;
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			LOG.warning("Sleep of " + millis + " ms interrupted.");
+		}
+	}
+
+	public static Optional<String> urlDecode(String encodedStr) {
+		if (null == encodedStr)
+			return Optional.absent();
+		try {
+			return Optional.of(URLDecoder.decode(encodedStr, Constants.UTF_8));
+		} catch (UnsupportedEncodingException e) {
+			return Optional.absent();
+		}
+	}
+
 }

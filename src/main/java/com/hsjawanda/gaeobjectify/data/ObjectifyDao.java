@@ -17,13 +17,17 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.base.Optional;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Result;
 import com.googlecode.objectify.SaveException;
 import com.googlecode.objectify.cmd.Query;
+import com.hsjawanda.gaeobjectify.collections.CollectionHelper;
+import com.hsjawanda.gaeobjectify.util.Pager;
 import com.hsjawanda.gaeobjectify.util.PagingData;
 
 
@@ -33,9 +37,11 @@ import com.hsjawanda.gaeobjectify.util.PagingData;
  */
 public class ObjectifyDao<T> {
 
-	protected Class<T> cls;
+	protected Class<T>		cls;
 
-	protected final Logger log;
+	protected final Logger	log;
+
+	protected static int DEFAULT_LIMIT = 20;
 
 	public ObjectifyDao(Class<T> cls) {
 		this.cls = cls;
@@ -105,8 +111,9 @@ public class ObjectifyDao<T> {
 			key = Key.create(this.cls, id);
 			return this.getByKey(key);
 		} catch (Exception e) {
-			this.log.log(Level.WARNING, "Unexpected exception getting Optional<"
-					+ this.cls.getSimpleName() + "> from long id", e);
+			this.log.log(Level.WARNING,
+					"Unexpected exception getting Optional<" + this.cls.getSimpleName()
+							+ "> from long id", e);
 		}
 		return Optional.absent();
 	}
@@ -124,7 +131,8 @@ public class ObjectifyDao<T> {
 		} catch (NullPointerException npe) {
 			this.log.info("Reason: " + npe.getMessage());
 		} catch (Exception e) {
-			this.log.log(Level.SEVERE,
+			this.log.log(
+					Level.SEVERE,
 					"Unexpected exception creating Key<" + this.cls.getSimpleName() + "> from POJO",
 					e);
 		}
@@ -136,8 +144,9 @@ public class ObjectifyDao<T> {
 		try {
 			key = Key.create(webKey);
 		} catch (Exception e) {
-			this.log.log(Level.WARNING, "Unexpected exception getting Key<"
-					+ this.cls.getSimpleName() + "> from webKey", e);
+			this.log.log(Level.WARNING,
+					"Unexpected exception getting Key<" + this.cls.getSimpleName()
+							+ "> from webKey", e);
 		}
 		return key;
 	}
@@ -347,8 +356,8 @@ public class ObjectifyDao<T> {
 			} catch (NullPointerException e) {
 				this.log.warning("NullPointerException because: " + e.getMessage());
 			} catch (Exception e) {
-				this.log.log(Level.WARNING,
-						"Error creating a Ref<" + this.cls.getSimpleName() + "> to a POJO", e);
+				this.log.log(Level.WARNING, "Error creating a Ref<" + this.cls.getSimpleName()
+						+ "> to a POJO", e);
 			}
 		}
 		return ref;
@@ -401,6 +410,113 @@ public class ObjectifyDao<T> {
 
 	public void getPaginatedEntities(PagingData<T> pd, Filter filter, String sort) {
 		getPaginatedEntities(pd, Arrays.asList(filter), Arrays.asList(sort));
+	}
+
+	public List<T> getPaginatedEntities(Pager<?> pgr, Iterable<? extends Filter> filters,
+			Iterable<String> sorts) throws NullPointerException {
+//		Query<T> qry = ofy().load().type(this.cls);
+//		if (null != filters) {
+//			for (Filter filter : filters) {
+//				if (null != filter) {
+//					qry = qry.filter(filter);
+//				}
+//			}
+//		}
+//		if (null != sorts) {
+//			for (String sort : sorts) {
+//				if (isNotBlank(sort)) {
+//					qry = qry.order(sort);
+//				}
+//			}
+//		}
+//		this.log.fine("genTotalResults: " + pgr.isGenTotalResults() + "; nextCursor: "
+//				+ pgr.getNextCursor());
+//		if (pgr.isGenTotalResults()) {
+//			qry = qry.limit(pgr.getCountLimit());
+//			pgr.setTotalResults(qry.count());
+//		}
+//		qry = qry.limit(pgr.getLimit());
+//		if (null != pgr.getNextCursor()) {
+//			try {
+//				Cursor startCursor = Cursor.fromWebSafeString(pgr.getNextCursor());
+//				qry = qry.startAt(startCursor);
+//			} catch (Exception e) {
+//				this.log.log(Level.WARNING,
+//						"Exceptiong creating Datastore startCursor. Stacktrace:", e);
+//			}
+//		}
+		QueryResultIterator<T> qryItr = getResults(pgr, filters, sorts);
+		List<T> retList = CollectionHelper.toImmutableList(qryItr, pgr.getLimit());
+		pgr.setCursor(qryItr.getCursor());
+		return retList;
+	}
+
+	public List<T> getPaginatedEntities(Pager<?> pgr, Filter filter, String sort) {
+		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
+		Iterable<String> sorts = sort == null ? null : Arrays.asList(sort);
+		return getPaginatedEntities(pgr, filters, sorts);
+	}
+
+	public QueryResultIterator<T> getResults(Pager<?> pgr, Iterable<? extends Filter> filters,
+			Iterable<String> sorts) throws NullPointerException {
+//		checkNotNull(pgr, "pgr" + Constants.NOT_NULL);
+		if (null == pgr) {
+			pgr = Pager.builder().limit(DEFAULT_LIMIT).build();
+		}
+		Query<T> qry = ofy().load().type(this.cls);
+		if (null != filters) {
+			for (Filter filter : filters) {
+				if (null != filter) {
+					qry = qry.filter(filter);
+				}
+			}
+		}
+		if (null != sorts) {
+			for (String sort : sorts) {
+				if (isNotBlank(sort)) {
+					qry = qry.order(sort);
+				}
+			}
+		}
+		this.log.fine("genTotalResults: " + pgr.isGenTotalResults() + "; nextCursor: "
+				+ (null == pgr.getCursor() ? "null" : pgr.getCursor().toWebSafeString()));
+		if (pgr.isGenTotalResults()) {
+			qry = qry.limit(pgr.getCountLimit());
+			pgr.setTotalResults(qry.count());
+		}
+		qry = qry.limit(pgr.getLimit());
+		if (null != pgr.getCursor()) {
+			try {
+				Cursor startCursor = pgr.getCursor();
+				qry = qry.startAt(startCursor);
+			} catch (Exception e) {
+				this.log.log(Level.WARNING,
+						"Exceptiong creating Datastore startCursor. Stacktrace:", e);
+			}
+		}
+		return qry.iterator();
+	}
+	public QueryResultIterator<T> getResults(Pager<?> pgr, Filter filter, String sort) {
+		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
+		Iterable<String> sorts = sort == null ? null : Arrays.asList(sort);
+		return getResults(pgr, filters, sorts);
+	}
+
+	public int getEntityCount(Iterable<? extends Filter> filters) {
+		Query<T> qry = ofy().load().type(this.cls);
+		if (null != filters) {
+			for (Filter filter : filters) {
+				if (null != filter) {
+					qry = qry.filter(filter);
+				}
+			}
+		}
+		return qry.count();
+	}
+
+	public int getEntityCount(Filter filter) {
+		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
+		return getEntityCount(filters);
 	}
 
 }

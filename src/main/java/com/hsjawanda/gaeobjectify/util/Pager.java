@@ -3,15 +3,21 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.Collections;
 import java.util.List;
-
-import com.google.appengine.api.datastore.Cursor;
-import com.google.common.collect.Range;
+import java.util.logging.Logger;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.appengine.api.datastore.Cursor;
+import com.google.common.collect.Range;
 
 
 /**
@@ -21,26 +27,43 @@ import lombok.Setter;
 @Data
 public class Pager<T> {
 
-	public static final int			PAGE_NUM_MIN	= 1;
+	private static Logger							LOG					= Logger.getLogger(Pager.class
+																				.getName());
 
-	public static Range<Integer>	PER_PAGE_RANGE	= Range.closed(5, 100);
+	public static final int							PAGE_NUM_MIN		= 1;
 
-	private int						pageNum			= PAGE_NUM_MIN;
+	public static Range<Integer>					RESULT_LIMIT_RANGE	= Range.closed(1, 500);
 
-	private int						itemsPerPage	= 20;
+	public static int								DEFAULT_LIMIT		= 200;
 
-	private Cursor					cursor;
+	private int										limit;
 
-	private int						totalResults	= -1;
+//	private String					nextCursorStr;
 
-	private int						countLimit		= 5000;
+	@JsonIgnore
+	private Cursor									cursor;
+
+	@JsonIgnore
+	private com.google.appengine.api.search.Cursor	searchCursor;
+
+	private int										totalResults		= -1;
+
+	private int										countLimit			= 5000;
 
 	@Setter(AccessLevel.NONE)
-	private int						totalPages		= 0;
+	private int										totalPages			= 0;
 
-	private boolean					genTotalResults	= true;
+	@Setter(AccessLevel.PRIVATE)
+	private boolean									genTotalResults;
 
-	private List<T>					results;
+	private List<T>									results;
+
+	@Builder
+	private Pager(Integer limit, Boolean genTotalResults, String cursorStr) {
+		setLimit(Defaults.or(limit, Integer.valueOf(DEFAULT_LIMIT)).intValue());
+		setGenTotalResults(Defaults.or(genTotalResults, Boolean.FALSE));
+		setCursorStr(cursorStr);
+	}
 
 	public List<T> getResults() {
 		if (null == this.results)
@@ -55,40 +78,63 @@ public class Pager<T> {
 	 *            the results to set
 	 */
 	public void setResults(List<T> results) {
-		if (null == this.results) {
+		if (null != results && null == this.results) {
 			this.results = results;
 		}
 	}
 
-	/**
-	 * @param pageNum
-	 *            the pageNum to set
-	 */
-	public void setPageNum(int pageNum) {
-		this.pageNum = Math.max(PAGE_NUM_MIN, pageNum);
-	}
-
-	/**
-	 * @return the itemsPerPage
-	 */
-	public int getItemsPerPage() {
-		return this.itemsPerPage;
-	}
-
-	/**
-	 * @param itemsPerPage
-	 *            the itemsPerPage to set
-	 */
-	public void setItemsPerPage(int itemsPerPage) {
-		if (PER_PAGE_RANGE.contains(itemsPerPage)) {
-			this.itemsPerPage = itemsPerPage;
+	private void setLimit(int limit) {
+		if (limit < RESULT_LIMIT_RANGE.lowerEndpoint().intValue()) {
+			this.limit = RESULT_LIMIT_RANGE.lowerEndpoint().intValue();
 		}
+		else if (limit > RESULT_LIMIT_RANGE.upperEndpoint().intValue()) {
+			this.limit = RESULT_LIMIT_RANGE.upperEndpoint().intValue();
+		} else {
+			this.limit = limit;
+		}
+	}
+
+	public Pager<T> setCursorStr(String cursorStr) {
+		if (isBlank(cursorStr)) {
+			this.cursor = null;
+		} else {
+			try {
+				this.cursor = Cursor.fromWebSafeString(cursorStr);
+			} catch (IllegalArgumentException e) {
+				LOG.warning("The supplied cursor string couldn't be decoded as a valid Cursor:"
+						+ cursorStr);
+				this.cursor = null;
+			}
+		}
+		return this;
+	}
+
+	public String getCursorStr() {
+		if (null == this.cursor)
+			return EMPTY;
+		return this.cursor.toWebSafeString();
+	}
+
+	public Pager<T> setSearchCursorStr(String cursorStr) {
+		if (isBlank(cursorStr)) {
+			this.searchCursor = null;
+		} else {
+			try {
+				this.searchCursor = com.google.appengine.api.search.Cursor.newBuilder().build(
+						cursorStr);
+			} catch (IllegalArgumentException e) {
+				LOG.warning("The supplied cursor string couldn't be decoded as a valid search "
+						+ "Cursor:" + cursorStr);
+				this.cursor = null;
+			}
+		}
+		return this;
 	}
 
 	public void setTotalResults(int totalResults) {
 		if (totalResults >= 0 && this.totalResults < 0) {
 			this.totalResults = totalResults;
-			this.calcTotalPages();
+//			this.calcTotalPages();
 		}
 	}
 
@@ -98,41 +144,9 @@ public class Pager<T> {
 		}
 	}
 
-	private void calcTotalPages() {
-		this.totalPages = this.totalResults / this.itemsPerPage;
-		if (this.totalResults % this.itemsPerPage > 0) {
-			this.totalPages++;
-		}
-	}
-
-	/**
-	 * Get the zero-based offset into the result set.
-	 *
-	 * @return the zero-based offset.
-	 */
-	public int getOffset() {
-		return (this.pageNum - PAGE_NUM_MIN) * this.itemsPerPage;
-	}
-
-	/**
-	 * Convenience method giving the number of pages that come before the current page.
-	 *
-	 * @return the number of previous pages.
-	 */
-	public int numPagesBefore() {
-		return this.getOffset() / this.itemsPerPage;
-	}
-
-	/**
-	 * Convenience method giving the number of pages that come after the current page.
-	 *
-	 * @return the number of succeeding pages.
-	 */
-	public int numPagesAfter() {
-		return Math.max(0, this.totalPages - this.pageNum);
-	}
-
 	public boolean hasMore() {
+		if (this.totalResults < 0 && null != this.results)
+			return !(this.results.size() < this.limit);
 		return !(this.totalResults < this.countLimit);
 	}
 

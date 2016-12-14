@@ -5,6 +5,7 @@ package com.hsjawanda.gaeobjectify.util;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.mail.internet.InternetAddress;
@@ -16,27 +17,58 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.ToString;
 
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
+
 
 /**
  * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
  */
-@Builder
 @Getter
 @EqualsAndHashCode
 @ToString
-public class EmailData {
+@Entity
+public class EmailData implements Serializable {
+
+	@Id
+	private String								id;
+
+	private static final long					serialVersionUID	= 1L;
 
 	@NonNull
-	private InternetAddress from;
+	private InternetAddress						from;
 
-	@Singular("to")
 	@NonNull
-	private List<InternetAddress> to;
+	private List<InternetAddress>				to;
 
-	private String subj;
+	private String								subj;
 
-	private String body;
+	private String								body;
+
+	private boolean								isHtml;
+
+	public static final ObjectifyDao<EmailData>	DAO					= new ObjectifyDao<>(
+																			EmailData.class);
+
+	private EmailData() {
+		this.id = UniqueIdGenerator.medium();
+		this.isHtml = false;
+	}
+
+	@Builder
+	private EmailData(InternetAddress from, @Singular("to") List<InternetAddress> to, String subj,
+			String body, Boolean isHtml) {
+		this();
+		this.from = from;
+		this.to = to;
+		this.subj = subj;
+		this.body = body;
+		if (null != isHtml) {
+			this.isHtml = isHtml.booleanValue();
+		}
+	}
 
 	public static EmailData empty() {
 		return builder().build();
@@ -57,4 +89,8 @@ public class EmailData {
 	public String getBody() {
 		return getBody("(No body)");
 	}
+
+//	public static class EmailDataBuilder {
+//		private String id = UniqueIdGenerator.medium();
+//	}
 }

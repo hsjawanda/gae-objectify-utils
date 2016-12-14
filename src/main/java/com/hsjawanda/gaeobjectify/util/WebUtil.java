@@ -9,6 +9,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -16,6 +17,7 @@ import org.jsoup.safety.Whitelist;
 
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.common.base.Optional;
+import com.google.common.net.HttpHeaders;
 
 
 /**
@@ -68,5 +70,11 @@ public class WebUtil {
 
 	public static String getServerUrl(HttpServletRequest req) {
 		return req.getRequestURL().toString().replace(req.getRequestURI(), EMPTY);
+	}
+
+	public static void setCacheControl(HttpServletResponse res, boolean isPublic, int seconds) {
+		StringBuilder particulars = new StringBuilder(35);
+		particulars.append(isPublic ? "public" : "private").append(", max-age=").append(seconds);
+		res.setHeader(HttpHeaders.CACHE_CONTROL, particulars.toString());
 	}
 }

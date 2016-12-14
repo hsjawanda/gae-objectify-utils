@@ -53,19 +53,27 @@ public class PositionalUriParser {
 		checkArgument(isNotBlank(uri), "uri" + Constants.NOT_BLANK);
 		List<String> uriParts = Constants.PATH_SPLITTER.splitToList(uri);
 		int counter = 0;
-		if (uriParts.size() != this.specifierParts.size()) {
-			log.info("The size of the uri (" + uriParts.size() + ") doesn't match that of the "
+		if (uriParts.size() < this.specifierParts.size()) {
+			log.fine("The size of the uri (" + uriParts.size() + ") doesn't match that of the "
 					+ "specifier (" + this.specifierParts.size() + ").");
 			return Optional.absent();
 		}
+		for (int i = 0; i < this.specifierParts.size(); i++) {
+			if (!uriParts.get(i).equalsIgnoreCase(this.specifierParts.get(i)))
+				return Optional.absent();
+		}
+		if (debug) {
+			log.info("uri: " + uri + "; uriParts: " + uriParts + "; specifierParts: "
+					+ this.specifierParts);
+		}
 		Map<String, String> arguments = new HashMap<>(this.matchAgainst.size());
-		for (int i = 0; i < uriParts.size(); i++) {
+		for (int i = 0; i < uriParts.size() && this.matchAgainst.size() > 0; i++) {
 			PositionalMatch match = this.matchAgainst.get(counter);
 			if (i == match.position) {
 				arguments.put(match.name, uriParts.get(match.position));
 				counter++;
 			} else if (!uriParts.get(i).equalsIgnoreCase(this.specifierParts.get(i))) {
-				log.info("uri (" + uri + ") doesn't match the specified pattern (/"
+				log.fine("uri (" + uri + ") doesn't match the specified pattern (/"
 						+ Constants.pathJoiner.join(this.specifierParts) + ")");
 				return Optional.absent();
 			}

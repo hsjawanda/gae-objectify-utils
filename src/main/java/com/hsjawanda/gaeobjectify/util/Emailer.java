@@ -114,7 +114,7 @@ public class Emailer {
 			domain = checkNotNull(trimToNull(domain),
 					"Domain name ('" + domain + "') must be specified correctly.");
 		} else {
-			domain = Defaults.orDefault(trimToNull(domain), DEFAULT_DOMAIN.get());
+			domain = Defaults.or(trimToNull(domain), DEFAULT_DOMAIN.get());
 		}
 		String fullEmail = beforeAt + "@" + domain;
 		return getEmailAddress(fullEmail, name);

@@ -33,13 +33,21 @@ public class CollectionHelper {
 		return retList;
 	}
 
-	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int limit) {
-		Iterator<T> itr = iterable.iterator();
+	public static <T> ImmutableList<T> toImmutableList(Iterator<T> iterator, int limit) {
+		if (null == iterator)
+			return ImmutableList.of();
 		Builder<T> bildr = ImmutableList.builder();
-		for (int i = 0; itr.hasNext() && i < limit; i++) {
-			bildr.add(itr.next());
+		for (int i = 0; iterator.hasNext() && i < limit; i++) {
+			bildr.add(iterator.next());
 		}
 		return bildr.build();
+
+	}
+
+	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int limit) {
+		if (null == iterable)
+			return ImmutableList.of();
+		return toImmutableList(iterable.iterator(), limit);
 	}
 
 	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable) {

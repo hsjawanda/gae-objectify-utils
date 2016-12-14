@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -23,8 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.condition.IfFalse;
-import com.googlecode.objectify.condition.IfTrue;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
 import com.hsjawanda.gaeobjectify.data.IndexProperty;
 import com.hsjawanda.gaeobjectify.exceptions.InvalidFormatException;
@@ -43,6 +42,7 @@ import com.hsjawanda.gaeobjectify.util.Validators;
  */
 @Data
 @Accessors(chain = true)
+@ToString(exclude = {"hashedPassword"})
 public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 
 	private static Logger			log				= Logger.getLogger(AccountEntity.class
@@ -52,12 +52,15 @@ public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 	@JsonIgnore
 	protected String				hashedPassword;
 
-	@Index(IfTrue.class)
+	@JsonIgnore
+	@Index
 	protected boolean				suspended		= false;
 
-	@Index(IfFalse.class)
+	@JsonIgnore
+	@Index
 	protected boolean				emailVerified	= false;
 
+	@JsonIgnore
 	@Setter(AccessLevel.NONE)
 	protected Ref<T>				email;
 

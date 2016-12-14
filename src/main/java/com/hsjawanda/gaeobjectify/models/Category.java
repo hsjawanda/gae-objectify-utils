@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Optional;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -32,14 +33,24 @@ public class Category implements GaeEntity, StringIdEntity {
 
 	@Id
 	@Setter(AccessLevel.NONE)
-	private String id;
+	private String				id;
 
 	@Index
 	@Setter(AccessLevel.NONE)
-	private String namespace;
+	@JsonIgnore
+	private String				namespace;
 
-	@Setter(AccessLevel.NONE)
-	private String displayName;
+	private String				displayName;
+
+	private String				pluralDisplayName;
+
+	private String				description;
+
+	@Index
+	private int					order;
+
+	@Index
+	private boolean				showOnHomepage;
 
 	public static CategoryDao DAO = new CategoryDao();
 
@@ -64,7 +75,7 @@ public class Category implements GaeEntity, StringIdEntity {
 		return catOpt;
 	}
 
-	private static String prepareId(String namespace, String displayName)
+	public static String prepareId(String namespace, String displayName)
 			throws IllegalArgumentException {
 		checkArgument(isNotBlank(displayName), "displayName" + Constants.NOT_BLANK);
 		String normalizedName = Slugs.toSlug(normalizeSpace(displayName));
@@ -74,6 +85,11 @@ public class Category implements GaeEntity, StringIdEntity {
 	public static String normalizeNamespace(String namespace) {
 		namespace = normalizeSpace(namespace);
 		return null == namespace ? EMPTY : namespace;
+	}
+
+	public Category setOrder(int order) {
+		this.order = Math.max(1, order);
+		return this;
 	}
 
 }

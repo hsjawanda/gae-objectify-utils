@@ -24,7 +24,26 @@ public class Defaults {
 	private Defaults() {
 	}
 
-	public static <T> T orDefault(T obj, T defaultValue) {
+	/**
+	 * Return a default value if the input object is {@code null}.
+	 *
+	 * @param obj the input object
+	 * @param defaultValue the default value to use
+	 * @return {@code obj} if it is not-null, {@code defaultValue} otherwise
+	 */
+	public static <T> T or(T obj, T defaultValue) {
 		return null == obj ? defaultValue : obj;
+	}
+
+	public static int asInt(String intString, int defaultVal) {
+		try {
+			return Integer.parseInt(intString);
+		} catch (NumberFormatException e) {
+			return defaultVal;
+		}
+	}
+
+	public static int asInt(Integer input, int defaultVal) {
+		return null == input ? defaultVal : input.intValue();
 	}
 }

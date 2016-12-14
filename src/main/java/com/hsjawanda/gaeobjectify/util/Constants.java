@@ -72,7 +72,7 @@ public class Constants {
 
 	public static final String					HOMEPAGE			= "/";
 
-	public static final String					TASK_HEADER_NAME	= "X-AppEngine-QueueName";
+	public static final String					QUEUE_NAME_HEADER	= "X-AppEngine-QueueName";
 
 	public static final String					FM_USER_UID			= "userUid";
 

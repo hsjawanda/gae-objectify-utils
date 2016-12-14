@@ -43,7 +43,7 @@ public class GaeSearchUtil {
 
 	private static final int maxTries = 5;
 
-	private static final int batchMax = 200;
+	public static final int BATCH_MAX = 200;
 
 	public static boolean indexDocument(String indexName, Document document) {
 		Index index = getIndex(indexName);
@@ -99,7 +99,7 @@ public class GaeSearchUtil {
 	public static void deleteDocuments(String indexName, Iterable<String> docIds) {
 		Index index = getIndex(indexName);
 		if (null != index) {
-			int max = batchMax;
+			int max = BATCH_MAX;
 			List<String> idList = new ArrayList<>(max);
 			Iterator<String> iter = docIds.iterator();
 			while (iter.hasNext()) {
@@ -115,9 +115,9 @@ public class GaeSearchUtil {
 	public static void deleteIndexContents(String indexName) {
 		Index index = getIndex(indexName);
 		if (null != index) {
-			GetRequest req = GetRequest.newBuilder().setReturningIdsOnly(true).setLimit(batchMax)
+			GetRequest req = GetRequest.newBuilder().setReturningIdsOnly(true).setLimit(BATCH_MAX)
 					.build();
-			List<String> docIds = new ArrayList<>(batchMax);
+			List<String> docIds = new ArrayList<>(BATCH_MAX);
 			while (true) {
 				GetResponse<Document> resp = index.getRange(req);
 				if (resp.getResults().isEmpty()) {

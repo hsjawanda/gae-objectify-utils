@@ -43,7 +43,9 @@ public class TaskConfig<T> {
 
 	private String							queueName;
 
-	private long							delayMillis	= 0;
+	private long							delayMillis	= 500;
+
+	private boolean							addTimestamp = true;
 
 	@Singular()
 	@Setter(AccessLevel.NONE)
@@ -88,8 +90,11 @@ public class TaskConfig<T> {
 		checkArgument(null != q, "Couldn't find a queue with name '" + this.queueName + "'.");
 		String normalizedTaskName = normalizedTaskName();
 		StringBuilder taskName = new StringBuilder(30).append(normalizedTaskName).append('_')
-				.append(defaultString(this.nameSuffix)).append('_')
-				.append(TasksHelper.TASK_DATE.format(new Date()));
+				.append(defaultString(this.nameSuffix));
+		if (this.addTimestamp) {
+			TasksHelper.TASK_DATE.setTimeZone(Constants.IST);
+			taskName.append('_').append(TasksHelper.TASK_DATE.format(new Date()));
+		}
 		TaskOptions taskOptions = TaskOptions.Builder.withUrl(taskUrl(normalizedTaskName))
 				.taskName(taskName.toString());
 		if (null != this.strParams) {

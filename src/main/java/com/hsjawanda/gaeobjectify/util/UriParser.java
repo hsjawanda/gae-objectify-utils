@@ -82,7 +82,11 @@ public class UriParser {
 	 * @return a {@code KeyValueUriInfo} object representing data from the {@code uri}. Never {@code null}.
 	 */
 	public KeyValueUriInfo parse(String uri, boolean debug) {
-		uri = trimToEmpty(uri);
+		String origUri = trimToEmpty(uri);
+		uri = Holdall.removeJSessoinId(origUri);
+		if (debug) {
+			log.info("origUri: " + origUri + "; uri: " + uri);
+		}
 		List<String> parts = Constants.PATH_SPLITTER.splitToList(uri);
 		if (debug) {
 			log.info("Parts of pathInfo: " + parts);

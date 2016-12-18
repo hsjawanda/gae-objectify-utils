@@ -28,6 +28,8 @@ public class PositionalUriParser {
 
 	List<String>					specifierParts;
 
+	private int						fixedParts = 0;
+
 	private List<PositionalMatch>	matchAgainst	= new ArrayList<>();
 
 	private PositionalUriParser() {
@@ -42,7 +44,13 @@ public class PositionalUriParser {
 			if (part.startsWith("{") && part.endsWith("}")) {
 				parser.matchAgainst.add(new PositionalMatch(i,
 						part.substring(1, part.length() - 1)));
+				if (0 == parser.fixedParts) {
+					parser.fixedParts = i;
+				}
 			}
+		}
+		if (0 == parser.fixedParts) {
+			parser.fixedParts = parser.specifierParts.size();
 		}
 //		log.info("matchAgainst: " + parser.matchAgainst);
 		return parser;
@@ -51,6 +59,7 @@ public class PositionalUriParser {
 	public Optional<PositionalUriInfo> parse(String uri, boolean debug)
 			throws IllegalArgumentException {
 		checkArgument(isNotBlank(uri), "uri" + Constants.NOT_BLANK);
+		uri = Holdall.removeJSessoinId(uri);
 		List<String> uriParts = Constants.PATH_SPLITTER.splitToList(uri);
 		int counter = 0;
 		if (uriParts.size() < this.specifierParts.size()) {
@@ -58,7 +67,7 @@ public class PositionalUriParser {
 					+ "specifier (" + this.specifierParts.size() + ").");
 			return Optional.absent();
 		}
-		for (int i = 0; i < this.specifierParts.size(); i++) {
+		for (int i = 0; i < this.fixedParts; i++) {
 			if (!uriParts.get(i).equalsIgnoreCase(this.specifierParts.get(i)))
 				return Optional.absent();
 		}
@@ -76,6 +85,9 @@ public class PositionalUriParser {
 				log.fine("uri (" + uri + ") doesn't match the specified pattern (/"
 						+ Constants.pathJoiner.join(this.specifierParts) + ")");
 				return Optional.absent();
+			}
+			if (counter == this.matchAgainst.size()) {
+				break;
 			}
 		}
 		PositionalUriInfo info = new PositionalUriInfo();

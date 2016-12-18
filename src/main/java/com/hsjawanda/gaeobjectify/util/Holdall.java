@@ -3,6 +3,8 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -110,6 +112,12 @@ public final class Holdall {
 		} catch (UnsupportedEncodingException e) {
 			return Optional.absent();
 		}
+	}
+
+	public static String removeJSessoinId(String origUri) {
+		if (null == origUri)
+			return EMPTY;
+		return origUri.replaceAll("(?i);JSESSIONID=.*", EMPTY);
 	}
 
 }

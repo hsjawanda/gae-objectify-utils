@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -11,10 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
-import com.hsjawanda.gaeobjectify.util.PositionalUriInfo;
 import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
-import com.hsjawanda.gaeobjectify.util.UriParser;
+import com.hsjawanda.gaeobjectify.util.PositionalUriInfo;
 import com.hsjawanda.gaeobjectify.util.PositionalUriParser;
+import com.hsjawanda.gaeobjectify.util.UriParser;
 
 
 /**
@@ -109,6 +110,17 @@ public class UriParserTests {
 		assertTrue(info.isPresent());
 		assertEquals("hsjawanda", info.get().getParam("profile").get());
 		assertEquals("lfauouekllfl", info.get().getParam("photoId").get());
+	}
+
+	@Test
+	public void testParsePositionalUriFixedPartsOnly() {
+		PositionalUriParser positionalParser = PositionalUriParser
+				.instance("/photos/user/{profile}/{photoId}");
+		Optional<PositionalUriInfo> info = positionalParser.parse("/photos/user/",
+				true);
+		assertTrue(info.isPresent());
+		assertNull(info.get().getParam("profile").orNull());
+		assertNull(info.get().getParam("photoId").orNull());
 	}
 
 	@Test

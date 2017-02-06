@@ -46,6 +46,9 @@ public class Pager<T> {
 	@JsonIgnore
 	private com.google.appengine.api.search.Cursor	searchCursor;
 
+	@JsonIgnore
+	private boolean									keysOnly			= false;
+
 	private int										totalResults		= -1;
 
 	private int										countLimit			= 5000;
@@ -95,15 +98,15 @@ public class Pager<T> {
 	}
 
 	public Pager<T> setCursorStr(String cursorStr) {
-		if (isBlank(cursorStr)) {
-			this.cursor = null;
-		} else {
+		this.cursor = null;
+		if (isBlank(cursorStr))
+			return this;
+		else {
 			try {
 				this.cursor = Cursor.fromWebSafeString(cursorStr);
 			} catch (IllegalArgumentException e) {
 				LOG.warning("The supplied cursor string couldn't be decoded as a valid Cursor:"
 						+ cursorStr);
-				this.cursor = null;
 			}
 		}
 		return this;

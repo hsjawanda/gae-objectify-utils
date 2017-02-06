@@ -3,19 +3,24 @@
  */
 package com.hsjawanda.gaeobjectify.data;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Result;
@@ -304,5 +309,14 @@ public class GaeDataUtil {
 		}
 		pd.setResults(qry.list());
 		return pd;
+	}
+
+	public static ImmutableList<Filter> timeRangeFilters(Date start, Date end, String property)
+			throws IllegalArgumentException {
+		checkArgument(start.compareTo(end) <= 0, "start time must be <= end time");
+		Filter onOrAfter = new FilterPredicate(property, FilterOperator.GREATER_THAN_OR_EQUAL,
+				start);
+		Filter before = new FilterPredicate(property, FilterOperator.LESS_THAN, end);
+		return ImmutableList.of(onOrAfter, before);
 	}
 }

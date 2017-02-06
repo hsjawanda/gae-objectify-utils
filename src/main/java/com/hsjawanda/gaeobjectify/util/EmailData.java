@@ -6,6 +6,8 @@ package com.hsjawanda.gaeobjectify.util;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.mail.internet.InternetAddress;
@@ -19,6 +21,7 @@ import lombok.ToString;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 
 
@@ -35,7 +38,10 @@ public class EmailData implements Serializable {
 	@Id
 	private String								id;
 
-	private static final long					serialVersionUID	= 1L;
+	@Index
+	private Date								dateCreated;
+
+	private static final long					serialVersionUID	= 2L;
 
 	@NonNull
 	private InternetAddress						from;
@@ -55,6 +61,7 @@ public class EmailData implements Serializable {
 	private EmailData() {
 		this.id = UniqueIdGenerator.medium();
 		this.isHtml = false;
+		this.dateCreated = Calendar.getInstance().getTime();
 	}
 
 	@Builder

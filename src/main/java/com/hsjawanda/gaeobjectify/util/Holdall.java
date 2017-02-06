@@ -114,7 +114,7 @@ public final class Holdall {
 		}
 	}
 
-	public static String removeJSessoinId(String origUri) {
+	public static String removeJSessionId(String origUri) {
 		if (null == origUri)
 			return EMPTY;
 		return origUri.replaceAll("(?i);JSESSIONID=.*", EMPTY);

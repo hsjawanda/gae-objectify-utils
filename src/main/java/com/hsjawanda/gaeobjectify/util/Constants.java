@@ -39,8 +39,9 @@ public class Constants {
 
 	public static final int						GAE_STRING_LENGTH	= 500;
 
-	public static final Splitter				GAE_STRING_SPLITTER	= Splitter
-																			.fixedLength(GAE_STRING_LENGTH);
+	public static final Splitter				GAE_STRING_SPLITTER	= Splitter.fixedLength(
+																			GAE_STRING_LENGTH)
+																			.omitEmptyStrings();
 
 	public static final Joiner					GAE_STRING_JOINER	= Joiner.on(EMPTY);
 

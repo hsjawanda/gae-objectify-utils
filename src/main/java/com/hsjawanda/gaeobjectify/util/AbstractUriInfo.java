@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public abstract class AbstractUriInfo {
 
-	protected ImmutableMap<String, String> args;
+	protected ImmutableMap<String, String> args = ImmutableMap.of();
 
 	void setParams(Map<String, String> params) {
 		this.args = ImmutableMap.copyOf(params);

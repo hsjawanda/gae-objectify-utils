@@ -59,12 +59,14 @@ public class PositionalUriParser {
 	public Optional<PositionalUriInfo> parse(String uri, boolean debug)
 			throws IllegalArgumentException {
 		checkArgument(isNotBlank(uri), "uri" + Constants.NOT_BLANK);
-		uri = Holdall.removeJSessoinId(uri);
+		uri = Holdall.removeJSessionId(uri);
 		List<String> uriParts = Constants.PATH_SPLITTER.splitToList(uri);
 		int counter = 0;
 		if (uriParts.size() < this.specifierParts.size()) {
-			log.fine("The size of the uri (" + uriParts.size() + ") doesn't match that of the "
-					+ "specifier (" + this.specifierParts.size() + ").");
+			if (debug) {
+				log.info("The size of the uri (" + uriParts.size() + ") doesn't match that of the "
+						+ "specifier (" + this.specifierParts.size() + ").");
+			}
 			return Optional.absent();
 		}
 		for (int i = 0; i < this.fixedParts; i++) {

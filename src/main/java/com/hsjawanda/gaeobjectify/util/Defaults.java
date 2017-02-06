@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import java.text.SimpleDateFormat;
+import java.util.logging.Logger;
 
 
 /**
@@ -11,6 +12,8 @@ import java.text.SimpleDateFormat;
  *
  */
 public class Defaults {
+
+	private static Logger LOG = Logger.getLogger(Defaults.class.getName());
 
 	public static final double geoSearchRadius = 16093;
 
@@ -38,7 +41,8 @@ public class Defaults {
 	public static int asInt(String intString, int defaultVal) {
 		try {
 			return Integer.parseInt(intString);
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | NullPointerException e) {
+			LOG.info(e.getMessage());
 			return defaultVal;
 		}
 	}

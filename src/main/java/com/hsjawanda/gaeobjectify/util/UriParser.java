@@ -83,7 +83,7 @@ public class UriParser {
 	 */
 	public KeyValueUriInfo parse(String uri, boolean debug) {
 		String origUri = trimToEmpty(uri);
-		uri = Holdall.removeJSessoinId(origUri);
+		uri = Holdall.removeJSessionId(origUri);
 		if (debug) {
 			log.info("origUri: " + origUri + "; uri: " + uri);
 		}

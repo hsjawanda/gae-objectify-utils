@@ -151,6 +151,20 @@ public class ObjectifyDao<T> {
 		return key;
 	}
 
+	public Key<T> getKeyFromId(String id) {
+		if (isBlank(id))
+			return null;
+		Key<T> key = null;
+		try {
+			key = Key.create(this.cls, id);
+		} catch (Exception e) {
+			this.log.log(Level.WARNING,
+					"Unexpected exception getting Key<" + this.cls.getSimpleName() + "> for ID "
+							+ id, e);
+		}
+		return key;
+	}
+
 	public String getWebKeyFor(T pojo) {
 		Key<T> key = this.getKeyFromPojo(pojo);
 		return (null == key) ? EMPTY : key.toWebSafeString();
@@ -171,8 +185,8 @@ public class ObjectifyDao<T> {
 		return ofy().load().type(this.cls).list();
 	}
 
-	public T getByProjection(Class<T> cls, String... propNames) {
-		ofy().load().type(cls).project(propNames);
+	public T getByProjection(String... propNames) {
+		ofy().load().type(this.cls).project(propNames).list();
 		return null;
 	}
 
@@ -281,6 +295,10 @@ public class ObjectifyDao<T> {
 			return this.deleteByKey(key);
 	}
 
+	public boolean deleteById(String id) {
+		return deleteByKey(Key.create(this.cls, id));
+	}
+
 	public boolean deleteByKey(Key<T> key) {
 		if (null == key)
 			return true;
@@ -291,6 +309,10 @@ public class ObjectifyDao<T> {
 			this.log.log(Level.WARNING, "Failed to delete entity: " + key + " ...", e);
 			return false;
 		}
+	}
+
+	public void deleteByKeys(Iterable<Key<T>> keys) {
+		ofy().delete().keys(keys).now();
 	}
 
 	public boolean deleteByRef(Ref<T> ref) {
@@ -502,8 +524,10 @@ public class ObjectifyDao<T> {
 		return getResults(pgr, filters, sorts);
 	}
 
-	public int getEntityCount(Iterable<? extends Filter> filters) {
-		Query<T> qry = ofy().load().type(this.cls);
+	public int getEntityCount(Iterable<? extends Filter> filters, int limit) {
+		limit = Math.max(1, limit);
+		limit = Math.min(50000, limit);
+		Query<T> qry = ofy().load().type(this.cls).limit(limit);
 		if (null != filters) {
 			for (Filter filter : filters) {
 				if (null != filter) {
@@ -514,9 +538,13 @@ public class ObjectifyDao<T> {
 		return qry.count();
 	}
 
-	public int getEntityCount(Filter filter) {
+	public int getEntityCount(Filter filter, int limit) {
 		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
-		return getEntityCount(filters);
+		return getEntityCount(filters, limit);
+	}
+
+	public int getEntityCount(Filter filter) {
+		return getEntityCount(filter, 5000);
 	}
 
 }

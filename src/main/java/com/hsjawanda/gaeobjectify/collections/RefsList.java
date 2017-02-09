@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import com.googlecode.objectify.Ref;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
@@ -40,6 +41,17 @@ public class RefsList<E> implements List<E> {
 		RefsList<T> refsList = new RefsList<>();
 		refsList.wrapped = toWrap;
 		return refsList;
+	}
+
+	public static <T> RefsList<T> wrap(Set<Ref<T>> setToWrap) {
+		List<Ref<T>> toWrap = null;
+		if (null != setToWrap) {
+			toWrap = new ArrayList<Ref<T>>(setToWrap.size());
+			for (Ref<T> ref : setToWrap) {
+				toWrap.add(ref);
+			}
+		}
+		return wrap(toWrap);
 	}
 
 	public static <T> RefsList<T> newList(List<Ref<T>> toCopy) {

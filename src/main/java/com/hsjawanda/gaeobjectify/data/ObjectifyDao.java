@@ -17,10 +17,14 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lombok.NonNull;
+
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.QueryResultIterable;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.base.Optional;
+import com.google.common.collect.Iterators;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Result;
@@ -41,7 +45,7 @@ public class ObjectifyDao<T> {
 
 	protected final Logger	log;
 
-	protected static int DEFAULT_LIMIT = 20;
+	protected static int	DEFAULT_LIMIT	= 20;
 
 	public ObjectifyDao(Class<T> cls) {
 		this.cls = cls;
@@ -348,6 +352,35 @@ public class ObjectifyDao<T> {
 		return this.deleteEntities(Arrays.asList(entities));
 	}
 
+	/**
+	 * Find all the entities that satisfy a given query and then delete them.
+	 *
+	 * @param pgr
+	 *            the {@link Pager} to use. Shouldn't be {@code null}.
+	 * @param filters
+	 *            the {@code Filter}s to use
+	 * @param deferDeletion
+	 *            whether deletion should be deferred
+	 * @return {@code true} if another iteration may be needed, {@code false}
+	 *         otherwise
+	 */
+	public boolean deleteByQuery(@NonNull Pager<?> pgr, Iterable<Filter> filters,
+			boolean deferDeletion) {
+		QueryResultIterable<Key<T>> iterable = getKeysByQuery(pgr, filters);
+		if (deferDeletion) {
+			deferredDeleteByKeys(iterable);
+		} else {
+			deleteByKeys(iterable);
+		}
+		QueryResultIterator<Key<T>> itr = iterable.iterator();
+		int numKeys = Iterators.size(itr);
+		if (numKeys >= pgr.getLimit()) {
+			pgr.setCursor(itr.getCursor());
+			return true; // another iteration may be needed
+		}
+		return false;
+	}
+
 	public List<T> filteredQuery(Filter... filters) {
 		Query<T> qry = ofy().load().type(this.cls);
 		if (null != filters) {
@@ -436,37 +469,6 @@ public class ObjectifyDao<T> {
 
 	public List<T> getPaginatedEntities(Pager<?> pgr, Iterable<? extends Filter> filters,
 			Iterable<String> sorts) throws NullPointerException {
-//		Query<T> qry = ofy().load().type(this.cls);
-//		if (null != filters) {
-//			for (Filter filter : filters) {
-//				if (null != filter) {
-//					qry = qry.filter(filter);
-//				}
-//			}
-//		}
-//		if (null != sorts) {
-//			for (String sort : sorts) {
-//				if (isNotBlank(sort)) {
-//					qry = qry.order(sort);
-//				}
-//			}
-//		}
-//		this.log.fine("genTotalResults: " + pgr.isGenTotalResults() + "; nextCursor: "
-//				+ pgr.getNextCursor());
-//		if (pgr.isGenTotalResults()) {
-//			qry = qry.limit(pgr.getCountLimit());
-//			pgr.setTotalResults(qry.count());
-//		}
-//		qry = qry.limit(pgr.getLimit());
-//		if (null != pgr.getNextCursor()) {
-//			try {
-//				Cursor startCursor = Cursor.fromWebSafeString(pgr.getNextCursor());
-//				qry = qry.startAt(startCursor);
-//			} catch (Exception e) {
-//				this.log.log(Level.WARNING,
-//						"Exceptiong creating Datastore startCursor. Stacktrace:", e);
-//			}
-//		}
 		QueryResultIterator<T> qryItr = getResults(pgr, filters, sorts);
 		List<T> retList = CollectionHelper.toImmutableList(qryItr, pgr.getLimit());
 		pgr.setCursor(qryItr.getCursor());
@@ -481,7 +483,6 @@ public class ObjectifyDao<T> {
 
 	public QueryResultIterator<T> getResults(Pager<?> pgr, Iterable<? extends Filter> filters,
 			Iterable<String> sorts) throws NullPointerException {
-//		checkNotNull(pgr, "pgr" + Constants.NOT_NULL);
 		if (null == pgr) {
 			pgr = Pager.builder().limit(DEFAULT_LIMIT).build();
 		}
@@ -518,6 +519,7 @@ public class ObjectifyDao<T> {
 		}
 		return qry.iterator();
 	}
+
 	public QueryResultIterator<T> getResults(Pager<?> pgr, Filter filter, String sort) {
 		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
 		Iterable<String> sorts = sort == null ? null : Arrays.asList(sort);
@@ -545,6 +547,17 @@ public class ObjectifyDao<T> {
 
 	public int getEntityCount(Filter filter) {
 		return getEntityCount(filter, 5000);
+	}
+
+	public QueryResultIterable<Key<T>> getKeysByQuery(@NonNull Pager<?> pgr,
+			Iterable<Filter> filters) {
+		Query<T> qry = ofy().load().type(this.cls);
+		if (null != filters) {
+			for (Filter filter : filters) {
+				qry = qry.filter(filter);
+			}
+		}
+		return qry.limit(pgr.getLimit()).keys().iterable();
 	}
 
 }

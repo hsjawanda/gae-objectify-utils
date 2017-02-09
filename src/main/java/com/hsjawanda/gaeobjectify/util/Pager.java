@@ -153,4 +153,10 @@ public class Pager<T> {
 		return !(this.totalResults < this.countLimit);
 	}
 
+	public static class PagerBuilder<T> {
+
+		private int limit = 500;
+
+	}
+
 }

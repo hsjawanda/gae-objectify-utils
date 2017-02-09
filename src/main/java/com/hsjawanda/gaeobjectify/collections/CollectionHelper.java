@@ -3,9 +3,9 @@
  */
 package com.hsjawanda.gaeobjectify.collections;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -26,7 +26,7 @@ public class CollectionHelper {
 	public static <T> List<T> toList(Iterable<T> iterable) {
 		if (null == iterable)
 			return Collections.emptyList();
-		List<T> retList = new LinkedList<>();
+		List<T> retList = new ArrayList<>();
 		for (T item : iterable) {
 			retList.add(item);
 		}

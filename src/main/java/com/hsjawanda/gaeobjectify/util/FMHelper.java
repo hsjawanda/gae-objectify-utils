@@ -81,9 +81,13 @@ public class FMHelper {
 			return false;
 		}
 		try {
-			Environment env = template.createProcessingEnvironment(args, writer);
-			env.setOutputEncoding(charEncoding);
-			env.process();
+			if (null == charEncoding) {
+				template.process(args, writer);
+			} else {
+				Environment env = template.createProcessingEnvironment(args, writer);
+				env.setOutputEncoding(charEncoding);
+				env.process();
+			}
 		} catch (TemplateException | IOException e) {
 			log.log(Level.WARNING, "Failed to process template '" + tmpl + "'. Stacktrace:", e);
 			return false;
@@ -95,8 +99,9 @@ public class FMHelper {
 			Map<String, Object> args) {
 		PrintWriter pw = null;
 		try {
+			res.setCharacterEncoding(StandardCharsets.UTF_8.name());
 			pw = res.getWriter();
-			return processTemplate(tmpl, pw, args, res.getCharacterEncoding());
+			return processTemplate(tmpl, pw, args, null);
 		} catch (IOException e) {
 			log.log(Level.WARNING, "Couldn't get writer from HttpServletResponse. Stacktrace:", e);
 			return false;
@@ -110,7 +115,7 @@ public class FMHelper {
 	public static String processTemplate(String tmpl, Map<String, Object> args, int initialCapacity) {
 		initialCapacity = Math.max(initialCapacity, 50);
 		StringWriter sw = new StringWriter(initialCapacity);
-		processTemplate(tmpl, sw, args);
+		processTemplate(tmpl, sw, args, null);
 		return sw.toString();
 	}
 

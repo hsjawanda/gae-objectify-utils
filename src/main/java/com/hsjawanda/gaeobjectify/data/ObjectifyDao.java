@@ -374,6 +374,8 @@ public class ObjectifyDao<T> {
 		}
 		QueryResultIterator<Key<T>> itr = iterable.iterator();
 		int numKeys = Iterators.size(itr);
+		this.log.info("Deleted " + numKeys + " entities of type " + this.cls.getName()
+				+ ". Deferred: " + deferDeletion);
 		if (numKeys >= pgr.getLimit()) {
 			pgr.setCursor(itr.getCursor());
 			return true; // another iteration may be needed

@@ -81,13 +81,10 @@ public class FMHelper {
 			return false;
 		}
 		try {
-			if (null == charEncoding) {
-				template.process(args, writer);
-			} else {
-				Environment env = template.createProcessingEnvironment(args, writer);
-				env.setOutputEncoding(charEncoding);
-				env.process();
-			}
+			charEncoding = null == charEncoding ? StandardCharsets.UTF_8.name() : charEncoding;
+			Environment env = template.createProcessingEnvironment(args, writer);
+			env.setOutputEncoding(charEncoding);
+			env.process();
 		} catch (TemplateException | IOException e) {
 			log.log(Level.WARNING, "Failed to process template '" + tmpl + "'. Stacktrace:", e);
 			return false;

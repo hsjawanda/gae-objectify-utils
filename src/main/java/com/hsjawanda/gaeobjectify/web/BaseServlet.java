@@ -48,7 +48,7 @@ public class BaseServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		this.initialize(resp);
+		initialize(resp);
 	}
 
 	/*
@@ -60,7 +60,7 @@ public class BaseServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		this.initialize(resp);
+		initialize(resp);
 	}
 
 	private void initialize(HttpServletResponse resp) {
@@ -85,6 +85,7 @@ public class BaseServlet extends HttpServlet {
 		for (Object key : attributes.keySet()) {
 			newSess.setAttribute(key, attributes.get(key));
 		}
+		newSess.setTimeout(432000 * 1000); // 5 days
 	}
 
 }

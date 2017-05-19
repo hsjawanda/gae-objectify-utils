@@ -75,6 +75,11 @@ public class Setting implements StringIdEntity, Serializable {
 		return setting.isPresent() ? setting.get().getValue() : defaultValue;
 	}
 
+	public static boolean getAsBool(String name, boolean defaultValue) {
+		Optional<Setting> setting = getByName(name);
+		return setting.isPresent() ? setting.get().getAsBoolean() : defaultValue;
+	}
+
 	public static Optional<Setting> getByName(String name) {
 		name = normalizeName(name);
 		return DAO.getById(name);

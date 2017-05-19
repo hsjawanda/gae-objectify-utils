@@ -98,7 +98,7 @@ public class FMHelper {
 		try {
 			res.setCharacterEncoding(StandardCharsets.UTF_8.name());
 			pw = res.getWriter();
-			return processTemplate(tmpl, pw, args, null);
+			return processTemplate(tmpl, pw, args, res.getCharacterEncoding());
 		} catch (IOException e) {
 			log.log(Level.WARNING, "Couldn't get writer from HttpServletResponse. Stacktrace:", e);
 			return false;

@@ -105,7 +105,7 @@ public class Pager<T> {
 			try {
 				this.cursor = Cursor.fromWebSafeString(cursorStr);
 			} catch (IllegalArgumentException e) {
-				LOG.warning("The supplied cursor string couldn't be decoded as a valid Cursor:"
+				LOG.warning("The supplied cursor string couldn't be decoded as a valid Cursor: "
 						+ cursorStr);
 			}
 		}

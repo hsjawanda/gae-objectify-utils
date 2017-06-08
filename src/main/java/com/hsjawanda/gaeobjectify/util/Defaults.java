@@ -6,6 +6,8 @@ package com.hsjawanda.gaeobjectify.util;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+
 
 /**
  * @author harsh.deep
@@ -34,7 +36,9 @@ public class Defaults {
 	 * @param defaultValue the default value to use
 	 * @return {@code obj} if it is not-null, {@code defaultValue} otherwise
 	 */
-	public static <T> T or(T obj, T defaultValue) {
+//	@SuppressWarnings("null")
+	@Nonnull
+	public static <T> T or(T obj, @Nonnull T defaultValue) {
 		return null == obj ? defaultValue : obj;
 	}
 

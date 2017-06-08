@@ -4,20 +4,21 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.List;
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Optional;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Ignore;
-import com.googlecode.objectify.annotation.OnLoad;
-
-import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
+import com.googlecode.objectify.annotation.Index;
+import com.hsjawanda.gaeobjectify.data.UniquePropertyDao;
+import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
 
 
@@ -26,20 +27,49 @@ import com.hsjawanda.gaeobjectify.util.SplitJoin;
  *
  */
 @Entity
-public class UniqueProperty<T extends GaeEntity> extends RootEntity<UniqueProperty<T>> {
+@Data
+@Accessors(chain = true)
+public class UniqueProperty {
 
 	@Id
-	private String id;
+	@Setter(AccessLevel.NONE)
+	private String							id;
 
-	@Ignore
-	private String namespace;
+	@Index
+	@Setter(AccessLevel.NONE)
+	private String							namespace;
 
-	@Ignore
-	private String value;
+	@Setter(AccessLevel.NONE)
+	private String							value;
 
-	private Ref<T> reference;
+	@Setter(AccessLevel.NONE)
+	private String							referencedWebSafeKey;
+
+	public static final UniquePropertyDao	DAO	= UniquePropertyDao.instance();
 
 	private UniqueProperty() {
+	}
+
+	public static UniqueProperty create(String namespace, String value, String referencedWebSafeKey)
+			throws NullPointerException, IllegalArgumentException {
+		checkArgument(isNotBlank(namespace), "namespace" + Constants.NOT_BLANK);
+		checkArgument(isNotBlank(value), "value" + Constants.NOT_BLANK);
+		checkNotNull(referencedWebSafeKey, "referencedWebSafeKey" + Constants.NOT_NULL);
+		UniqueProperty retVal = new UniqueProperty();
+		retVal.namespace = trimToNull(namespace);
+		retVal.value = value.trim();
+		retVal.id = genIdPreNormalized(retVal.namespace, retVal.value);
+		retVal.referencedWebSafeKey = referencedWebSafeKey;
+		return retVal;
+	}
+
+	public static String genId(String namespace, String value) throws IllegalArgumentException {
+		checkArgument(isNotBlank(value), "value" + Constants.NOT_BLANK);
+		return genIdPreNormalized(trimToNull(namespace), value.trim());
+	}
+
+	private static String genIdPreNormalized(String namespace, String value) {
+		return SplitJoin.join(namespace, value);
 	}
 
 	/**
@@ -56,51 +86,23 @@ public class UniqueProperty<T extends GaeEntity> extends RootEntity<UniqueProper
 	public String getNamespace() {
 		return StringUtils.defaultString(this.namespace);
 	}
+//
+//	@OnLoad
+//	protected void tokenize() {
+//		List<String> parts = SplitJoin.split(getId());
+//		int size;
+//		if (null != parts && (size = parts.size()) > 0) {
+//			if (1 == size) {
+//				this.value = parts.get(0);
+//			} else {
+//				this.namespace = parts.get(0);
+//				this.value = parts.get(1);
+//			}
+//		}
+//	}
 
-	@OnLoad
-	protected void tokenize() {
-		List<String> parts = SplitJoin.split(getId());
-		int size;
-		if (null != parts && (size = parts.size()) > 0) {
-			if (1 == size) {
-				this.value = parts.get(0);
-			} else {
-				this.namespace = parts.get(0);
-				this.value = parts.get(1);
-			}
-		}
-	}
-
-	protected void setId(String id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the reference
-	 */
-	public Optional<T> getReferenced() {
-		return GaeDataUtil.getByRef(this.reference);
-	}
-
-	/**
-	 * @param reference
-	 *            the reference to set
-	 */
-	public void setReference(T reference) {
-		this.reference = GaeDataUtil.getNullableRefFromPojo(reference);
-	}
-
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		public <T extends GaeEntity> UniqueProperty<T> build(String namespace, String value) {
-			UniqueProperty<T> prop = null;
-			checkArgument(isNotBlank(value), "value can't be null, empty or whitespace");
-			prop = new UniqueProperty<>();
-			prop.setId(SplitJoin.join(StringUtils.trimToNull(namespace), value));
-			return prop;
-		}
+	protected UniqueProperty setId(String namespace, String value) {
+		this.id = genId(namespace, value);
+		return this;
 	}
 }

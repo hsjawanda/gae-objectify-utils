@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -61,11 +63,19 @@ public class Pager<T> {
 
 	private List<T>									results;
 
+	@SuppressWarnings("null")
 	@Builder
 	private Pager(Integer limit, Boolean genTotalResults, String cursorStr) {
 		setLimit(Defaults.or(limit, Integer.valueOf(DEFAULT_LIMIT)).intValue());
 		setGenTotalResults(Defaults.or(genTotalResults, Boolean.FALSE));
 		setCursorStr(cursorStr);
+	}
+
+	@Nonnull
+	@SuppressWarnings("null")
+	public static <T> Pager<T> getDefault(int limit) {
+		limit = Holdall.constrainToRange(RESULT_LIMIT_RANGE, Integer.valueOf(limit)).intValue();
+		return Pager.<T> builder().limit(limit).build();
 	}
 
 	public List<T> getResults() {

@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -12,7 +13,11 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.base.Optional;
+import com.google.common.collect.Range;
+import com.google.common.primitives.Ints;
 import com.googlecode.objectify.annotation.Entity;
 
 
@@ -118,6 +123,34 @@ public final class Holdall {
 		if (null == origUri)
 			return EMPTY;
 		return origUri.replaceAll("(?i);JSESSIONID=.*", EMPTY);
+	}
+
+	public static <T extends Comparable<T>> T constrainToRange(Range<T> range, T value) {
+		T retVal = value;
+		if (value.compareTo(range.lowerEndpoint()) < 0) {
+			retVal = range.lowerEndpoint();
+		} else if (value.compareTo(range.upperEndpoint()) > 0) {
+			retVal = range.upperEndpoint();
+		}
+		return retVal;
+	}
+
+	public static Integer constrainToRange(Range<Integer> range, String strVal,
+			@Nonnull Integer defaultValue) {
+		Integer value = Defaults.or(Ints.tryParse(defaultString(strVal)), defaultValue);
+//		T retVal = value;
+//		if (value.compareTo(range.lowerEndpoint()) < 0) {
+//			retVal = range.lowerEndpoint();
+//		} else if (value.compareTo(range.upperEndpoint()) > 0) {
+//			retVal = range.upperEndpoint();
+//		}
+		return constrainToRange(range, value);
+	}
+
+	@SuppressWarnings("null")
+	@Nonnull
+	public static <T> T get(Optional<T> presetVar) {
+		return presetVar.get();
 	}
 
 }

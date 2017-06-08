@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+
 import lombok.NonNull;
 
 import com.google.appengine.api.datastore.Cursor;
@@ -31,6 +33,7 @@ import com.googlecode.objectify.Result;
 import com.googlecode.objectify.SaveException;
 import com.googlecode.objectify.cmd.Query;
 import com.hsjawanda.gaeobjectify.collections.CollectionHelper;
+import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Pager;
 import com.hsjawanda.gaeobjectify.util.PagingData;
 
@@ -109,6 +112,12 @@ public class ObjectifyDao<T> {
 		return ofy().load().type(this.cls).ids(ids);
 	}
 
+	public Map<Key<T>, T> getByKeys(Iterable<Key<T>> keys) {
+		if (null == keys)
+			return Collections.emptyMap();
+		return ofy().load().keys(keys);
+	}
+
 	public Optional<T> getById(long id) {
 		Key<T> key = null;
 		try {
@@ -174,6 +183,11 @@ public class ObjectifyDao<T> {
 		return (null == key) ? EMPTY : key.toWebSafeString();
 	}
 
+	public String getNullableWebKeyFor(T pojo) {
+		Key<T> key = this.getKeyFromPojo(pojo);
+		return (null == key) ? null : key.toWebSafeString();
+	}
+
 	public Key<T> keyFor(String id) {
 		Key<T> key = null;
 		try {
@@ -189,9 +203,38 @@ public class ObjectifyDao<T> {
 		return ofy().load().type(this.cls).list();
 	}
 
-	public T getByProjection(String... propNames) {
-		ofy().load().type(this.cls).project(propNames).list();
-		return null;
+	public QueryResultIterable<T> getByProjection(@Nonnull Pager<T> pgr, Iterable<Filter> filters,
+			Iterable<String> sorts, String... propNames) {
+		checkNotNull(pgr, "pgr" + Constants.NOT_NULL);
+		Query<T> qry = ofy().load().type(this.cls).project(propNames);
+		if (null != filters) {
+			for (Filter filter : filters) {
+				if (null != filter) {
+					qry = qry.filter(filter);
+				}
+			}
+		}
+		if (null != sorts) {
+			for (String sort : sorts) {
+				if (isNotBlank(sort)) {
+					qry = qry.order(sort);
+				}
+			}
+		}
+//		if (pgr.isGenTotalResults()) {
+//			qry = qry.limit(pgr.getCountLimit());
+//			pgr.setTotalResults(qry.count());
+//		}
+		qry = qry.limit(pgr.getLimit());
+		if (null != pgr.getCursor()) {
+			try {
+				qry = qry.startAt(pgr.getCursor());
+			} catch (Exception e) {
+				this.log.log(Level.WARNING,
+						"Exceptiong creating Datastore startCursor. Stacktrace:", e);
+			}
+		}
+		return qry.iterable();
 	}
 
 	public Optional<Key<T>> saveEntity(T entity) throws SaveException {
@@ -366,7 +409,7 @@ public class ObjectifyDao<T> {
 	 */
 	public boolean deleteByQuery(@NonNull Pager<?> pgr, Iterable<Filter> filters,
 			boolean deferDeletion) {
-		QueryResultIterable<Key<T>> iterable = getKeysByQuery(pgr, filters);
+		QueryResultIterable<Key<T>> iterable = getKeysByQuery(pgr, filters, (Iterable<String>) null);
 		if (deferDeletion) {
 			deferredDeleteByKeys(iterable);
 		} else {
@@ -528,6 +571,51 @@ public class ObjectifyDao<T> {
 		return getResults(pgr, filters, sorts);
 	}
 
+	public QueryResultIterable<T> getIterableResults(@Nonnull Pager<?> pgr,
+			Iterable<? extends Filter> filters, Iterable<String> sorts) throws NullPointerException {
+		checkNotNull(pgr, "pgr" + Constants.NOT_NULL);
+		Query<T> qry = ofy().load().type(this.cls);
+		if (null != filters) {
+			for (Filter filter : filters) {
+				if (null != filter) {
+					qry = qry.filter(filter);
+				}
+			}
+		}
+		if (null != sorts) {
+			for (String sort : sorts) {
+				if (isNotBlank(sort)) {
+					qry = qry.order(sort);
+				}
+			}
+		}
+		this.log.fine("genTotalResults: " + pgr.isGenTotalResults() + "; nextCursor: "
+				+ (null == pgr.getCursor() ? "null" : pgr.getCursor().toWebSafeString()));
+		if (pgr.isGenTotalResults()) {
+			qry = qry.limit(pgr.getCountLimit());
+			pgr.setTotalResults(qry.count());
+		}
+		qry = qry.limit(pgr.getLimit());
+		if (null != pgr.getCursor()) {
+			try {
+				Cursor startCursor = pgr.getCursor();
+				qry = qry.startAt(startCursor);
+			} catch (Exception e) {
+				this.log.log(Level.WARNING,
+						"Exceptiong creating Datastore startCursor. Stacktrace:", e);
+			}
+		}
+		return qry.iterable();
+	}
+
+	public QueryResultIterable<T> getIterableResults(@Nonnull Pager<?> pgr, Filter filter,
+			String sort) throws NullPointerException {
+		checkNotNull(pgr, "pgr" + Constants.NOT_NULL);
+		List<Filter> filters = null == filter ? null : Arrays.asList(filter);
+		List<String> sorts = null == sort ? null : Arrays.asList(sort);
+		return getIterableResults(pgr, filters, sorts);
+	}
+
 	public int getEntityCount(Iterable<? extends Filter> filters, int limit) {
 		limit = Math.max(1, limit);
 		limit = Math.min(50000, limit);
@@ -552,14 +640,34 @@ public class ObjectifyDao<T> {
 	}
 
 	public QueryResultIterable<Key<T>> getKeysByQuery(@NonNull Pager<?> pgr,
-			Iterable<Filter> filters) {
+			Iterable<Filter> filters, Iterable<String> sorts) {
 		Query<T> qry = ofy().load().type(this.cls);
 		if (null != filters) {
 			for (Filter filter : filters) {
 				qry = qry.filter(filter);
 			}
 		}
+		if (null != sorts) {
+			for (String sort : sorts) {
+				if (isNotBlank(sort)) {
+					qry = qry.order(sort);
+				}
+			}
+		}
 		return qry.limit(pgr.getLimit()).keys().iterable();
+	}
+
+	public QueryResultIterable<Key<T>> getKeysByQuery(@NonNull Pager<?> pgr,
+			Iterable<Filter> filters, String sort) {
+		Iterable<String> sorts = null == sort ? null : Arrays.asList(sort);
+		return getKeysByQuery(pgr, filters, sorts);
+	}
+
+	public QueryResultIterable<Key<T>> getKeysByQuery(@NonNull Pager<?> pgr,
+			Filter filter, String sort) {
+		Iterable<String> sorts = null == sort ? null : Arrays.asList(sort);
+		Iterable<Filter> filters = null == filter ? null : Arrays.asList(filter);
+		return getKeysByQuery(pgr, filters, sorts);
 	}
 
 }

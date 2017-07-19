@@ -31,4 +31,8 @@ public class GcmResponse {
 	private String statusMessage;
 
 	private List<Map<String, String>> results;
+
+	public static final String ERROR = "error";
+
+	public static final String NOT_REGISTERED = "NotRegistered";
 }

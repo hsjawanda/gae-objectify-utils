@@ -197,6 +197,21 @@ public class NetCall {
 		return gcmFactory;
 	}
 
+	public static HttpRequestFactory getGcmRequestFactory(final String key) {
+		if (null == gcmFactory) {
+			gcmFactory = (new UrlFetchTransport())
+					.createRequestFactory(new HttpRequestInitializer() {
+						@Override
+						public void initialize(HttpRequest request) throws IOException {
+							HttpHeaders headers = request.getHeaders();
+							headers.setAuthorization("key=" + Config.getOrEmpty(key));
+							headers.setContentType(javax.ws.rs.core.MediaType.APPLICATION_JSON);
+						}
+					});
+		}
+		return gcmFactory;
+	}
+
 	public static HttpResponse callResponse(GenericUrl url, HttpRequestFactory factory,
 			String httpMethod, HttpContent content) throws IOException {
 		factory = null == factory ? getRequestFactory() : factory;

@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import lombok.AccessLevel;
@@ -23,6 +24,7 @@ import lombok.experimental.Accessors;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskHandle;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Range;
@@ -99,7 +101,7 @@ public class TaskConfig<T> {
 		return this;
 	}
 
-	public void addToQueue() throws IllegalArgumentException {
+	private Future<TaskHandle> addToQueue(boolean async) throws IllegalArgumentException {
 		Queue q = null;
 		if (null == this.queueName) {
 			q = QueueFactory.getDefaultQueue();
@@ -139,7 +141,20 @@ public class TaskConfig<T> {
 		if (DELAY_RANGE.contains(this.delayMillis)) {
 			taskOptions = taskOptions.countdownMillis(this.delayMillis);
 		}
-		q.add(taskOptions);
+		if (async)
+			return q.addAsync(taskOptions);
+		else {
+			q.add(taskOptions);
+		}
+		return null;
+	}
+
+	public void addToQueue() {
+		addToQueue(false);
+	}
+
+	public Future<TaskHandle> addToQueueAsync() {
+		return addToQueue(true);
 	}
 
 	private String normalizedTaskName() {

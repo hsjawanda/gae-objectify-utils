@@ -3,6 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.data;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import static java.util.logging.Level.WARNING;
@@ -96,14 +97,19 @@ public class ObjectifyDao<T> {
 	public Optional<T> getById(String id) {
 		if (isBlank(id))
 			return Optional.absent();
-		Key<T> key = null;
 		try {
-			key = Key.create(this.cls, id);
-			return this.getByKey(key);
+			return Optional.fromNullable(ofy().load().type(this.cls).id(id).now());
 		} catch (Exception e) {
-			this.log.warning("Error creating key: " + e.getMessage());
+			this.log.warning("Error getting by ID: " + e.getClass().getName() + "("
+					+ e.getMessage() + ")");
 			return Optional.absent();
 		}
+	}
+
+	public Optional<T> getByIdThrow(String id) {
+		if (isBlank(id))
+			return Optional.absent();
+		return Optional.fromNullable(ofy().load().type(this.cls).id(id).now());
 	}
 
 	public Map<String, T> getByStringIds(Iterable<String> ids) {
@@ -235,6 +241,13 @@ public class ObjectifyDao<T> {
 			}
 		}
 		return qry.iterable();
+	}
+
+	public QueryResultIterable<T> getByProjection(@Nonnull Pager<T> pgr, Filter filter,
+			String sort, String... propNames) {
+		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
+		Iterable<String> sorts = sort == null ? null : Arrays.asList(sort);
+		return getByProjection(pgr, filters, sorts, propNames);
 	}
 
 	public Optional<Key<T>> saveEntity(T entity) throws SaveException {
@@ -516,7 +529,8 @@ public class ObjectifyDao<T> {
 			Iterable<String> sorts) throws NullPointerException {
 		QueryResultIterator<T> qryItr = getResults(pgr, filters, sorts);
 		List<T> retList = CollectionHelper.toImmutableList(qryItr, pgr.getLimit());
-		pgr.setCursor(qryItr.getCursor());
+		Cursor nextCursor = retList.size() > 0 ? qryItr.getCursor() : null;
+		pgr.setCursor(nextCursor);
 		return retList;
 	}
 
@@ -654,6 +668,10 @@ public class ObjectifyDao<T> {
 				}
 			}
 		}
+		Cursor curs = pgr.getCursor();
+		if (null != curs) {
+			qry = qry.startAt(curs);
+		}
 		return qry.limit(pgr.getLimit()).keys().iterable();
 	}
 
@@ -668,6 +686,15 @@ public class ObjectifyDao<T> {
 		Iterable<String> sorts = null == sort ? null : Arrays.asList(sort);
 		Iterable<Filter> filters = null == filter ? null : Arrays.asList(filter);
 		return getKeysByQuery(pgr, filters, sorts);
+	}
+
+	public boolean entityExists(@NonNull String id) throws IllegalArgumentException {
+		checkArgument(isNotBlank(id), "id" + Constants.NOT_BLANK);
+		return entityExists(Key.create(this.cls, id));
+	}
+
+	public boolean entityExists(@NonNull Key<T> key) {
+		return null != ofy().load().filterKey(key).keys().first().now();
 	}
 
 }

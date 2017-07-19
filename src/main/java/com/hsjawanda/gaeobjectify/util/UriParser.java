@@ -63,7 +63,9 @@ public class UriParser {
 	public KeyValueUriInfo parse(HttpServletRequest req, boolean debug) {
 		if (null == req)
 			return parse(EMPTY, debug);
-		return parse(req.getRequestURI().replace(this.mapping, EMPTY), debug);
+		String uri = req.getRequestURI();
+		String trimmedUri = uri.substring(uri.indexOf(this.mapping) + this.mapping.length());
+		return parse(trimmedUri, debug);
 	}
 
 	/**

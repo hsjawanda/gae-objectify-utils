@@ -120,15 +120,15 @@ public class Emailer {
 		return getEmailAddress(fullEmail, name);
 	}
 
-	public static InternetAddress getEmailAddress(String fullEmail, String name) {
+	public static InternetAddress getEmailAddress(String email, String name) {
 		InternetAddress retVal = null;
 		try {
-			retVal = new InternetAddress(fullEmail, name);
+			retVal = new InternetAddress(email, name);
 		} catch (UnsupportedEncodingException e) {
-			log.log(Level.WARNING, "Error creating email (" + name + " <" + fullEmail + ">)", e);
+			log.log(Level.WARNING, "Error creating email (" + name + " <" + email + ">)", e);
 		} catch (Exception e) {
 			log.log(Level.WARNING,
-					"Unforeseen error creating email (" + name + " <" + fullEmail + ">)", e);
+					"Unforeseen error creating email (" + name + " <" + email + ">)", e);
 		}
 		return retVal;
 	}

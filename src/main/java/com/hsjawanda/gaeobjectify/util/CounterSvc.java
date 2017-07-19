@@ -29,13 +29,12 @@ public class CounterSvc {
 			throws IllegalArgumentException {
 		checkArgument(isNotBlank(counterName), "counterName" + Constants.NOT_BLANK);
 		Counter counter = ofy().transact(new Work<Counter>() {
-
 			@Override
 			public Counter run() {
-				Counter counter = COUNTER.getById(counterName).orNull();
+				Counter counter = COUNTER.getByIdThrow(counterName).orNull();
 				if (null == counter) {
 					counter = Counter.create(counterName, numShards);
-					COUNTER.saveEntity(counter);
+					COUNTER.deferredSaveEntity(counter);
 				}
 				return counter;
 			}
@@ -46,7 +45,7 @@ public class CounterSvc {
 	public static Optional<Counter> getIfExists(@Nonnull final String counterName)
 			throws IllegalArgumentException {
 		checkArgument(isNotBlank(counterName), "counterName" + Constants.NOT_BLANK);
-		return COUNTER.getById(counterName);
+		return COUNTER.getByIdThrow(counterName);
 	}
 
 	/**

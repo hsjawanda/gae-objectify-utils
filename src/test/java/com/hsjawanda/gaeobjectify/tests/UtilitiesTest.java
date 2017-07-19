@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 import com.hsjawanda.gaeobjectify.models.UniqueIndex;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
@@ -78,6 +80,19 @@ public class UtilitiesTest {
 		assertEquals("5", id1);
 		String id2 = UniqueIndex.genIdFor(" Content    Type for", "abc");
 		assertEquals("Content Type for" + SplitJoin.token + "abc", id2);
+	}
+
+	@Test
+	public void testContainInRange() {
+		int lowValue = 5, highValue = 25;
+		// TODO: also test for case where either or both ends of Range are open
+		Range<Integer> allowable = Range.closed(lowValue, highValue);
+		int retVal = Holdall.constrainToRange(allowable, lowValue - 1);
+		assertTrue(retVal == lowValue);
+		retVal = Holdall.constrainToRange(allowable, highValue + 1);
+		assertTrue(retVal == highValue);
+		retVal = Holdall.constrainToRange(allowable, highValue - 1);
+		assertTrue(retVal == highValue - 1);
 	}
 
 }

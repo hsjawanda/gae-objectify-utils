@@ -72,9 +72,9 @@ public class Config {
 				}
 			}
 		}
-		if (null == retVal) {
-			log.info("Couldn't find any value for key '" + key + "'");
-		}
+//		if (null == retVal) {
+//			log.info("Couldn't find any value for key '" + key + "'");
+//		}
 		return Optional.fromNullable(retVal);
 	}
 

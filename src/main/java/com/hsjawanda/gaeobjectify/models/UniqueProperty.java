@@ -7,6 +7,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
+
+import java.io.Serializable;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -14,9 +17,11 @@ import lombok.experimental.Accessors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 import com.hsjawanda.gaeobjectify.data.UniquePropertyDao;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
@@ -29,23 +34,28 @@ import com.hsjawanda.gaeobjectify.util.SplitJoin;
 @Entity
 @Data
 @Accessors(chain = true)
-public class UniqueProperty {
+public class UniqueProperty implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Setter(AccessLevel.NONE)
-	private String							id;
+	private String id;
 
 	@Index
 	@Setter(AccessLevel.NONE)
-	private String							namespace;
+	private String namespace;
 
 	@Setter(AccessLevel.NONE)
-	private String							value;
+	private String value;
 
 	@Setter(AccessLevel.NONE)
-	private String							referencedWebSafeKey;
+	private String referencedWebSafeKey;
 
-	public static final UniquePropertyDao	DAO	= UniquePropertyDao.instance();
+	private static final ObjectifyDao<UniqueProperty> BASE = new ObjectifyDao<>(
+			UniqueProperty.class);
+
+	public static final UniquePropertyDao DAO = UniquePropertyDao.instance();
 
 	private UniqueProperty() {
 	}
@@ -86,6 +96,7 @@ public class UniqueProperty {
 	public String getNamespace() {
 		return StringUtils.defaultString(this.namespace);
 	}
+
 //
 //	@OnLoad
 //	protected void tokenize() {
@@ -105,4 +116,14 @@ public class UniqueProperty {
 		this.id = genId(namespace, value);
 		return this;
 	}
+
+	/**
+	 * @param key
+	 * @return
+	 * @see com.hsjawanda.gaeobjectify.data.ObjectifyDao#deleteByKey(com.googlecode.objectify.Key)
+	 */
+	public static boolean deleteByKey(Key<UniqueProperty> key) {
+		return BASE.deleteByKey(key);
+	}
+
 }

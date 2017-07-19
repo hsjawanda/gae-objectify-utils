@@ -74,11 +74,13 @@ public class Counter implements Serializable, StringIdEntity {
 	@Setter(AccessLevel.NONE)
 	private transient final Random					CHOOSER				= new Random();
 
-	public static final int							DEFAULT_NUM_SHARDS	= 3;
+	public static final int							DEFAULT_NUM_SHARDS	= 5;
 
 	public static final int							MAX_SHARDS			= 50;
 
 	public static final String						SEPARATOR			= "-";
+
+	public static final int							COUNT_EXPIRATION	= 120;
 
 	public static final int							DEFAULT_SB_LEN		= 30;
 
@@ -131,15 +133,12 @@ public class Counter implements Serializable, StringIdEntity {
 				CounterShard shard = SHARD.getById(shardId).orNull();
 				if (null != shard) {
 					shard.increment(delta);
-
 				} else {
 					shard = CounterShard.create(shardId, delta);
 				}
-				SHARD.saveEntity(shard);
+				SHARD.deferredSaveEntity(shard);
 			}
 		});
-//		this.dateLastModified = System.currentTimeMillis();
-//		CounterSvc.COUNTER.deferredSaveEntity(this);
 		MEMCACHE.delete(this.name);
 	}
 
@@ -148,7 +147,8 @@ public class Counter implements Serializable, StringIdEntity {
 		Long countObj = (Long) MEMCACHE.get(this.name);
 		if (null != countObj && !skipCache) {
 			count = countObj.longValue();
-			LOG.info("Found value of counter " + this.name + " in Memcache: " + count);
+			LOG.info("Found value of counter " + this.name + " in Memcache: " + count
+					/*+ System.lineSeparator() + "Called from: " + Tracer.callerLocation()*/);
 		} else {
 			// TODO: maybe use BigInteger to avoid overflow?
 			for (CounterShard shard : getAllShards()) {
@@ -156,14 +156,30 @@ public class Counter implements Serializable, StringIdEntity {
 					count += shard.getCount();
 				}
 			}
-			MEMCACHE.put(this.name, Long.valueOf(count), Expiration.byDeltaSeconds(60),
-					SetPolicy.ADD_ONLY_IF_NOT_PRESENT);
+			MEMCACHE.put(this.name, Long.valueOf(count),
+					Expiration.byDeltaSeconds(COUNT_EXPIRATION), SetPolicy.ADD_ONLY_IF_NOT_PRESENT);
 		}
 		return count;
 	}
 
 	public long getCount() {
 		return getCount(false);
+	}
+
+	public static long getCount(String name, boolean skipCache) throws IllegalArgumentException {
+		checkArgument(isNotBlank(name), "name" + Constants.NOT_BLANK);
+		long count = 0;
+		Long countObj = (Long) MEMCACHE.get(name);
+		if (null != countObj && !skipCache) {
+			count = countObj.longValue();
+			LOG.info("Found value of counter " + name + " in Memcache: " + count
+					/*+ System.lineSeparator() + "Called from: " + Tracer.partialTrace(null, 0, 20)*/);
+		} else {
+			// TODO: maybe use BigInteger to avoid overflow?
+			Counter counter = CounterSvc.get(name, null);
+			count = counter.getCount();
+		}
+		return count;
 	}
 
 	public void printAllShards() {

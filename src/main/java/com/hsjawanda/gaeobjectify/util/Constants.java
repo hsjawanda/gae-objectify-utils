@@ -55,7 +55,7 @@ public class Constants {
 
 	public static final Joiner					pathJoiner			= Joiner.on('/').skipNulls();
 
-	static Splitter								PATH_SPLITTER		= Splitter.on('/')
+	public static Splitter						PATH_SPLITTER		= Splitter.on('/')
 																			.omitEmptyStrings()
 																			.trimResults();
 

@@ -74,6 +74,7 @@ public class FMHelper {
 		if (null == writer)
 			return false;
 		Template template = null;
+//		Template.getPlainTextTemplate(arg0, arg1, arg2, arg3)
 		try {
 			template = config.getTemplate(tmpl);
 		} catch (IOException e) {

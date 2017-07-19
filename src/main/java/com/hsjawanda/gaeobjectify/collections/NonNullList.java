@@ -5,6 +5,7 @@ package com.hsjawanda.gaeobjectify.collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,7 +20,9 @@ import com.hsjawanda.gaeobjectify.util.Constants;
  * @author harsh.deep
  *
  */
-public class NonNullList<E> implements List<E> {
+public class NonNullList<E> implements List<E>, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(NonNullList.class.getName());
 

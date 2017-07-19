@@ -59,6 +59,10 @@ public class PositionalUriParserV2 {
 		return instance(Constants.pathJoiner.join(specifier));
 	}
 
+	public String getMapping() {
+		return Constants.pathJoiner.join(this.specifierParts);
+	}
+
 	public Optional<PositionalUriInfo> parse(String uri, boolean debug) {
 		if (debug) {
 			LOG.info("Original URI: " + uri);

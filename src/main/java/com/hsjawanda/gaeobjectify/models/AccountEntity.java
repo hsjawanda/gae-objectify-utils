@@ -89,10 +89,20 @@ public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 	}
 
 	public String genRandomPassword() {
-		String pwd = PWDS.genRandomPassword();
-		this.hashAndSetPassword(pwd);
+			String pwd = PWDS.genRandomPassword();
+			this.hashAndSetPassword(pwd);
+			GaeDataUtil.deferredSaveEntity(this);
+			return pwd;
+	}
+
+	/**
+	 * Use {@link AccountEntity#checkPasswd(String)} before calling this method.
+	 *
+	 * @param plaintextPassword
+	 */
+	public void forceSetPassword(String plaintextPassword) {
+		this.hashAndSetPassword(plaintextPassword);
 		GaeDataUtil.deferredSaveEntity(this);
-		return pwd;
 	}
 
 	@SuppressWarnings("unchecked")

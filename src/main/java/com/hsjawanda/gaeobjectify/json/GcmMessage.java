@@ -98,7 +98,10 @@ public class GcmMessage {
 			if (null == this.data) {
 				this.data = new LinkedHashMap<>();
 			}
-			addToMap(this.data, key, value);
+			if (isNotBlank(key)) {
+				this.data.put(key, value);
+			}
+//			addToMap(this.data, key, value);
 		}
 		return this;
 	}
@@ -165,4 +168,14 @@ public class GcmMessage {
 			return super.name().toLowerCase();
 		}
 	}
+
+	public enum Data {
+		TITLE, MESSAGE, TIMESTAMP, PAYLOAD;
+
+		@Override
+		public String toString() {
+			return name().toLowerCase();
+		}
+	}
+
 }

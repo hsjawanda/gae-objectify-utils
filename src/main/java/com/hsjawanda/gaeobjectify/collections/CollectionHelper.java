@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.api.client.util.Lists;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
@@ -29,6 +30,16 @@ public class CollectionHelper {
 		List<T> retList = new ArrayList<>();
 		for (T item : iterable) {
 			retList.add(item);
+		}
+		return retList;
+	}
+
+	public static <T> List<T> toList(Iterator<T> iterator) {
+		if (null == iterator)
+			return Collections.emptyList();
+		List<T> retList = Lists.newArrayList();
+		while (iterator.hasNext()) {
+			retList.add(iterator.next());
 		}
 		return retList;
 	}

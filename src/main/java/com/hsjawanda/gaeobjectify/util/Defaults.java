@@ -43,9 +43,11 @@ public class Defaults {
 	}
 
 	public static int asInt(String intString, int defaultVal) {
+		if (null == intString)
+			return defaultVal;
 		try {
 			return Integer.parseInt(intString);
-		} catch (NumberFormatException | NullPointerException e) {
+		} catch (NumberFormatException e) {
 			LOG.info(e.getMessage());
 			return defaultVal;
 		}

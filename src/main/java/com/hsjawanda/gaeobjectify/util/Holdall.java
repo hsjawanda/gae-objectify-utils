@@ -147,7 +147,6 @@ public final class Holdall {
 		return constrainToRange(range, value);
 	}
 
-	@SuppressWarnings("null")
 	@Nonnull
 	public static <T> T get(Optional<T> presetVar) {
 		return presetVar.get();

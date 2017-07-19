@@ -20,6 +20,11 @@ import com.googlecode.objectify.annotation.Ignore;
  */
 public class UniqueNamespacedProperty<T> extends UniqueStringProperty<T> {
 
+	/**
+	 * 22/06/17
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static final String separator = ":::";
 
 	private static final Joiner joiner = Joiner.on(separator).skipNulls();

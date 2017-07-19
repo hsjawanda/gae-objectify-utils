@@ -29,14 +29,21 @@ public class CategoryDao extends ObjectifyDao<Category> {
 		return super.filteredQuery(filter);
 	}
 
-	public List<Category> getOrderedForNamespace(String namespace) {
+	public List<Category> getOrderedForNamespace(String namespace, Boolean showOnHomepage) {
 		Filter namespaceFilter = new FilterPredicate("namespace", FilterOperator.EQUAL,
 				Category.normalizeNamespace(namespace));
 		Filter showOnHomepageFilter = new FilterPredicate("showOnHomepage", FilterOperator.EQUAL,
-				Boolean.TRUE);
+				showOnHomepage);
+		Filter finalFilter = namespaceFilter;
+		if (null != showOnHomepage) {
+			finalFilter = CompositeFilterOperator.and(namespaceFilter, showOnHomepageFilter);
+		}
 		Pager<Category> pgr = Pager.<Category>builder().limit(50).build();
-		return getPaginatedEntities(pgr,
-				CompositeFilterOperator.and(namespaceFilter, showOnHomepageFilter), "order");
+		return getPaginatedEntities(pgr, finalFilter, "order");
+	}
+
+	public List<Category> getOrderedForNamespace(String namespace) {
+		return getOrderedForNamespace(namespace, true);
 	}
 
 }

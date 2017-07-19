@@ -3,7 +3,6 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Collections;
@@ -34,7 +33,7 @@ public class Pager<T> {
 
 	public static final int							PAGE_NUM_MIN		= 1;
 
-	public static Range<Integer>					RESULT_LIMIT_RANGE	= Range.closed(1, 500);
+	public static Range<Integer>					RESULT_LIMIT_RANGE	= Range.closed(1, 5000);
 
 	public static int								DEFAULT_LIMIT		= 200;
 
@@ -63,16 +62,15 @@ public class Pager<T> {
 
 	private List<T>									results;
 
-	@SuppressWarnings("null")
 	@Builder
-	private Pager(Integer limit, Boolean genTotalResults, String cursorStr) {
+	private Pager(Integer limit, Boolean genTotalResults, String cursorStr, String searchCursorStr) {
 		setLimit(Defaults.or(limit, Integer.valueOf(DEFAULT_LIMIT)).intValue());
 		setGenTotalResults(Defaults.or(genTotalResults, Boolean.FALSE));
 		setCursorStr(cursorStr);
+		setSearchCursorStr(searchCursorStr);
 	}
 
 	@Nonnull
-	@SuppressWarnings("null")
 	public static <T> Pager<T> getDefault(int limit) {
 		limit = Holdall.constrainToRange(RESULT_LIMIT_RANGE, Integer.valueOf(limit)).intValue();
 		return Pager.<T> builder().limit(limit).build();
@@ -124,8 +122,19 @@ public class Pager<T> {
 
 	public String getCursorStr() {
 		if (null == this.cursor)
-			return EMPTY;
+			return null;
 		return this.cursor.toWebSafeString();
+	}
+
+	public String getSearchCursorStr() {
+		return null != this.searchCursor ? this.searchCursor.toWebSafeString() : null;
+	}
+
+	public com.google.appengine.api.search.Cursor getSearchCursor() {
+		if (null == this.searchCursor) {
+			this.searchCursor = com.google.appengine.api.search.Cursor.newBuilder().build();
+		}
+		return this.searchCursor;
 	}
 
 	public Pager<T> setSearchCursorStr(String cursorStr) {
@@ -136,9 +145,9 @@ public class Pager<T> {
 				this.searchCursor = com.google.appengine.api.search.Cursor.newBuilder().build(
 						cursorStr);
 			} catch (IllegalArgumentException e) {
-				LOG.warning("The supplied cursor string couldn't be decoded as a valid search "
-						+ "Cursor:" + cursorStr);
-				this.cursor = null;
+				LOG.warning("Cursor string couldn't be decoded as a valid search Cursor: "
+						+ cursorStr);
+				this.searchCursor = null;
 			}
 		}
 		return this;

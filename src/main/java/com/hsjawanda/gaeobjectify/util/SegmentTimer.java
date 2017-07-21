@@ -53,10 +53,14 @@ public class SegmentTimer {
 	}
 
 	public String start() throws IllegalStateException {
+		return start(null);
+	}
+
+	public String start(@Nullable String mesg) {
 		checkState(this.timers.isEmpty(), "The timer is already running, it can't be re-started");
-//		checkState(!this.finalStop, "Timer has been stopped, it can't be started again.");
+		checkState(!this.finalStop, "Timer has been stopped, it can't be started again.");
 		this.timers.add(Stopwatch.createStarted());
-		return "Started timer";
+		return "Started timer" + (isNotBlank(mesg) ? ": " + mesg : EMPTY);
 	}
 
 	public String next() {

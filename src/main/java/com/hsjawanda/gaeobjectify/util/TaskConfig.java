@@ -68,6 +68,8 @@ public class TaskConfig<T> {
 	@Setter(AccessLevel.PRIVATE)
 	private Map<String, byte[]>				byteParams;
 
+	private static final int DEF_RETRY_LIMIT = 3;
+
 	public static final Range<Long>			DELAY_RANGE	= Range.closed(1L, 60 * 60 * 1000L);
 
 	public static final String				MAPPING		= Config.get("tasks.mapping").or("/task");
@@ -115,9 +117,9 @@ public class TaskConfig<T> {
 		checkArgument(null != q, "Couldn't find a queue with name '" + this.queueName + "'.");
 		String normalizedTaskName = normalizedTaskName();
 		TaskOptions taskOptions = TaskOptions.Builder.withUrl(taskUrl(normalizedTaskName));
-		if (null != this.retryOptions) {
-			taskOptions = taskOptions.retryOptions(this.retryOptions);
-		}
+		RetryOptions ro = null == this.retryOptions ? RetryOptions.Builder
+				.withTaskRetryLimit(DEF_RETRY_LIMIT) : this.retryOptions;
+		taskOptions = taskOptions.retryOptions(ro);
 		if (null != this.host) {
 			taskOptions = taskOptions.header("Host", this.host);
 		}

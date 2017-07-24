@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import com.google.appengine.api.memcache.AsyncMemcacheService;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheService.SetPolicy;
@@ -86,6 +87,9 @@ public class Counter implements Serializable, StringIdEntity {
 
 	private static final MemcacheService			MEMCACHE			= MemcacheServiceFactory
 																				.getMemcacheService();
+
+	private static final AsyncMemcacheService ASYNC_MEMCACHE = MemcacheServiceFactory
+			.getAsyncMemcacheService();
 
 	private static final ObjectifyDao<CounterShard>	SHARD				= new ObjectifyDao<>(
 																				CounterShard.class);
@@ -156,7 +160,7 @@ public class Counter implements Serializable, StringIdEntity {
 					count += shard.getCount();
 				}
 			}
-			MEMCACHE.put(this.name, Long.valueOf(count),
+			ASYNC_MEMCACHE.put(this.name, Long.valueOf(count),
 					Expiration.byDeltaSeconds(COUNT_EXPIRATION), SetPolicy.ADD_ONLY_IF_NOT_PRESENT);
 		}
 		return count;

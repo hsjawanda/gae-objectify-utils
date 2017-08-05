@@ -80,6 +80,11 @@ public class SegmentTimer {
 		return String.format("%3d >>>> %s%s", size, time(lastTimer), segmentLabel);
 	}
 
+	public long prevSegmentTime() {
+		return this.timers.size() > 1 ? this.timers.get(this.timers.size() - 2).elapsed(
+				this.timeUnit) : 0;
+	}
+
 	public SegmentTimer pauseSegment() throws IllegalStateException {
 		int size = this.timers.size();
 		checkState(size >= 1, "Timer isn't running yet, you can't pause a segment");

@@ -13,6 +13,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ import com.google.appengine.api.datastore.QueryResultIterable;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Range;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Result;
@@ -35,6 +37,7 @@ import com.googlecode.objectify.SaveException;
 import com.googlecode.objectify.cmd.Query;
 import com.hsjawanda.gaeobjectify.collections.CollectionHelper;
 import com.hsjawanda.gaeobjectify.util.Constants;
+import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.Pager;
 import com.hsjawanda.gaeobjectify.util.PagingData;
 
@@ -45,11 +48,15 @@ import com.hsjawanda.gaeobjectify.util.PagingData;
  */
 public class ObjectifyDao<T> {
 
-	protected Class<T>		cls;
+	protected Class<T> cls;
 
-	protected final Logger	log;
+	protected final Logger log;
 
-	protected static int	DEFAULT_LIMIT	= 20;
+	protected static int DEFAULT_LIMIT = 20;
+
+	protected static final Range<Integer> MAX_TRIES_RANGE = Range.closed(1, 15);
+
+	protected static final Range<Integer> WAIT_TIME_RANGE = Range.closed(10, 200);
 
 	public ObjectifyDao(Class<T> cls) {
 		this.cls = cls;
@@ -94,16 +101,31 @@ public class ObjectifyDao<T> {
 		return ofy().load().refs(entities);
 	}
 
-	public Optional<T> getById(String id) {
+	public Optional<T> getById(String id, int maxTries, int waitMillis) {
+		maxTries = Holdall.constrainToRange(MAX_TRIES_RANGE, Integer.valueOf(maxTries));
+		waitMillis = Holdall.constrainToRange(WAIT_TIME_RANGE, Integer.valueOf(waitMillis));
+		T entity = null;
 		if (isBlank(id))
 			return Optional.absent();
 		try {
-			return Optional.fromNullable(ofy().load().type(this.cls).id(id).now());
+			for (int i = 0; i < maxTries; i++) {
+				try {
+					entity = ofy().load().type(this.cls).id(id).now();
+					break;
+				} catch (ConcurrentModificationException e) {
+					this.log.info("Failure #" + (i + 1));
+					Holdall.sleep(waitMillis);
+				}
+			}
+			return Optional.fromNullable(entity);
 		} catch (Exception e) {
-			this.log.warning("Error getting by ID: " + e.getClass().getName() + "("
-					+ e.getMessage() + ")");
+			this.log.warning("Error getting by ID: " + Holdall.showException(e));
 			return Optional.absent();
 		}
+	}
+
+	public Optional<T> getById(String id) {
+		return getById(id, 4, 20);
 	}
 
 	public Optional<T> getByIdThrow(String id) {

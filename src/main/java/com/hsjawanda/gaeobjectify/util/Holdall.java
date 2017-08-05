@@ -138,18 +138,19 @@ public final class Holdall {
 	public static Integer constrainToRange(Range<Integer> range, String strVal,
 			@Nonnull Integer defaultValue) {
 		Integer value = Defaults.or(Ints.tryParse(defaultString(strVal)), defaultValue);
-//		T retVal = value;
-//		if (value.compareTo(range.lowerEndpoint()) < 0) {
-//			retVal = range.lowerEndpoint();
-//		} else if (value.compareTo(range.upperEndpoint()) > 0) {
-//			retVal = range.upperEndpoint();
-//		}
 		return constrainToRange(range, value);
 	}
 
 	@Nonnull
 	public static <T> T get(Optional<T> presetVar) {
 		return presetVar.get();
+	}
+
+	public static String showException(Throwable throwable) {
+		if (null == throwable)
+			return EMPTY;
+		return new StringBuilder(50).append(throwable.getClass().getName()).append(" (")
+				.append(throwable.getMessage()).append(").").toString();
 	}
 
 }

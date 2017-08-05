@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Optional;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -29,6 +30,7 @@ import com.hsjawanda.gaeobjectify.util.SplitJoin;
 @Data
 @Accessors(chain = true)
 @Entity
+@Cache(expirationSeconds = 1800)
 public class Category implements GaeEntity, StringIdEntity {
 
 	@Id

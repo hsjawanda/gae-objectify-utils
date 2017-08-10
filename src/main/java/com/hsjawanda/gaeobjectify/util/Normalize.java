@@ -9,6 +9,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
+import javax.annotation.Nullable;
+
 
 /**
  * @author Harshdeep Jawanda <hsjawanda@gmail.com>
@@ -25,6 +27,7 @@ public class Normalize {
 		return INSTANCE;
 	}
 
+	@Nullable
 	public String email(String email) {
 		email = trimToNull(email);
 		return null == email ? null : email.toLowerCase();
@@ -36,6 +39,7 @@ public class Normalize {
 				.replaceAll("-{2,}", "-");
 	}
 
+	@Nullable
 	public String tag(String tag) {
 		if (null == tag)
 			return null;

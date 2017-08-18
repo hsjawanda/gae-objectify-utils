@@ -10,6 +10,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Range;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Result;
@@ -28,6 +30,7 @@ import com.googlecode.objectify.SaveException;
 import com.googlecode.objectify.VoidWork;
 import com.googlecode.objectify.cmd.Query;
 import com.hsjawanda.gaeobjectify.models.GaeEntity;
+import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.PagingData;
 
 
@@ -39,11 +42,38 @@ public class GaeDataUtil {
 
 	private static final Logger log = Logger.getLogger(GaeDataUtil.class.getName());
 
+	protected static final Range<Integer> MAX_TRIES_RANGE = Range.closed(1, 15);
+
+	protected static final Range<Integer> WAIT_TIME_RANGE = Range.closed(10, 200);
+
 	private GaeDataUtil() {
 	}
 
+	public static <T> Optional<T> getByKey(Key<T> key, int maxTries, int waitMillis) {
+		if (null == key)
+			return Optional.absent();
+		maxTries = Holdall.constrainToRange(MAX_TRIES_RANGE, Integer.valueOf(maxTries));
+		waitMillis = Holdall.constrainToRange(WAIT_TIME_RANGE, Integer.valueOf(waitMillis));
+		T entity = null;
+		try {
+			for (int i = 0; i < maxTries; i++) {
+				try {
+					entity = ofy().load().key(key).now();
+					break;
+				} catch (ConcurrentModificationException e) {
+					log.info("Failure #" + (i + 1));
+					Holdall.sleep(waitMillis);
+				}
+			}
+			return Optional.fromNullable(entity);
+		} catch (Exception e) {
+			log.warning("Error getting by ID: " + Holdall.showException(e));
+			return Optional.absent();
+		}
+	}
+
 	public static <T> Optional<T> getByKey(Key<T> key) {
-		return Optional.fromNullable(ofy().load().key(key).now());
+		return getByKey(key, 4, 20);
 	}
 
 	public static <T> Optional<T> getByWebKey(String webKey) {
@@ -65,9 +95,12 @@ public class GaeDataUtil {
 		return ofy().load().refs(entities);
 	}
 
+	public static <T> Optional<T> getById(Class<T> cls, String id, int maxTries, int waitMillis) {
+		return getByKey(Key.create(cls, id), maxTries, waitMillis);
+	}
+
 	public static <T> Optional<T> getById(Class<T> cls, String id) {
-		Key<T> key = Key.create(cls, id);
-		return getByKey(key);
+		return getByKey(Key.create(cls, id), 4, 20);
 	}
 
 	public static <T> Optional<T> getById(Class<T> cls, long id) {
@@ -318,5 +351,16 @@ public class GaeDataUtil {
 				start);
 		Filter before = new FilterPredicate(property, FilterOperator.LESS_THAN, end);
 		return ImmutableList.of(onOrAfter, before);
+	}
+
+	public static <T> ImmutableList<T> entitiesFromRefs(Iterable<Ref<T>> refs) {
+		Map<Key<T>, T> entityMap = getByRefs(refs);
+		ImmutableList.Builder<T> bildr = ImmutableList.builder();
+		for (T entity : entityMap.values()) {
+			if (null != entity) {
+				bildr.add(entity);
+			}
+		}
+		return bildr.build();
 	}
 }

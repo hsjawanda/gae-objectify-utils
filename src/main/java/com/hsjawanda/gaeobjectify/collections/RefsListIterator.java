@@ -3,9 +3,9 @@
  */
 package com.hsjawanda.gaeobjectify.collections;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.ListIterator;
+
+import lombok.NonNull;
 
 import com.googlecode.objectify.Ref;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
@@ -20,8 +20,7 @@ public class RefsListIterator<E> implements ListIterator<E> {
 
 	private ListIterator<Ref<E>> wrapped;
 
-	RefsListIterator(ListIterator<Ref<E>> toWrap) {
-		checkNotNull(toWrap);
+	RefsListIterator(@NonNull ListIterator<Ref<E>> toWrap) {
 		this.wrapped = toWrap;
 	}
 

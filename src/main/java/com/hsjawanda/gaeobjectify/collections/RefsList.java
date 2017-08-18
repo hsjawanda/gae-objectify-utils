@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.googlecode.objectify.Ref;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
 
@@ -48,7 +50,9 @@ public class RefsList<E> implements List<E> {
 		if (null != setToWrap) {
 			toWrap = new ArrayList<Ref<T>>(setToWrap.size());
 			for (Ref<T> ref : setToWrap) {
-				toWrap.add(ref);
+				if (null != ref) {
+					toWrap.add(ref);
+				}
 			}
 		}
 		return wrap(toWrap);
@@ -178,15 +182,6 @@ public class RefsList<E> implements List<E> {
 				return false;
 		}
 		return true;
-
-		// List<Object> refList = new ArrayList<>(c.size());
-		// for (Object element : c) {
-		// Ref<Object> ref = GaeDataUtil.getNullableRefFromPojo(element);
-		// if (null != ref) {
-		// refList.add(ref);
-		// }
-		// }
-		// return this.wrapped.containsAll(refList);
 	}
 
 	/**
@@ -205,8 +200,10 @@ public class RefsList<E> implements List<E> {
 	 * @see java.util.List#get(int)
 	 */
 	@Override
+	@Nullable
 	public E get(int index) {
-		return this.wrapped.get(index).get();
+		Ref<E> element = this.wrapped.get(index);
+		return element == null ? null : element.get();
 	}
 
 	/**

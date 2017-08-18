@@ -22,7 +22,7 @@ public class Tracer {
 			e = new Exception("Just tracing");
 		}
 		StackTraceElement[] elements = e.getStackTrace();
-		StringBuilder trace = new StringBuilder(500);
+		StringBuilder trace = new StringBuilder(700).append(System.lineSeparator());
 		for (int i = startFrame; i < startFrame + numToPrint && i < elements.length; i++) {
 			trace.append(leftPad(Integer.toString(i), 3)).append(". ").append(elements[i])
 					.append(System.lineSeparator());

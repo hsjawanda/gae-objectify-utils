@@ -115,6 +115,7 @@ public class ObjectifyDao<T> {
 				} catch (ConcurrentModificationException e) {
 					this.log.info("Failure #" + (i + 1));
 					Holdall.sleep(waitMillis);
+					waitMillis = waitMillis << 1;
 				}
 			}
 			return Optional.fromNullable(entity);
@@ -125,7 +126,7 @@ public class ObjectifyDao<T> {
 	}
 
 	public Optional<T> getById(String id) {
-		return getById(id, 4, 20);
+		return getById(id, 4, 100);
 	}
 
 	public Optional<T> getByIdThrow(String id) {

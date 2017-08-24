@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.collections;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,33 @@ public class CollectionHelper {
 			retList.add(item);
 		}
 		return retList;
+	}
+
+	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int offset,
+			int numElements) {
+		int size = Integer.MAX_VALUE;
+		if (null == iterable)
+			return ImmutableList.of();
+		if (iterable instanceof Collection) {
+			Collection<T> coll = (Collection<T>) iterable;
+			if (coll.isEmpty())
+				return ImmutableList.of();
+			size = coll.size();
+		}
+		offset = Math.max(0, offset);
+		numElements = Math.max(0, numElements);
+		numElements = Math.min(2000, numElements);
+		if (size <= offset)
+			return ImmutableList.of();
+		int count = 0, upperLimit = offset + numElements;
+		ImmutableList.Builder<T> bildr = ImmutableList.builder();
+		for (T element : iterable) {
+			if (count >= offset && count <= upperLimit) {
+				bildr.add(element);
+			}
+			count++;
+		}
+		return bildr.build();
 	}
 
 	public static <T> List<T> toList(Iterator<T> iterator) {

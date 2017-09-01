@@ -63,10 +63,35 @@ public class ObjectifyDao<T> {
 		this.log = Logger.getLogger(ObjectifyDao.class.getSimpleName() + ":" + this.cls.getName());
 	}
 
-	public Optional<T> getByKey(Key<T> key) {
-		if (null == key)
+	public Optional<T> getByKey(Key<T> id, int maxTries, int waitMillis) {
+		if (null == id)
 			return Optional.absent();
-		return Optional.fromNullable(ofy().load().key(key).now());
+		maxTries = Holdall.constrainToRange(MAX_TRIES_RANGE, Integer.valueOf(maxTries));
+		waitMillis = Holdall.constrainToRange(WAIT_TIME_RANGE, Integer.valueOf(waitMillis));
+		T entity = null;
+		try {
+			int i;
+			for (i = 0; i < maxTries && null == entity; i++) {
+				try {
+					entity = ofy().load().key(id).now();
+				} catch (ConcurrentModificationException e) {
+					Holdall.sleep(waitMillis);
+					waitMillis = waitMillis << 1;
+				}
+			}
+			if (i > 1) {
+				this.log.info(String.format("Retrieved entity in %2d tries: %s", i,
+						(null != entity)));
+			}
+			return Optional.fromNullable(entity);
+		} catch (Exception e) {
+			this.log.warning("Error getting by ID: " + Holdall.showException(e));
+			return Optional.absent();
+		}
+	}
+
+	public Optional<T> getByKey(Key<T> key) {
+		return getByKey(key, 4, 100);
 	}
 
 	public Optional<T> getByWebKey(String webKey) {
@@ -102,27 +127,10 @@ public class ObjectifyDao<T> {
 	}
 
 	public Optional<T> getById(String id, int maxTries, int waitMillis) {
-		maxTries = Holdall.constrainToRange(MAX_TRIES_RANGE, Integer.valueOf(maxTries));
-		waitMillis = Holdall.constrainToRange(WAIT_TIME_RANGE, Integer.valueOf(waitMillis));
-		T entity = null;
 		if (isBlank(id))
 			return Optional.absent();
-		try {
-			for (int i = 0; i < maxTries; i++) {
-				try {
-					entity = ofy().load().type(this.cls).id(id).now();
-					break;
-				} catch (ConcurrentModificationException e) {
-					this.log.info("Failure #" + (i + 1));
-					Holdall.sleep(waitMillis);
-					waitMillis = waitMillis << 1;
-				}
-			}
-			return Optional.fromNullable(entity);
-		} catch (Exception e) {
-			this.log.warning("Error getting by ID: " + Holdall.showException(e));
-			return Optional.absent();
-		}
+		Key<T> key = Key.create(this.cls, id);
+		return getByKey(key, maxTries, waitMillis);
 	}
 
 	public Optional<T> getById(String id) {

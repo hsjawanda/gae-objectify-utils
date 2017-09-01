@@ -141,6 +141,28 @@ public final class Holdall {
 		return constrainToRange(range, value);
 	}
 
+	/**
+	 * Ensure a {@code long} value falls within a closed range.
+	 *
+	 * @param lower
+	 *            the lower end of the closed range
+	 * @param upper
+	 *            the upper end of the close range
+	 * @param value
+	 *            the value to constrain to within the closed range
+	 * @return a range-checked value. If {@code value} is less than
+	 *         {@code lower}, {@code lower} is returned. If {@code value} is
+	 *         greater than {@code upper}, {@code upper} is returned. Else,
+	 *         {@code value} itself is returned.
+	 */
+	public static long constrainToRange(long lower, long upper, long value) {
+		if (value < lower)
+			return lower;
+		else if (value > upper)
+			return upper;
+		return value;
+	}
+
 	@Nonnull
 	public static <T> T get(Optional<T> presetVar) {
 		return presetVar.get();

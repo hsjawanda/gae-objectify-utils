@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.NonNull;
 import freemarker.core.Environment;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
@@ -64,6 +65,10 @@ public class FMHelper {
 		config.setDefaultEncoding("UTF-8");
 	}
 
+	public static Configuration config() {
+		return config;
+	}
+
 	public static boolean processTemplate(String tmpl, Writer writer, Map<String, Object> args,
 			String charEncoding) {
 		if (null == config) {
@@ -91,6 +96,19 @@ public class FMHelper {
 			return false;
 		}
 		return true;
+	}
+
+	public static String processTemplate(@NonNull Template template, Map<String, Object> args,
+			int initialCapacity) {
+		StringWriter sw = new StringWriter(initialCapacity);
+		try {
+			Environment env = template.createProcessingEnvironment(args, sw);
+			env.setOutputEncoding(Constants.UTF_8);
+			env.process();
+		} catch (TemplateException | IOException e) {
+			log.log(Level.WARNING, "Failed to process template '" + template + "'. Stacktrace:", e);
+		}
+		return sw.toString();
 	}
 
 	public static boolean processTemplate(String tmpl, HttpServletResponse res,

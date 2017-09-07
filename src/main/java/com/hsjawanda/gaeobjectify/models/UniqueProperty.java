@@ -18,6 +18,7 @@ import lombok.experimental.Accessors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.Maps;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -54,7 +55,7 @@ public class UniqueProperty implements Serializable {
 	@Setter(AccessLevel.NONE)
 	private String value;
 
-	private Map<String, Object> properties;
+	private Map<String, Object> properties = Maps.newTreeMap();
 
 	@Setter(AccessLevel.NONE)
 	private String referencedWebSafeKey;

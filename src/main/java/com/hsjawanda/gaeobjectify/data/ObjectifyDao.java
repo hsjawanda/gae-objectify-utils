@@ -40,6 +40,7 @@ import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.Pager;
 import com.hsjawanda.gaeobjectify.util.PagingData;
+import com.hsjawanda.gaeobjectify.util.Tracer;
 
 
 /**
@@ -63,8 +64,8 @@ public class ObjectifyDao<T> {
 		this.log = Logger.getLogger(ObjectifyDao.class.getSimpleName() + ":" + this.cls.getName());
 	}
 
-	public Optional<T> getByKey(Key<T> id, int maxTries, int waitMillis) {
-		if (null == id)
+	public Optional<T> getByKey(Key<T> key, int maxTries, int waitMillis) {
+		if (null == key)
 			return Optional.absent();
 		maxTries = Holdall.constrainToRange(MAX_TRIES_RANGE, Integer.valueOf(maxTries));
 		waitMillis = Holdall.constrainToRange(WAIT_TIME_RANGE, Integer.valueOf(waitMillis));
@@ -73,15 +74,19 @@ public class ObjectifyDao<T> {
 			int i;
 			for (i = 0; i < maxTries && null == entity; i++) {
 				try {
-					entity = ofy().load().key(id).now();
+					entity = ofy().load().key(key).now();
+					if (null == entity) {
+						break;
+					}
 				} catch (ConcurrentModificationException e) {
 					Holdall.sleep(waitMillis);
 					waitMillis = waitMillis << 1;
 				}
 			}
 			if (i > 1) {
-				this.log.info(String.format("Retrieved entity in %2d tries: %s", i,
-						(null != entity)));
+				this.log.info(String.format("%2d tries to retrieve by " + key
+						+ ". Succeeded: %s. Called from:\n%s", i, (null != entity),
+						Tracer.partialTrace(null, 1, 7)));
 			}
 			return Optional.fromNullable(entity);
 		} catch (Exception e) {

@@ -60,7 +60,7 @@ public class EmailData implements Serializable {
 
 	private EmailData() {
 		this.id = UniqueIdGenerator.medium();
-		this.isHtml = false;
+		this.isHtml = true;
 		this.dateCreated = Calendar.getInstance().getTime();
 	}
 

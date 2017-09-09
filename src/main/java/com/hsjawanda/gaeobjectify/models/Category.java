@@ -7,13 +7,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Optional;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -22,6 +19,11 @@ import com.hsjawanda.gaeobjectify.data.CategoryDao;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Slugs;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * @author Harshdeep Jawanda <hsjawanda@gmail.com>
@@ -92,6 +94,26 @@ public class Category implements GaeEntity, StringIdEntity {
 	public Category setOrder(int order) {
 		this.order = Math.max(1, order);
 		return this;
+	}
+
+	public Optional<Key<Category>> save() {
+		return DAO.saveEntity(this);
+	}
+
+	public void deferredSave() {
+		DAO.deferredSaveEntity(this);
+	}
+
+	public boolean delete() {
+		return DAO.deleteEntity(this);
+	}
+
+	public void deferredDelete() {
+		DAO.deferredDeleteEntity(this);
+	}
+
+	public Key<Category> key() {
+		return DAO.getKeyFromPojo(this);
 	}
 
 }

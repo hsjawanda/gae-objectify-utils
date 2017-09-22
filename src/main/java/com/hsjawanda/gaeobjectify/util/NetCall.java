@@ -53,7 +53,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.MediaType;
 import com.hsjawanda.gaeobjectify.json.GcmMessage;
-import com.hsjawanda.gaeobjectify.json.GcmResponse;
+import com.hsjawanda.gaeobjectify.json.FcmResponse;
 
 
 /**
@@ -295,12 +295,12 @@ public class NetCall {
 	// Registration token:
 	// nFtrGlHegjs:APA91bH0mJiGN58zKfSe5HhtEvnt8-QO1djlX0iHDTiO1fxS375WAuuLEygpxq8OiD1Dg6O3MyE39Hryw2tsTBolvB24FM8IYStDYNVyGBZDVEtVq1ChqHNpvkNdVRuQOCZSEFcoNG2M
 	// Device id: e0f961349fcfcbd465935dca12249f8e503063bc407d41e3ecb7be5ca6f37b2f
-	public static GcmResponse sendGcmMessage(Map<String, Object> message, boolean debug)
+	public static FcmResponse sendGcmMessage(Map<String, Object> message, boolean debug)
 			throws JsonParseException, JsonMappingException, IOException {
 		HttpRequestFactory factory = getGcmRequestFactory();
 		JsonHttpContent content = new JsonHttpContent(getJsonFactory(), message);
 		String response = EMPTY;
-		GcmResponse resp = null;
+		FcmResponse resp = null;
 		Object json;
 		try {
 			HttpRequest req = factory.buildPostRequest(gcmDownstreamUrl, content);
@@ -317,7 +317,7 @@ public class NetCall {
 			}
 			HttpResponse res = req.execute();
 			response = IOUtils.toString(res.getContent());
-			resp = mapper.readValue(response, GcmResponse.class);
+			resp = mapper.readValue(response, FcmResponse.class);
 			resp.setStatusCode(res.getStatusCode()).setStatusMessage(res.getStatusMessage());
 			if (debug) {
 				json = mapper.readValue(response, Object.class);
@@ -331,17 +331,17 @@ public class NetCall {
 		return resp;
 	}
 
-	public static GcmResponse sendGcmMessage(Map<String, Object> message)
+	public static FcmResponse sendGcmMessage(Map<String, Object> message)
 			throws JsonParseException, JsonMappingException, IOException {
 		return sendGcmMessage(message, false);
 	}
 
-	public static GcmResponse sendGcmMessage(GcmMessage mesg, boolean debug)
+	public static FcmResponse sendGcmMessage(GcmMessage mesg, boolean debug)
 			throws JsonParseException, JsonMappingException, IOException {
 		return sendGcmMessage(mesg.asMap(), debug);
 	}
 
-	public static GcmResponse sendGcmMessage(GcmMessage mesg)
+	public static FcmResponse sendGcmMessage(GcmMessage mesg)
 			throws JsonParseException, JsonMappingException, IOException {
 		return sendGcmMessage(mesg.asMap(), false);
 	}

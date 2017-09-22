@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
@@ -47,8 +48,12 @@ public class Defaults {
 			return defaultVal;
 		try {
 			return Integer.parseInt(intString);
-		} catch (NumberFormatException e) {
-			LOG.info(e.getMessage());
+		} catch (Exception e) {
+			if (e instanceof NumberFormatException) {
+				LOG.warning(e.getMessage());
+			} else {
+				LOG.log(Level.WARNING, "Couldn't parse <" + intString + "> as a valid number. Returned default.", e);
+			}
 			return defaultVal;
 		}
 	}

@@ -11,13 +11,9 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 import java.io.Serializable;
 import java.util.Map;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
@@ -27,6 +23,11 @@ import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 import com.hsjawanda.gaeobjectify.data.UniquePropertyDao;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 
 /**
@@ -110,6 +111,14 @@ public class UniqueProperty implements Serializable {
 
 	public String getNamespace() {
 		return StringUtils.defaultString(this.namespace);
+	}
+
+	public Optional<Key<UniqueProperty>> save() {
+		return BASE.saveEntity(this);
+	}
+
+	public void deferredSave() {
+		BASE.deferredSaveEntity(this);
 	}
 
 //

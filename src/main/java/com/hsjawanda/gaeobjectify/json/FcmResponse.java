@@ -4,7 +4,6 @@
 package com.hsjawanda.gaeobjectify.json;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,7 +15,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class GcmResponse {
+public class FcmResponse {
 
 	private String multicast_id;
 
@@ -30,9 +29,11 @@ public class GcmResponse {
 
 	private String statusMessage;
 
-	private List<Map<String, String>> results;
+	private List<FcmResponseResult> results;
 
 	public static final String ERROR = "error";
 
 	public static final String NOT_REGISTERED = "NotRegistered";
+
+	public static final String UNAVAILABLE = "Unavailable";
 }

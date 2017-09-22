@@ -9,6 +9,7 @@ import com.google.common.base.Optional;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 
 
 /**
@@ -23,6 +24,7 @@ public abstract class UniqueStringProperty<T> implements Serializable {
 	@Id
 	private String	id;
 
+	@Load
 	private Ref<T>	reference;
 
 	protected UniqueStringProperty() {

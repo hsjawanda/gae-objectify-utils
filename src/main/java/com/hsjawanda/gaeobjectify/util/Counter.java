@@ -18,13 +18,6 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 import com.google.appengine.api.memcache.AsyncMemcacheService;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
@@ -37,6 +30,13 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
 import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 import com.hsjawanda.gaeobjectify.models.StringIdEntity;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 
 
@@ -131,6 +131,7 @@ public class Counter implements Serializable, StringIdEntity {
 		final int shardNum = this.CHOOSER.nextInt(this.numShards);
 		final String shardId = new StringBuilder(DEFAULT_SB_LEN).append(this.name).append(SEPARATOR)
 				.append(shardNum).toString();
+		MEMCACHE.delete(this.name);
 		ofy().transact(new VoidWork() {
 			@Override
 			public void vrun() {
@@ -143,7 +144,6 @@ public class Counter implements Serializable, StringIdEntity {
 				SHARD.deferredSaveEntity(shard);
 			}
 		});
-		MEMCACHE.delete(this.name);
 	}
 
 	public long getCount(boolean skipCache) {
@@ -151,8 +151,6 @@ public class Counter implements Serializable, StringIdEntity {
 		Long countObj = (Long) MEMCACHE.get(this.name);
 		if (null != countObj && !skipCache) {
 			count = countObj.longValue();
-			LOG.info("Found value of counter " + this.name + " in Memcache: " + count
-					/*+ System.lineSeparator() + "Called from: " + Tracer.callerLocation()*/);
 		} else {
 			// TODO: maybe use BigInteger to avoid overflow?
 			for (CounterShard shard : getAllShards()) {
@@ -176,8 +174,6 @@ public class Counter implements Serializable, StringIdEntity {
 		Long countObj = (Long) MEMCACHE.get(name);
 		if (null != countObj && !skipCache) {
 			count = countObj.longValue();
-			LOG.info("Found value of counter " + name + " in Memcache: " + count
-					/*+ System.lineSeparator() + "Called from: " + Tracer.partialTrace(null, 0, 20)*/);
 		} else {
 			// TODO: maybe use BigInteger to avoid overflow?
 			Counter counter = CounterSvc.get(name, null);

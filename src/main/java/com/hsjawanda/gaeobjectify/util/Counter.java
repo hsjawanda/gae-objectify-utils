@@ -45,7 +45,7 @@ import lombok.experimental.Accessors;
  *
  */
 @Entity
-@Cache(expirationSeconds = 120)
+@Cache(expirationSeconds = 600)
 @Data
 @EqualsAndHashCode(of = {"name"})
 @Accessors(chain = true)
@@ -56,15 +56,13 @@ public class Counter implements Serializable, StringIdEntity {
 	 */
 	private static final long						serialVersionUID	= 1L;
 
+	@SuppressWarnings("unused")
 	private static Logger							LOG					= Logger.getLogger(Counter.class
 																				.getName());
 
 	@Id
 	@Setter(AccessLevel.PRIVATE)
 	private String									name;
-
-//	@Setter(AccessLevel.NONE)
-//	private long									dateLastModified;
 
 	private int										numShards;
 

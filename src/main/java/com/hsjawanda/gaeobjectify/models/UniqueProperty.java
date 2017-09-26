@@ -70,6 +70,8 @@ public class UniqueProperty implements Serializable {
 
 	public static final String AC_CREATOR_NAME = "acCreatorName";
 
+	public static final String AC_CREATOR_KEY = "acCreatorKey";
+
 	public static final String SMS_LAST_SENT = "smsLastSent";
 
 	private UniqueProperty() {

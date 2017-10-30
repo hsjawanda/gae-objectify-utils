@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 
-import lombok.NonNull;
-
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.QueryResultIterable;
@@ -41,6 +39,8 @@ import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.Pager;
 import com.hsjawanda.gaeobjectify.util.PagingData;
 import com.hsjawanda.gaeobjectify.util.Tracer;
+
+import lombok.NonNull;
 
 
 /**
@@ -303,11 +303,7 @@ public class ObjectifyDao<T> {
 		try {
 			return Optional.fromNullable(ofy().save().entity(entity));
 		} catch (Exception e) {
-			if (e instanceof SaveException) {
-				this.log.warning("Failed to save entity because: " + e.getMessage());
-			} else {
-				this.log.log(Level.WARNING, "Failed to save entity.", e);
-			}
+			this.log.warning("Failed to save entity because: " + e.getMessage());
 			throw e;
 		}
 	}
@@ -565,8 +561,7 @@ public class ObjectifyDao<T> {
 			Iterable<String> sorts) throws NullPointerException {
 		QueryResultIterator<T> qryItr = getResults(pgr, filters, sorts);
 		List<T> retList = CollectionHelper.toImmutableList(qryItr, pgr.getLimit());
-		Cursor nextCursor = retList.size() > 0 ? qryItr.getCursor() : null;
-		pgr.setCursor(nextCursor);
+		pgr.setCursor(retList.size() > 0 ? qryItr.getCursor() : null);
 		return retList;
 	}
 
@@ -605,8 +600,7 @@ public class ObjectifyDao<T> {
 		qry = qry.limit(pgr.getLimit());
 		if (null != pgr.getCursor()) {
 			try {
-				Cursor startCursor = pgr.getCursor();
-				qry = qry.startAt(startCursor);
+				qry = qry.startAt(pgr.getCursor());
 			} catch (Exception e) {
 				this.log.log(Level.WARNING,
 						"Exceptiong creating Datastore startCursor. Stacktrace:", e);
@@ -668,7 +662,6 @@ public class ObjectifyDao<T> {
 
 	public int getEntityCount(Iterable<? extends Filter> filters, int limit) {
 		limit = Math.max(1, limit);
-		limit = Math.min(50000, limit);
 		Query<T> qry = ofy().load().type(this.cls).limit(limit);
 		if (null != filters) {
 			for (Filter filter : filters) {

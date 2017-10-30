@@ -131,6 +131,10 @@ public class Config {
 		return StringHelper.getAsInt(get(key).orNull(), defaultValue);
 	}
 
+	public static Integer getAsInteger(String key) {
+		return StringHelper.getAsInteger(get(key).orNull());
+	}
+
 	public static <T extends Enum<?>> Boolean getAsBoolean(T key) {
 		return StringHelper.getAsBoolean(get(key).orNull());
 	}

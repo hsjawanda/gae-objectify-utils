@@ -87,6 +87,21 @@ public class StringHelper {
 		return defaultValue;
 	}
 
+	public static Integer getAsInteger(String stringValue) {
+		if (isNotBlank(stringValue)) {
+			try {
+				return Integer.valueOf(stringValue);
+			} catch (NumberFormatException e) {
+				log.warning(
+						"Exception converting '" + stringValue + "' to Integer: " + e.getMessage());
+			} catch (Exception e) {
+				log.log(Level.WARNING,
+						"Exception converting '" + stringValue + "' to Integer. Stacktrace:", e);
+			}
+		}
+		return null;
+	}
+
 	public static Double getAsDouble(String stringValue) {
 		if (null == stringValue)
 			return null;

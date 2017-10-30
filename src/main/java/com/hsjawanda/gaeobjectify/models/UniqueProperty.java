@@ -9,10 +9,14 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.googlecode.objectify.Key;
@@ -22,10 +26,12 @@ import com.googlecode.objectify.annotation.Index;
 import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 import com.hsjawanda.gaeobjectify.data.UniquePropertyDao;
 import com.hsjawanda.gaeobjectify.util.Constants;
+import com.hsjawanda.gaeobjectify.util.Pager;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -73,6 +79,8 @@ public class UniqueProperty implements Serializable {
 	public static final String AC_CREATOR_KEY = "acCreatorKey";
 
 	public static final String SMS_LAST_SENT = "smsLastSent";
+
+	public static final String SHORT_URL = "shortUrl";
 
 	private UniqueProperty() {
 	}
@@ -150,6 +158,13 @@ public class UniqueProperty implements Serializable {
 	 */
 	public static boolean deleteByKey(Key<UniqueProperty> key) {
 		return BASE.deleteByKey(key);
+	}
+
+	public static List<UniqueProperty> getByNamespace(@NonNull Pager<UniqueProperty> pgr, @NonNull String namespace)
+			throws NullPointerException, IllegalArgumentException {
+		checkArgument(isNotBlank(namespace), "namespace" + Constants.NOT_BLANK);
+		Filter filter = new FilterPredicate("namespace", FilterOperator.EQUAL, namespace);
+		return BASE.getPaginatedEntities(pgr, filter, null);
 	}
 
 }

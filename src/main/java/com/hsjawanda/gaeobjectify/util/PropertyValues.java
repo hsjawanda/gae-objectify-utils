@@ -40,6 +40,15 @@ public class PropertyValues {
 		return new PropertyValues(separator);
 	}
 
+	public PropertyValues addProperties(Map<String, Object> values) {
+		if (null != values) {
+			for (String key : values.keySet()) {
+				addProperty(key, values.get(key));
+			}
+		}
+		return this;
+	}
+
 	public PropertyValues addProperty(String property, Object value) {
 		if (StringUtils.isNotBlank(property)) {
 			this.properties.put(property, value);

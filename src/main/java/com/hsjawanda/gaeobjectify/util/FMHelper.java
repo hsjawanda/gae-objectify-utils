@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.NonNull;
 import freemarker.core.Environment;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
@@ -24,6 +23,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateModelException;
+import lombok.NonNull;
 
 
 /**
@@ -43,10 +43,12 @@ public class FMHelper {
 	private FMHelper() {
 	}
 
-	public static void init(String documentRoot) {
+	public static void init(String documentRoot, boolean debug) {
 		if (null != config)
 			return;
-		log.info("Initializing FM with documentRoot '" + documentRoot + "'");
+		if (debug) {
+			log.info("Initializing FM with documentRoot '" + documentRoot + "'");
+		}
 		config = new Configuration();
 		docRoot = new File(documentRoot);
 		try {
@@ -63,6 +65,10 @@ public class FMHelper {
 			config.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
 		}
 		config.setDefaultEncoding("UTF-8");
+	}
+
+	public static void init(String documentRoot) {
+		init(documentRoot, false);
 	}
 
 	public static Configuration config() {

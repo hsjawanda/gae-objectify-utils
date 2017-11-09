@@ -154,13 +154,13 @@ public class SegmentTimer {
 					.append(leftPad(line.elapsed, longestTime));
 			count++;
 		}
-		int totalTime = 0;
+		long totalTime = 0;
 		for (Stopwatch timer : this.timers) {
 			totalTime += timer.elapsed(this.timeUnit);
 		}
 		return report.append(NL).append(repeat('-', 5 + longestText + 3 + longestTime)).append(NL)
-				.append(leftPad("Total time: ", 5 + longestText + 1)).append(totalTime).append(this.timeUnitStr)
-				.toString();
+				.append(leftPad("Total time: ", 5 + longestText + 1))
+				.append(leftPad(time(totalTime), longestTime + 1)).append(this.timeUnitStr).toString();
 	}
 
 	private SegmentTimer timeUnitStr(TimeUnit tu) {
@@ -173,6 +173,10 @@ public class SegmentTimer {
 			return Long.toString(timer.elapsed(this.timeUnit)) + timeUnitStr();
 		else
 			return timer.toString();
+	}
+
+	private String time(long timeValue) {
+		return Long.toString(timeValue) + this.timeUnitStr;
 	}
 
 	private static String display(TimeUnit unit) {

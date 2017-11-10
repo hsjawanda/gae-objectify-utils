@@ -159,8 +159,8 @@ public class SegmentTimer {
 			totalTime += timer.elapsed(this.timeUnit);
 		}
 		return report.append(NL).append(repeat('-', 5 + longestText + 3 + longestTime)).append(NL)
-				.append(leftPad("Total time: ", 5 + longestText + 1))
-				.append(leftPad(time(totalTime), longestTime + 1)).append(this.timeUnitStr).toString();
+				.append(leftPad("Total time: ", 5 + longestText + 1)).append(leftPad(time(totalTime), longestTime + 1))
+				.toString();
 	}
 
 	private SegmentTimer timeUnitStr(TimeUnit tu) {

@@ -13,11 +13,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Optional;
 import com.googlecode.objectify.annotation.Cache;
@@ -26,6 +21,11 @@ import com.googlecode.objectify.annotation.Id;
 import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Normalize;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 
 /**
@@ -47,6 +47,14 @@ public class Setting implements StringIdEntity, Serializable {
 	private String								name;
 
 	private List<String>						value	= new ArrayList<>();
+
+	public static final String TYPE_STRING = "String";
+
+	public static final String TYPE_LONG = "long";
+
+	public static final String TYPE_BOOLEAN = "boolean";
+
+	private String								type = TYPE_STRING;
 
 	public static final ObjectifyDao<Setting>	DAO		= new ObjectifyDao<>(Setting.class);
 

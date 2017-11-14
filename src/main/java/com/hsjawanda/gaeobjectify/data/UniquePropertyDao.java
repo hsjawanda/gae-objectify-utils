@@ -61,6 +61,14 @@ public class UniquePropertyDao {
 		return OBJ_DAO.deleteEntity(entity);
 	}
 
+	public void deferredDelete(UniqueProperty entity) {
+		OBJ_DAO.deferredDeleteEntity(entity);
+	}
+
+	public void deferredDeleteById(String id) {
+		OBJ_DAO.deferredDeleteById(id);
+	}
+
 	/**
 	 * @param key
 	 * @return

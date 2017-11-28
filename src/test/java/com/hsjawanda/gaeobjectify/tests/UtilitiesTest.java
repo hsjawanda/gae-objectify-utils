@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.hsjawanda.gaeobjectify.models.UniqueIndex;
+import com.hsjawanda.gaeobjectify.util.BaseX;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
@@ -93,6 +94,24 @@ public class UtilitiesTest {
 		assertTrue(retVal == highValue);
 		retVal = Holdall.constrainToRange(allowable, highValue - 1);
 		assertTrue(retVal == highValue - 1);
+	}
+
+	@Test
+	public void testBaseXEncoding() {
+		BaseX defaultBase62 = BaseX.get("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		BaseX base62 = BaseX.get("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+		assertEquals("qZ", defaultBase62.encode10(1673));
+		assertEquals("0", defaultBase62.encode10(0));
+		assertEquals("A9", base62.encode10(1673));
+		assertEquals("a", base62.encode10(0));
+		assertEquals("d0ja", BaseX.URL_SAFE_BASE64.encode10(1_000_000));
+		assertEquals("7MSOa", BaseX.URL_SAFE_BASE64.encode10(1_000_000_000));
+	}
+
+	@Test
+	public void testBaseXDecoding() {
+		assertEquals(1_000_000, BaseX.URL_SAFE_BASE64.decode10("d0ja"));
+		assertEquals(1_000_000_000, BaseX.URL_SAFE_BASE64.decode10("7MSOa"));
 	}
 
 }

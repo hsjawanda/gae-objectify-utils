@@ -78,6 +78,11 @@ public class Setting implements StringIdEntity, Serializable {
 		return setting.isPresent() ? setting.get().getAsInt(defaultValue) : defaultValue;
 	}
 
+	public static long getAsLong(String name, long defaultValue) {
+		Optional<Setting> setting = getByName(name);
+		return setting.isPresent() ? setting.get().getAsLong(defaultValue) : defaultValue;
+	}
+
 	public static String getAsStr(String name, String defaultValue) {
 		Optional<Setting> setting = getByName(name);
 		return setting.isPresent() ? setting.get().getValue() : defaultValue;

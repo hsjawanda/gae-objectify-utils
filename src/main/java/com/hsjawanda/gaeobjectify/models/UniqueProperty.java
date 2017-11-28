@@ -20,6 +20,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -41,9 +42,10 @@ import lombok.experimental.Accessors;
  *
  */
 @Entity
+@Cache(expirationSeconds = 300)
 @Data
 @Accessors(chain = true)
-public class UniqueProperty implements Serializable {
+public class UniqueProperty implements Serializable, StringIdEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,7 +66,7 @@ public class UniqueProperty implements Serializable {
 
 	private Map<String, Object> properties = Maps.newTreeMap();
 
-	@Setter(AccessLevel.NONE)
+	@Setter(AccessLevel.PUBLIC)
 	private String referencedWebSafeKey;
 
 	private static final ObjectifyDao<UniqueProperty> BASE = new ObjectifyDao<>(
@@ -111,6 +113,7 @@ public class UniqueProperty implements Serializable {
 	/**
 	 * @return the id
 	 */
+	@Override
 	public String getId() {
 		return this.id;
 	}

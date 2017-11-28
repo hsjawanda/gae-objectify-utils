@@ -85,8 +85,8 @@ public class ObjectifyDao<T> {
 			}
 			if (i > 1) {
 				this.log.info(String.format("%2d tries to retrieve by " + key
-						+ ". Succeeded: %s. Called from:\n%s", i, (null != entity),
-						Tracer.partialTrace(null, 1, 7)));
+						+ ". Succeeded: %s. Last waitMillis: %d. Stacktrace:\n%s", i, (null != entity), waitMillis,
+						Tracer.partialTrace(null, 0, 7)));
 			}
 			return Optional.fromNullable(entity);
 		} catch (Exception e) {

@@ -52,4 +52,9 @@ public class Tracer {
 		return null;
 	}
 
+	public static String callingMethodName() {
+		StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+		return null != stackTrace && stackTrace.length > 1 ? stackTrace[1].getMethodName() + "(...)" : "Unknown";
+	}
+
 }

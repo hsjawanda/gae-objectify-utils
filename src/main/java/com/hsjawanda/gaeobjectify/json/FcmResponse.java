@@ -36,4 +36,6 @@ public class FcmResponse {
 	public static final String NOT_REGISTERED = "NotRegistered";
 
 	public static final String UNAVAILABLE = "Unavailable";
+
+	public static final String INTERNAL_SERVER_ERROR = "InternalServerError";
 }

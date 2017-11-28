@@ -179,7 +179,7 @@ public class SegmentTimer {
 		return Long.toString(timeValue) + this.timeUnitStr;
 	}
 
-	private static String display(TimeUnit unit) {
+	public static String display(TimeUnit unit) {
 		switch (unit) {
 		case NANOSECONDS:
 			return " ns";

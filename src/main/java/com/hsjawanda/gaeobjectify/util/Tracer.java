@@ -54,7 +54,12 @@ public class Tracer {
 
 	public static String callingMethodName() {
 		StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-		return null != stackTrace && stackTrace.length > 1 ? stackTrace[1].getMethodName() + "(...)" : "Unknown";
+		return null != stackTrace && stackTrace.length > 1 ? stackTrace[1].getMethodName() + "()" : "Unknown";
+	}
+
+	public static String callingMethodFqn() {
+		StackTraceElement[] st = new Throwable().getStackTrace();
+		return null != st && st.length >= 2 ? st[1].getClassName() + " " + st[1].getMethodName() + "()" : "Unknown";
 	}
 
 }

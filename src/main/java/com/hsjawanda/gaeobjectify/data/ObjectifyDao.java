@@ -90,7 +90,7 @@ public class ObjectifyDao<T> {
 			}
 			return Optional.fromNullable(entity);
 		} catch (Exception e) {
-			this.log.warning("Error getting by ID: " + Holdall.showException(e));
+			this.log.log(Level.WARNING, "Error getting by Key<T>", e);
 			return Optional.absent();
 		}
 	}
@@ -662,7 +662,7 @@ public class ObjectifyDao<T> {
 
 	public int getEntityCount(Iterable<? extends Filter> filters, int limit) {
 		limit = Math.max(1, limit);
-		Query<T> qry = ofy().load().type(this.cls).limit(limit);
+		Query<T> qry = ofy().transactionless().load().type(this.cls).limit(limit);
 		if (null != filters) {
 			for (Filter filter : filters) {
 				if (null != filter) {

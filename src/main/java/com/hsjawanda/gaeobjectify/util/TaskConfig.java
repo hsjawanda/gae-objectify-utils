@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -18,12 +19,14 @@ import java.util.logging.Logger;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.RetryOptions;
+import com.google.appengine.api.taskqueue.TaskAlreadyExistsException;
 import com.google.appengine.api.taskqueue.TaskHandle;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Range;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.Singular;
@@ -50,15 +53,24 @@ public class TaskConfig<T> {
 
 	private String							queueName;
 
+	@Setter(AccessLevel.NONE)
+	private Queue							queue;
+
 	private String							host;
 
 	private RetryOptions					retryOptions;
 
-	private long							delayMillis;
+	private long							delayMillis		= -1;
+
+	private long							startMillis;
 
 	private boolean							addTimestamp;
 
 	private boolean							useAutoNaming;
+
+	@Getter(AccessLevel.PRIVATE)
+	@Setter(AccessLevel.NONE)
+	private String							taskName;
 
 	@Singular()
 	@Setter(AccessLevel.PRIVATE)
@@ -109,14 +121,8 @@ public class TaskConfig<T> {
 		return this;
 	}
 
-	private Future<TaskHandle> addToQueue(boolean async) throws IllegalArgumentException {
-		Queue q = null;
-		if (null == this.queueName) {
-			q = QueueFactory.getDefaultQueue();
-		} else {
-			q = QueueFactory.getQueue(this.queueName);
-		}
-		checkArgument(null != q, "Couldn't find a queue with name '" + this.queueName + "'.");
+	private TaskOptions buildTaskOptions() throws IllegalStateException, TaskAlreadyExistsException {
+		checkState(null != this.queue, "No valid queue has been set.");
 		String normalizedTaskName = normalizedTaskName();
 		TaskOptions taskOptions = TaskOptions.Builder.withUrl(taskUrl(normalizedTaskName));
 		RetryOptions ro = null == this.retryOptions ? RetryOptions.Builder.withTaskRetryLimit(
@@ -134,7 +140,8 @@ public class TaskConfig<T> {
 				TasksHelper.TASK_DATE.setTimeZone(Constants.IST);
 				taskName.append('_').append(TasksHelper.TASK_DATE.format(new Date()));
 			}
-			taskOptions = taskOptions.taskName(taskName.toString());
+			this.taskName = taskName.toString();
+			taskOptions = taskOptions.taskName(this.taskName);
 		}
 		if (null != this.strParams) {
 			for (String key : this.strParams.keySet()) {
@@ -149,21 +156,36 @@ public class TaskConfig<T> {
 		if (null != this.payload) {
 			taskOptions = taskOptions.payload(this.payload);
 		}
-		taskOptions = taskOptions.countdownMillis(this.delayMillis);
-		if (async)
-			return q.addAsync(taskOptions);
-		else {
-			q.add(taskOptions);
+		if (this.delayMillis > 0) {
+			taskOptions = taskOptions.countdownMillis(this.delayMillis);
 		}
-		return null;
+		if (this.startMillis > 0) {
+			taskOptions = taskOptions.etaMillis(this.startMillis);
+		}
+		return taskOptions;
 	}
 
-	public void addToQueue() {
-		addToQueue(false);
+	public TaskHandle addToQueue() throws IllegalStateException, TaskAlreadyExistsException {
+		return this.queue.add(buildTaskOptions());
+
 	}
 
 	public Future<TaskHandle> addToQueueAsync() {
-		return addToQueue(true);
+		return this.queue.addAsync(buildTaskOptions());
+	}
+
+	public void tryAddToQueue() throws IllegalStateException {
+		try {
+			addToQueue();
+		} catch (TaskAlreadyExistsException e) {
+			LOG.info("Task named " + this.taskName + " already exists. Ignoring this task addition.");
+		}
+	}
+
+	public TaskConfig<T> setQueueName(String qName) throws IllegalArgumentException {
+		this.queue = null == qName ? QueueFactory.getDefaultQueue() : QueueFactory.getQueue(qName);
+		checkArgument(null != this.queue, "Couldn't find a queue with name '" + qName + "'.");
+		return this;
 	}
 
 	private String normalizedTaskName() {

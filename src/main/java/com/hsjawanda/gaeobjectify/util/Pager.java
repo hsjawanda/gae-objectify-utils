@@ -11,14 +11,14 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.appengine.api.datastore.Cursor;
+import com.google.common.collect.Range;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.appengine.api.datastore.Cursor;
-import com.google.common.collect.Range;
 
 
 /**
@@ -176,6 +176,15 @@ public class Pager<T> {
 
 		private int limit = 500;
 
+	}
+
+	/**
+	 * "Reset" this {@code Pager}. What exactly that means is encapsulated within this class.
+	 */
+	public void reset() {
+		this.cursor = null;
+		this.searchCursor = null;
+		this.results = null;
 	}
 
 }

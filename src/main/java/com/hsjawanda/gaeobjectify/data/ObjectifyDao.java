@@ -679,7 +679,7 @@ public class ObjectifyDao<T> {
 	}
 
 	public int getEntityCount(Filter filter) {
-		return getEntityCount(filter, 5000);
+		return getEntityCount(filter, 20_000);
 	}
 
 	public QueryResultIterable<Key<T>> getKeysByQuery(@NonNull Pager<?> pgr,

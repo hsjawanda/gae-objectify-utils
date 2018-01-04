@@ -15,12 +15,6 @@ import java.util.TimeZone;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.Singular;
-import lombok.experimental.Accessors;
-
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.RetryOptions;
@@ -28,6 +22,12 @@ import com.google.appengine.api.taskqueue.TaskHandle;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Range;
+
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.Singular;
+import lombok.experimental.Accessors;
 
 
 /**
@@ -67,6 +67,8 @@ public class TaskConfig<T> {
 	@Singular
 	@Setter(AccessLevel.PRIVATE)
 	private Map<String, byte[]>				byteParams;
+
+	private byte[]							payload;
 
 	private static final int DEF_RETRY_LIMIT = 2;
 
@@ -144,9 +146,10 @@ public class TaskConfig<T> {
 				taskOptions = taskOptions.param(key, this.byteParams.get(key));
 			}
 		}
-		if (DELAY_RANGE.contains(this.delayMillis)) {
-			taskOptions = taskOptions.countdownMillis(this.delayMillis);
+		if (null != this.payload) {
+			taskOptions = taskOptions.payload(this.payload);
 		}
+		taskOptions = taskOptions.countdownMillis(this.delayMillis);
 		if (async)
 			return q.addAsync(taskOptions);
 		else {

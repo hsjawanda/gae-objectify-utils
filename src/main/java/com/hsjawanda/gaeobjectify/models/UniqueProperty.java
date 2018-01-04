@@ -126,12 +126,16 @@ public class UniqueProperty implements Serializable, StringIdEntity {
 		return StringUtils.defaultString(this.namespace);
 	}
 
-	public Optional<Key<UniqueProperty>> save() {
-		return BASE.saveEntity(this);
+	public void deferredDelete() {
+		BASE.deferredDeleteEntity(this);
 	}
 
 	public void deferredSave() {
 		BASE.deferredSaveEntity(this);
+	}
+
+	public Optional<Key<UniqueProperty>> save() {
+		return BASE.saveEntity(this);
 	}
 
 //

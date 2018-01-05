@@ -51,8 +51,6 @@ public class TaskConfig<T> {
 
 	private String							nameSuffix;
 
-	private String							queueName;
-
 	@Setter(AccessLevel.NONE)
 	private Queue							queue;
 
@@ -156,11 +154,10 @@ public class TaskConfig<T> {
 		if (null != this.payload) {
 			taskOptions = taskOptions.payload(this.payload);
 		}
-		if (this.delayMillis > 0) {
-			taskOptions = taskOptions.countdownMillis(this.delayMillis);
-		}
 		if (this.startMillis > 0) {
 			taskOptions = taskOptions.etaMillis(this.startMillis);
+		} else if (this.delayMillis > 0) {
+			taskOptions = taskOptions.countdownMillis(this.delayMillis);
 		}
 		return taskOptions;
 	}

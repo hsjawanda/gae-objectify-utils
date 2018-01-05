@@ -5,19 +5,23 @@ package com.hsjawanda.gaeobjectify.json;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 
 /**
- * @author Harsh.Deep
- *
+ * @author Harshdeep S Jawanda <hsjawanda@gmail.com>
  */
 @Data
 @Accessors(chain = true)
 public class FcmResponse {
 
 	private String multicast_id;
+
+	@JsonProperty(value = "message_id")
+	private String messageId;
 
 	private int success;
 

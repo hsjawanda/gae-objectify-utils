@@ -58,6 +58,21 @@ public class Defaults {
 		}
 	}
 
+	public static long asLong(String longString, long defaultVal) {
+		if (null == longString)
+			return defaultVal;
+		try {
+			return Long.parseLong(longString);
+		} catch (Exception e) {
+			if (e instanceof NumberFormatException) {
+				LOG.warning(e.getMessage());
+			} else {
+				LOG.log(Level.WARNING, "Couldn't parse <" + longString + "> as a valid number. Returned default.", e);
+			}
+			return defaultVal;
+		}
+	}
+
 	public static int asInt(Integer input, int defaultVal) {
 		return null == input ? defaultVal : input.intValue();
 	}

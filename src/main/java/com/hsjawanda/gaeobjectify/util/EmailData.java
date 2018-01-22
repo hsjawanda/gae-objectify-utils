@@ -6,11 +6,17 @@ package com.hsjawanda.gaeobjectify.util;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.mail.internet.InternetAddress;
+
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
+import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -18,11 +24,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.ToString;
-
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Index;
-import com.hsjawanda.gaeobjectify.data.ObjectifyDao;
 
 
 /**
@@ -47,7 +48,7 @@ public class EmailData implements Serializable {
 	private InternetAddress						from;
 
 	@NonNull
-	private List<InternetAddress>				to;
+	private List<InternetAddress>				to = new ArrayList<>();
 
 	private String								subj;
 
@@ -69,7 +70,11 @@ public class EmailData implements Serializable {
 			String body, Boolean isHtml) {
 		this();
 		this.from = from;
-		this.to = to;
+		for (InternetAddress toAddr : to) {
+			if (null != toAddr && null != toAddr.getAddress()) {
+				this.to.add(toAddr);
+			}
+		}
 		this.subj = subj;
 		this.body = body;
 		if (null != isHtml) {

@@ -56,6 +56,10 @@ public class Category implements GaeEntity, StringIdEntity {
 	@Index
 	private boolean				showOnHomepage;
 
+	private String				icon;
+
+	private String				image;
+
 	public static CategoryDao DAO = new CategoryDao();
 
 	private Category() {}

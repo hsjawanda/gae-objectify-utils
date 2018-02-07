@@ -717,6 +717,23 @@ public class ObjectifyDao<T> {
 		return getKeysByQuery(pgr, filters, sorts);
 	}
 
+	public List<Key<T>> getKeys(@NonNull Pager<?> pgr, Filter filter, String sort) {
+		Query<T> qry = ofy().load().type(this.cls).limit(pgr.getLimit());
+		if (null != filter) {
+			qry = qry.filter(filter);
+		}
+		if (null != sort) {
+			qry = qry.order(sort);
+		}
+		if (null != pgr.getCursor()) {
+			qry = qry.startAt(pgr.getCursor());
+		}
+		QueryResultIterator<Key<T>> itr = qry.keys().iterator();
+		List<Key<T>> keys = CollectionHelper.toList(itr);
+		pgr.setCursor(itr.getCursor());
+		return keys;
+	}
+
 	public boolean entityExists(@NonNull String id) throws IllegalArgumentException {
 		checkArgument(isNotBlank(id), "id" + Constants.NOT_BLANK);
 		return entityExists(Key.create(this.cls, id));

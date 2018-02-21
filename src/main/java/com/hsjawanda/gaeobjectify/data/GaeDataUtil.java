@@ -367,6 +367,7 @@ public class GaeDataUtil {
 	}
 
 	public static <T extends StringIdEntity> Key<T> saveIfUnique(final T entity) throws NotUniqueException {
+		final String alreadyExists = "alreadyExists";
 		@SuppressWarnings("unchecked")
 		final Key<T> key = Key.create((Class<T>) entity.getClass(), entity.getId());
 		try {
@@ -375,13 +376,12 @@ public class GaeDataUtil {
 				public void vrun() {
 					T dsEntity = ofy().load().key(key).now();
 					if (null != dsEntity)
-						throw new IllegalStateException("alreadyExists");
-					log.info("Executed");
+						throw new IllegalStateException(alreadyExists);
 					ofy().save().entity(entity);
 				}
 			});
 		} catch (Exception e) {
-			if (e instanceof IllegalStateException && e.getMessage().equals("alreadyExists"))
+			if (e instanceof IllegalStateException && e.getMessage().equals(alreadyExists))
 				throw new NotUniqueException("Entity with " + key + " already exists.");
 			throw e;
 		}

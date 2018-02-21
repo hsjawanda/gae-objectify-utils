@@ -44,6 +44,8 @@ public class Pager<T> {
 	@JsonIgnore
 	private Cursor									cursor;
 
+	private String									cursorStr;
+
 	@JsonIgnore
 	private com.google.appengine.api.search.Cursor	searchCursor;
 
@@ -106,6 +108,7 @@ public class Pager<T> {
 	}
 
 	public Pager<T> setCursorStr(String cursorStr) {
+		this.cursorStr = cursorStr;
 		this.cursor = null;
 		if (isBlank(cursorStr))
 			return this;
@@ -122,7 +125,7 @@ public class Pager<T> {
 
 	public String getCursorStr() {
 		if (null == this.cursor)
-			return null;
+			return this.cursorStr;
 		return this.cursor.toWebSafeString();
 	}
 

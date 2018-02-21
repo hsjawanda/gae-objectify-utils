@@ -558,25 +558,34 @@ public class ObjectifyDao<T> {
 	}
 
 	public List<T> getPaginatedEntities(Pager<?> pgr, Iterable<? extends Filter> filters,
-			Iterable<String> sorts) throws NullPointerException {
-		QueryResultIterator<T> qryItr = getResults(pgr, filters, sorts);
+			Iterable<String> sorts, boolean transactionLess) throws NullPointerException {
+		QueryResultIterator<T> qryItr = getResults(pgr, filters, sorts, transactionLess);
 		List<T> retList = CollectionHelper.toImmutableList(qryItr, pgr.getLimit());
 		pgr.setCursor(retList.size() > 0 ? qryItr.getCursor() : null);
 		return retList;
 	}
 
-	public List<T> getPaginatedEntities(Pager<?> pgr, Filter filter, String sort) {
+	public List<T> getPaginatedEntities(Pager<?> pgr, Iterable<? extends Filter> filters,
+			Iterable<String> sorts) throws NullPointerException {
+		return getPaginatedEntities(pgr, filters, sorts, false);
+	}
+
+	public List<T> getPaginatedEntities(Pager<?> pgr, Filter filter, String sort, boolean transactionLess) {
 		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
 		Iterable<String> sorts = sort == null ? null : Arrays.asList(sort);
-		return getPaginatedEntities(pgr, filters, sorts);
+		return getPaginatedEntities(pgr, filters, sorts, transactionLess);
+	}
+
+	public List<T> getPaginatedEntities(Pager<?> pgr, Filter filter, String sort) {
+		return getPaginatedEntities(pgr, filter, sort, false);
 	}
 
 	public QueryResultIterator<T> getResults(Pager<?> pgr, Iterable<? extends Filter> filters,
-			Iterable<String> sorts) throws NullPointerException {
+			Iterable<String> sorts, boolean transactionLess) throws NullPointerException {
 		if (null == pgr) {
 			pgr = Pager.builder().limit(DEFAULT_LIMIT).build();
 		}
-		Query<T> qry = ofy().load().type(this.cls);
+		Query<T> qry = transactionLess ? ofy().transactionless().load().type(this.cls) : ofy().load().type(this.cls);
 		if (null != filters) {
 			for (Filter filter : filters) {
 				if (null != filter) {
@@ -608,11 +617,15 @@ public class ObjectifyDao<T> {
 		}
 		return qry.iterator();
 	}
+	public QueryResultIterator<T> getResults(Pager<?> pgr, Iterable<? extends Filter> filters,
+			Iterable<String> sorts) throws NullPointerException {
+		return getResults(pgr, filters, sorts, false);
+	}
 
 	public QueryResultIterator<T> getResults(Pager<?> pgr, Filter filter, String sort) {
 		Iterable<Filter> filters = filter == null ? null : Arrays.asList(filter);
 		Iterable<String> sorts = sort == null ? null : Arrays.asList(sort);
-		return getResults(pgr, filters, sorts);
+		return getResults(pgr, filters, sorts, false);
 	}
 
 	public QueryResultIterable<T> getIterableResults(@Nonnull Pager<?> pgr,

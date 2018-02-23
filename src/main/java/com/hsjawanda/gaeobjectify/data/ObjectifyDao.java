@@ -744,7 +744,7 @@ public class ObjectifyDao<T> {
 			qry = qry.startAt(pgr.getCursor());
 		}
 		QueryResultIterator<Key<T>> itr = qry.keys().iterator();
-		List<Key<T>> keys = CollectionHelper.toList(itr);
+		List<Key<T>> keys = CollectionHelper.toList(itr, pgr.getLimit());
 		pgr.setCursor(itr.getCursor());
 		return keys;
 	}

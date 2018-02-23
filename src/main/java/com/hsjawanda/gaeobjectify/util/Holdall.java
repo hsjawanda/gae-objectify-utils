@@ -3,6 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
@@ -145,17 +146,19 @@ public final class Holdall {
 	 * Ensure a {@code long} value falls within a closed range.
 	 *
 	 * @param lower
-	 *            the lower end of the closed range
+	 *            the lowest allowed value
 	 * @param upper
-	 *            the upper end of the close range
+	 *            the highest allowed value
 	 * @param value
 	 *            the value to constrain to within the closed range
-	 * @return a range-checked value. If {@code value} is less than
-	 *         {@code lower}, {@code lower} is returned. If {@code value} is
-	 *         greater than {@code upper}, {@code upper} is returned. Else,
-	 *         {@code value} itself is returned.
+	 * @return a range-checked value. If {@code value} is less than {@code lower}, {@code lower} is returned. If
+	 *         {@code value} is greater than {@code upper}, {@code upper} is returned. Otherwise, {@code value} itself
+	 *         is returned.
+	 * @throws IllegalArgumentException
+	 *             If {@code lower > upper}.
 	 */
-	public static long constrainToRange(long lower, long upper, long value) {
+	public static long constrainToRange(long lower, long upper, long value) throws IllegalArgumentException {
+		checkArgument(lower <= upper, "The lower bound must be <= upper bound.");
 		if (value < lower)
 			return lower;
 		else if (value > upper)

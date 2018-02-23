@@ -12,17 +12,21 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.hsjawanda.gaeobjectify.util.Holdall;
 
 /**
  * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
  */
-public class CollectionHelper {
+public final class CollectionHelper {
 
 	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(CollectionHelper.class.getName());
 
-	private CollectionHelper() {}
+	private static final int MAX_INIT_LIST_SIZE = 100;
+
+	private CollectionHelper() {
+	}
 
 	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable) {
 		return toImmutableList(iterable, Integer.MAX_VALUE);
@@ -34,8 +38,7 @@ public class CollectionHelper {
 		return toImmutableList(iterable.iterator(), limit);
 	}
 
-	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int offset,
-			int numElements) {
+	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int offset, int numElements) {
 		int size = Integer.MAX_VALUE;
 		if (null == iterable)
 			return ImmutableList.of();
@@ -46,8 +49,7 @@ public class CollectionHelper {
 			size = coll.size();
 		}
 		offset = Math.max(0, offset);
-		numElements = Math.max(0, numElements);
-		numElements = Math.min(2000, numElements);
+		numElements = (int) Holdall.constrainToRange(0, 2000, numElements);
 		if (size <= offset)
 			return ImmutableList.of();
 		int count = 0, upperLimit = offset + numElements;
@@ -72,10 +74,14 @@ public class CollectionHelper {
 
 	}
 
+	public static <T> List<T> toList(Iterable<T> iterable) {
+		return toList(iterable, Integer.MAX_VALUE);
+	}
+
 	public static <T> List<T> toList(Iterable<T> iterable, int maxItems) {
 		if (null == iterable)
 			return Collections.emptyList();
-		maxItems = Math.max(0, maxItems);
+		maxItems = (int) Holdall.constrainToRange(0, MAX_INIT_LIST_SIZE, maxItems);
 		List<T> retList = new ArrayList<>(maxItems);
 		for (T item : iterable) {
 			if (--maxItems >= 0) {
@@ -85,23 +91,19 @@ public class CollectionHelper {
 		return retList;
 	}
 
-	public static <T> List<T> toList(Iterable<T> iterable) {
-		return toList(iterable, Integer.MAX_VALUE);
+	public static <T> List<T> toList(Iterator<T> iterator) {
+		return toList(iterator, Integer.MAX_VALUE);
 	}
 
 	public static <T> List<T> toList(Iterator<T> iterator, int maxItems) {
 		if (null == iterator)
 			return Collections.emptyList();
-		maxItems = Math.max(0, maxItems);
+		maxItems = (int) Holdall.constrainToRange(0, MAX_INIT_LIST_SIZE, maxItems);
 		List<T> retList = new ArrayList<>(maxItems);
 		while (--maxItems >= 0 && iterator.hasNext()) {
 			retList.add(iterator.next());
 		}
 		return retList;
-	}
-
-	public static <T> List<T> toList(Iterator<T> iterator) {
-		return toList(iterator, Integer.MAX_VALUE);
 	}
 
 }

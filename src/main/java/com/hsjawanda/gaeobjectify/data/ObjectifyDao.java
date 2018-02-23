@@ -560,7 +560,7 @@ public class ObjectifyDao<T> {
 	public List<T> getPaginatedEntities(Pager<?> pgr, Iterable<? extends Filter> filters,
 			Iterable<String> sorts, boolean transactionLess) throws NullPointerException {
 		QueryResultIterator<T> qryItr = getResults(pgr, filters, sorts, transactionLess);
-		List<T> retList = CollectionHelper.toImmutableList(qryItr, pgr.getLimit());
+		List<T> retList = CollectionHelper.toList(qryItr, pgr.getLimit());
 		pgr.setCursor(retList.size() > 0 ? qryItr.getCursor() : null);
 		return retList;
 	}
@@ -730,13 +730,15 @@ public class ObjectifyDao<T> {
 		return getKeysByQuery(pgr, filters, sorts);
 	}
 
-	public List<Key<T>> getKeys(@NonNull Pager<?> pgr, Filter filter, String sort) {
+	public List<Key<T>> getKeys(@NonNull Pager<?> pgr, Filter filter, Iterable<String> sorts) {
 		Query<T> qry = ofy().load().type(this.cls).limit(pgr.getLimit());
 		if (null != filter) {
 			qry = qry.filter(filter);
 		}
-		if (null != sort) {
-			qry = qry.order(sort);
+		if (null != sorts) {
+			for (String sort : sorts) {
+				qry = qry.order(sort);
+			}
 		}
 		if (null != pgr.getCursor()) {
 			qry = qry.startAt(pgr.getCursor());
@@ -745,6 +747,10 @@ public class ObjectifyDao<T> {
 		List<Key<T>> keys = CollectionHelper.toList(itr);
 		pgr.setCursor(itr.getCursor());
 		return keys;
+	}
+
+	public List<Key<T>> getKeys(@NonNull Pager<?> pgr, Filter filter, String sorts) {
+		return getKeys(pgr, filter, Arrays.asList(sorts));
 	}
 
 	public boolean entityExists(@NonNull String id) throws IllegalArgumentException {

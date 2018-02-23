@@ -24,14 +24,14 @@ public class CollectionHelper {
 
 	private CollectionHelper() {}
 
-	public static <T> List<T> toList(Iterable<T> iterable) {
+	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable) {
+		return toImmutableList(iterable, Integer.MAX_VALUE);
+	}
+
+	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int limit) {
 		if (null == iterable)
-			return Collections.emptyList();
-		List<T> retList = new ArrayList<>();
-		for (T item : iterable) {
-			retList.add(item);
-		}
-		return retList;
+			return ImmutableList.of();
+		return toImmutableList(iterable.iterator(), limit);
 	}
 
 	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int offset,
@@ -61,16 +61,6 @@ public class CollectionHelper {
 		return bildr.build();
 	}
 
-	public static <T> List<T> toList(Iterator<T> iterator) {
-		if (null == iterator)
-			return Collections.emptyList();
-		List<T> retList = new ArrayList<>();
-		while (iterator.hasNext()) {
-			retList.add(iterator.next());
-		}
-		return retList;
-	}
-
 	public static <T> ImmutableList<T> toImmutableList(Iterator<T> iterator, int limit) {
 		if (null == iterator)
 			return ImmutableList.of();
@@ -82,14 +72,36 @@ public class CollectionHelper {
 
 	}
 
-	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable, int limit) {
+	public static <T> List<T> toList(Iterable<T> iterable, int maxItems) {
 		if (null == iterable)
-			return ImmutableList.of();
-		return toImmutableList(iterable.iterator(), limit);
+			return Collections.emptyList();
+		maxItems = Math.max(0, maxItems);
+		List<T> retList = new ArrayList<>(maxItems);
+		for (T item : iterable) {
+			if (--maxItems >= 0) {
+				retList.add(item);
+			}
+		}
+		return retList;
 	}
 
-	public static <T> ImmutableList<T> toImmutableList(Iterable<T> iterable) {
-		return toImmutableList(iterable, Integer.MAX_VALUE);
+	public static <T> List<T> toList(Iterable<T> iterable) {
+		return toList(iterable, Integer.MAX_VALUE);
+	}
+
+	public static <T> List<T> toList(Iterator<T> iterator, int maxItems) {
+		if (null == iterator)
+			return Collections.emptyList();
+		maxItems = Math.max(0, maxItems);
+		List<T> retList = new ArrayList<>(maxItems);
+		while (--maxItems >= 0 && iterator.hasNext()) {
+			retList.add(iterator.next());
+		}
+		return retList;
+	}
+
+	public static <T> List<T> toList(Iterator<T> iterator) {
+		return toList(iterator, Integer.MAX_VALUE);
 	}
 
 }

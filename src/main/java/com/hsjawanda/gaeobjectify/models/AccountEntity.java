@@ -11,12 +11,6 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -40,15 +34,11 @@ import com.hsjawanda.gaeobjectify.util.Validators;
  * @author Harshdeep Jawanda <hsjawanda@gmail.com>
  *
  */
-@Data
-@Accessors(chain = true)
-@ToString(exclude = {"hashedPassword"})
 public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 
 	private static Logger			log				= Logger.getLogger(AccountEntity.class
 															.getName());
 
-	@Setter(AccessLevel.NONE)
 	@JsonIgnore
 	protected String				hashedPassword;
 
@@ -61,7 +51,6 @@ public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 	protected boolean				emailVerified	= false;
 
 	@JsonIgnore
-	@Setter(AccessLevel.NONE)
 	protected Ref<T>				email;
 
 	public static final Passwords	PWDS			= Passwords
@@ -190,5 +179,18 @@ public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 	}
 
 	public abstract K setEmail(String inputEmail) throws InvalidFormatException, NotUniqueException;
+
+	public AccountEntity<K, T> setEmailVerified(boolean emailVerified) {
+		this.emailVerified = emailVerified;
+		return this;
+	}
+
+	public String getHashedPassword() {
+		return this.hashedPassword;
+	}
+
+	public boolean isEmailVerified() {
+		return this.emailVerified;
+	}
 
 }

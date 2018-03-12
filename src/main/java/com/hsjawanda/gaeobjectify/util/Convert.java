@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
+
+import javax.annotation.Nonnull;
 
 import com.hsjawanda.gaeobjectify.collections.KeyGenerator;
 
@@ -19,12 +22,12 @@ import com.hsjawanda.gaeobjectify.collections.KeyGenerator;
  *
  * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  */
-public class Converter {
+public class Convert {
 
 	@SuppressWarnings("unused")
-	private static final Logger log = Logger.getLogger(Converter.class.getName());
+	private static final Logger log = Logger.getLogger(Convert.class.getName());
 
-	protected Converter() {
+	protected Convert() {
 	}
 
 	/**
@@ -113,6 +116,11 @@ public class Converter {
 	 */
 	public static <K, V> Map<K, V> listToMap(List<V> list, KeyGenerator<K, V> keyGen) {
 		return listToMap(list, keyGen, null);
+	}
+
+	@Nonnull
+	public static <T> Optional<T> toJavaOptional(com.google.common.base.Optional<T> guavaOptional) {
+		return null != guavaOptional ? Optional.ofNullable(guavaOptional.orNull()) : Optional.<T>empty();
 	}
 
 }

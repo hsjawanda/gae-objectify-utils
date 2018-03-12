@@ -24,7 +24,7 @@ import com.googlecode.objectify.annotation.OnSave;
 import com.hsjawanda.gaeobjectify.collections.KeyGenerator;
 import com.hsjawanda.gaeobjectify.data.TagStoreDao;
 import com.hsjawanda.gaeobjectify.util.Constants;
-import com.hsjawanda.gaeobjectify.util.Converter;
+import com.hsjawanda.gaeobjectify.util.Convert;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -120,13 +120,13 @@ public class TagStore {
 
 	@OnSave
 	protected void saveActions() {
-		this.tagsList = Converter.mapToList(this.tags, this.tagsList);
+		this.tagsList = Convert.mapToList(this.tags, this.tagsList);
 	}
 
 	@OnLoad
 	protected void loadActions() {
 		log.info("In loadActions.");
-		this.tags = Converter.listToMap(this.tagsList, keyGen, this.tags);
+		this.tags = Convert.listToMap(this.tagsList, keyGen, this.tags);
 	}
 
 }

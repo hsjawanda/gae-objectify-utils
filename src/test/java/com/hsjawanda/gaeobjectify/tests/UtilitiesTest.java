@@ -19,6 +19,7 @@ import com.hsjawanda.gaeobjectify.util.BaseX;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
+import com.hsjawanda.gaeobjectify.util.PrintableTable;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
 import com.hsjawanda.gaeobjectify.util.UriParser;
 import com.hsjawanda.gaeobjectify.util.WebUtil;
@@ -112,6 +113,19 @@ public class UtilitiesTest {
 	public void testBaseXDecoding() {
 		assertEquals(1_000_000, BaseX.URL_SAFE_BASE64.decode10("d0ja"));
 		assertEquals(1_000_000_000, BaseX.URL_SAFE_BASE64.decode10("7MSOa"));
+	}
+
+	@Test
+	public void testPrintableTable() {
+		PrintableTable table = PrintableTable.create().setSeparator(" | ");
+		table.add("Harshdeep").add("Singh").add("Jawanda");
+		table.startRow().add("Adarsh").add("ArbitrarilyLongMiddleName").add("Sharma");
+		table.startRow().add("Gajendra").add(null).add("Singh");
+		table.startRow().add("Gajendra").add("Singh");
+		for (int i = 0; i < 5; i++) {
+			table.startRow().add("Gajendra").add(null).add("Singh");
+		}
+		System.out.print(table.printable(null));
 	}
 
 }

@@ -20,10 +20,9 @@ import com.hsjawanda.gaeobjectify.util.Holdall;
  */
 public final class CollectionHelper {
 
-	@SuppressWarnings("unused")
-	private static final Logger log = Logger.getLogger(CollectionHelper.class.getName());
+	private static final int MAX_ADVISABLE_ITEMS = 100;
 
-	private static final int MAX_INIT_LIST_SIZE = 100;
+	private static final Logger log = Logger.getLogger(CollectionHelper.class.getName());
 
 	private CollectionHelper() {
 	}
@@ -81,24 +80,22 @@ public final class CollectionHelper {
 	public static <T> List<T> toList(Iterable<T> iterable, int maxItems) {
 		if (null == iterable)
 			return Collections.emptyList();
-		maxItems = (int) Holdall.constrainToRange(0, MAX_INIT_LIST_SIZE, maxItems);
-		List<T> retList = new ArrayList<>(maxItems);
-		for (T item : iterable) {
-			if (--maxItems >= 0) {
-				retList.add(item);
-			}
-		}
-		return retList;
+		return toList(iterable.iterator(), maxItems);
 	}
 
 	public static <T> List<T> toList(Iterator<T> iterator) {
 		return toList(iterator, Integer.MAX_VALUE);
 	}
 
-	public static <T> List<T> toList(Iterator<T> iterator, int maxItems) {
+	public static <T> List<T> toList(Iterator<T> iterator, int maxItems) throws IllegalArgumentException {
 		if (null == iterator)
 			return Collections.emptyList();
-		maxItems = (int) Holdall.constrainToRange(0, MAX_INIT_LIST_SIZE, maxItems);
+		if (maxItems < 1)
+			throw new IllegalArgumentException("maxItems must be >= 1.");
+		if (maxItems > MAX_ADVISABLE_ITEMS) {
+			log.warning("maxItems = " + maxItems + ". It is advisable to not use a value greater than "
+					+ MAX_ADVISABLE_ITEMS + ".");
+		}
 		List<T> retList = new ArrayList<>(maxItems);
 		while (--maxItems >= 0 && iterator.hasNext()) {
 			retList.add(iterator.next());

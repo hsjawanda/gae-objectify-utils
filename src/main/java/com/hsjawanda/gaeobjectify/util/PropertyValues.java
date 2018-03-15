@@ -26,7 +26,7 @@ public class PropertyValues {
 	private Map<String, Object> properties = Maps.newTreeMap();
 
 	private PropertyValues(String separator) {
-		separator = StringUtils.trimToNull(separator);
+//		separator = StringUtils.trimToNull(separator);
 		if (null != separator) {
 			this.separator = separator + " ";
 		}

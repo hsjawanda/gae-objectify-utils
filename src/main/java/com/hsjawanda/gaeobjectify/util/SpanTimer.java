@@ -3,7 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static org.apache.commons.lang3.StringUtils.leftPad;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.leftPad;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

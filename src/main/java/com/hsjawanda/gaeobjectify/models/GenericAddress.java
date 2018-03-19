@@ -4,7 +4,7 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
 
 import java.util.ArrayList;
 import java.util.Collections;

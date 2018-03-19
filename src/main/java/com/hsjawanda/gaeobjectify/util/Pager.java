@@ -3,7 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isBlank;
 
 import java.util.Collections;
 import java.util.List;

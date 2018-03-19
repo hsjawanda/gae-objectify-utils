@@ -191,7 +191,24 @@ public class RefsList<E> implements List<E> {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		return this.wrapped.equals(GaeDataUtil.getNullableRefFromPojo(o));
+		if (null == o)
+			return false;
+		if (o instanceof List<?>) {
+			List<?> other = (List<?>) o;
+			if (other.size() != this.size())
+				return false;
+			for (int i = 0; i < other.size(); i++) {
+				Object o1 = other.get(i);
+				if (o1 instanceof Ref) {
+					@SuppressWarnings("unchecked")
+					Ref<E> o1Ref = (Ref<E>) o1;
+					if (!o1Ref.equals(o1))
+						return false;
+				} else
+					return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -240,7 +257,7 @@ public class RefsList<E> implements List<E> {
 	 */
 	@Override
 	public Iterator<E> iterator() {
-		return (Iterator<E>) listIterator();
+		return listIterator();
 	}
 
 	/**

@@ -5,9 +5,9 @@ package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.apache.commons.lang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.defaultString;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToEmpty;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;

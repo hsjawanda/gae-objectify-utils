@@ -7,9 +7,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import static java.util.logging.Level.WARNING;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
 
 import java.util.Arrays;
 import java.util.Collections;

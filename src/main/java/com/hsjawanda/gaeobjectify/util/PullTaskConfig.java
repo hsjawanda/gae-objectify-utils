@@ -5,8 +5,12 @@ package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
+
+import javax.annotation.Nullable;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
@@ -36,6 +40,7 @@ public class PullTaskConfig {
 
 	public static final String ID = "id";
 
+	@SuppressWarnings("unused")
 	private static final Logger LOG = Logger.getLogger(PullTaskConfig.class.getName());
 
 	private static final String NAME_JOIN_SEPARATOR = "-";
@@ -44,13 +49,17 @@ public class PullTaskConfig {
 
 	private Class<?> cls;
 
-	private String id;
+//	private String id;
 
 	private Long maxFrequency;
+
+	private Map<String, String> strParams = new LinkedHashMap<>();
 
 	@Getter(value = AccessLevel.NONE)
 	@Setter(value = AccessLevel.NONE)
 	private Queue queue;
+
+	private String tag;
 
 	private PullTaskConfig() {
 	}
@@ -77,16 +86,26 @@ public class PullTaskConfig {
 		}
 	}
 
+	public PullTaskConfig param(String key, @Nullable String value) {
+		if (null != key) {
+			this.strParams.put(key, value);
+		}
+		return this;
+	}
+
 	private TaskOptions buildTaskOptions() {
 		TaskOptions pullTask = TaskOptions.Builder.withMethod(Method.PULL).param(CLASS_NAME, this.cls.getName());
 		if (null != this.maxFrequency) {
 			long timeMillis = this.maxFrequency.longValue() * 1000;
 			String freqFagment = Long.toString(System.currentTimeMillis() / timeMillis);
-			pullTask = pullTask.taskName(NAME_JOINER.join(this.cls.getName().replace('.', '_'), this.id, freqFagment))
-					.etaMillis(Math.max(timeMillis - 250, 0));
+			pullTask = pullTask.taskName(NAME_JOINER.join(this.cls.getName().replace('.', '_'),
+					this.strParams.getOrDefault(ID, null), freqFagment)).etaMillis(Math.max(timeMillis - 250, 0));
 		}
-		if (null != this.id) {
-			pullTask = pullTask.param(ID, this.id);
+		if (null != this.tag) {
+			pullTask = pullTask.tag(this.tag);
+		}
+		for (String key : this.strParams.keySet()) {
+			pullTask = pullTask.param(key, this.strParams.get(key));
 		}
 		return pullTask;
 	}

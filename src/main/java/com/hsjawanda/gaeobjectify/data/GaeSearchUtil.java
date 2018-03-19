@@ -5,7 +5,7 @@ package com.hsjawanda.gaeobjectify.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import com.hsjawanda.gaeobjectify.repackaged.commonslang3.tuple.ImmutablePair;
 
 import com.google.appengine.api.search.Document;
 import com.google.appengine.api.search.GeoPoint;

@@ -4,14 +4,14 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToEmpty;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import com.hsjawanda.gaeobjectify.repackaged.commonslang3.tuple.ImmutablePair;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

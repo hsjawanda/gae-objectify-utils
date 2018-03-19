@@ -4,10 +4,10 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.normalizeSpace;
-import static org.apache.commons.lang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.normalizeSpace;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
 
 import javax.annotation.Nullable;
 

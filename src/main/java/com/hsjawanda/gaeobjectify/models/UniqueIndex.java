@@ -4,13 +4,13 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.normalizeSpace;
-import static org.apache.commons.lang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.normalizeSpace;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
 
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.tuple.Triple;
+import com.hsjawanda.gaeobjectify.repackaged.commonslang3.tuple.Triple;
 
 import com.google.common.base.Optional;
 import com.googlecode.objectify.annotation.Id;

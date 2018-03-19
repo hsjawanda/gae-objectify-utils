@@ -6,7 +6,7 @@ package com.hsjawanda.gaeobjectify.util;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.StringUtils;
+import com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils;
 
 import com.google.common.collect.Maps;
 

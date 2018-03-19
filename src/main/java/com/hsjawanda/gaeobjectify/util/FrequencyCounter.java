@@ -3,7 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

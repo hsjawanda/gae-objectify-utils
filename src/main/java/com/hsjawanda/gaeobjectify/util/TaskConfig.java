@@ -41,7 +41,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class TaskConfig<T> {
 
-	@SuppressWarnings("unused")
 	private static Logger					LOG			= Logger.getLogger(TaskConfig.class
 																.getName());
 
@@ -69,6 +68,12 @@ public class TaskConfig<T> {
 	@Getter(AccessLevel.PRIVATE)
 	@Setter(AccessLevel.NONE)
 	private String							taskName;
+
+	/**
+	 * In seconds.
+	 */
+	@Getter(AccessLevel.NONE)
+	private Long							maxFrequency;
 
 	@Singular()
 	@Setter(AccessLevel.PRIVATE)
@@ -134,7 +139,11 @@ public class TaskConfig<T> {
 			if (isNotBlank(this.nameSuffix)) {
 				taskName.append('_').append(defaultString(this.nameSuffix));
 			}
-			if (this.addTimestamp) {
+			if (null != this.maxFrequency) {
+				long timeMillis = this.maxFrequency.longValue() * 1000;
+				String freqFagment = Long.toString(System.currentTimeMillis() / timeMillis);
+				taskName.append('_').append(freqFagment);
+			} else if (this.addTimestamp) {
 				TasksHelper.TASK_DATE.setTimeZone(Constants.IST);
 				taskName.append('_').append(TasksHelper.TASK_DATE.format(new Date()));
 			}
@@ -156,6 +165,8 @@ public class TaskConfig<T> {
 		}
 		if (this.startMillis > 0) {
 			taskOptions = taskOptions.etaMillis(this.startMillis);
+		} else if (null != this.maxFrequency) {
+			taskOptions = taskOptions.countdownMillis(this.maxFrequency.longValue() * 1000 - 500);
 		} else if (this.delayMillis > 0) {
 			taskOptions = taskOptions.countdownMillis(this.delayMillis);
 		}

@@ -1,6 +1,6 @@
 package com.hsjawanda.gaeobjectify.tests;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

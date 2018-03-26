@@ -91,6 +91,18 @@ public final class Holdall {
 			}
 		}
 	}
+	public static <T> String printableList(List<T> alist) {
+		if (null != alist) {
+			final String nl = System.lineSeparator();
+			int counter = 1;
+			StringBuilder sb = new StringBuilder();
+			for (T element : alist) {
+				sb.append(String.format("%4d. ", counter++)).append(element).append(nl);
+			}
+			return sb.toString();
+		}
+		return EMPTY;
+	}
 
 	public static <T> void checkIfObjectifyEntity(Class<T> cls)
 			throws UnsupportedOperationException {

@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,17 +50,20 @@ public class PullTaskConfig {
 
 	private Class<?> cls;
 
-//	private String id;
-
+	/**
+	 * In seconds
+	 */
 	private Long maxFrequency;
-
-	private Map<String, String> strParams = new LinkedHashMap<>();
 
 	@Getter(value = AccessLevel.NONE)
 	@Setter(value = AccessLevel.NONE)
 	private Queue queue;
 
+	private Map<String, String> strParams = new LinkedHashMap<>();
+
 	private String tag;
+
+	private String taskName;
 
 	private PullTaskConfig() {
 	}
@@ -78,19 +82,19 @@ public class PullTaskConfig {
 		return this.queue.addAsync(opts);
 	}
 
+	public PullTaskConfig param(String key, @Nullable String value) {
+		if (null != key) {
+			this.strParams.put(key, value);
+		}
+		return this;
+	}
+
 	public void tryAddToQueue(@NonNull String queueName) {
 		try {
 			addToQueue(queueName);
 		} catch (TaskAlreadyExistsException e) {
 			// Do nothing
 		}
-	}
-
-	public PullTaskConfig param(String key, @Nullable String value) {
-		if (null != key) {
-			this.strParams.put(key, value);
-		}
-		return this;
 	}
 
 	private TaskOptions buildTaskOptions() {
@@ -100,6 +104,8 @@ public class PullTaskConfig {
 			String freqFagment = Long.toString(System.currentTimeMillis() / timeMillis);
 			pullTask = pullTask.taskName(NAME_JOINER.join(this.cls.getName().replace('.', '_'),
 					this.strParams.getOrDefault(ID, null), freqFagment)).etaMillis(Math.max(timeMillis - 250, 0));
+		} else if (isNotBlank(this.taskName)) {
+			pullTask = pullTask.taskName(this.taskName);
 		}
 		if (null != this.tag) {
 			pullTask = pullTask.tag(this.tag);

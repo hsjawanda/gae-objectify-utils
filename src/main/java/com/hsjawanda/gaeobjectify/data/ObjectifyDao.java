@@ -6,10 +6,10 @@ package com.hsjawanda.gaeobjectify.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.googlecode.objectify.ObjectifyService.ofy;
-import static java.util.logging.Level.WARNING;
 import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
 import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isBlank;
 import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
+import static java.util.logging.Level.WARNING;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -287,11 +287,7 @@ public class ObjectifyDao<T> {
 	}
 
 	public Optional<Key<T>> saveEntity(T entity) throws SaveException {
-		Optional<Result<Key<T>>> result = this.saveEntityAsync(entity);
-		if (result.isPresent())
-			return Optional.fromNullable(result.get().now());
-		else
-			return Optional.absent();
+		return Optional.fromNullable(ofy().save().entity(entity).now());
 	}
 
 	public Optional<Result<Key<T>>> saveEntityAsync(T entity) throws SaveException {

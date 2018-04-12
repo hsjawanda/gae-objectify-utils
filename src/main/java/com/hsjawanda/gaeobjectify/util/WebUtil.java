@@ -29,9 +29,9 @@ public class WebUtil {
 	@SuppressWarnings("unused")
 	private static Logger log = Logger.getLogger(WebUtil.class.getName());
 
-	protected static final Whitelist list = Whitelist.simpleText().addTags("br");
+	protected static Whitelist list;
 
-	protected static final OutputSettings settings = new OutputSettings().prettyPrint(false);
+	protected static OutputSettings settings;
 
 	protected WebUtil() {
 	}
@@ -60,6 +60,12 @@ public class WebUtil {
 	}
 
 	public static String plaintext2Html(String plaintext) {
+		if (null == list) {
+			list = Whitelist.simpleText().addTags("br");
+		}
+		if (null == settings) {
+			settings = new OutputSettings().prettyPrint(false);
+		}
 		String retVal = trimToEmpty(plaintext);
 		retVal = Jsoup.clean(plaintext, EMPTY, list, settings);
 		retVal = retVal.replaceAll("(\\\r?\\\n|\\\r)", "<br />");

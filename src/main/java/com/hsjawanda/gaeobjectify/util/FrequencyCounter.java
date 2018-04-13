@@ -91,8 +91,4 @@ public class FrequencyCounter {
 		return ImmutableMap.copyOf(this.counters);
 	}
 
-	public enum KeyOrdering {
-		IN_ORDER, NONE, SORTED;
-	}
-
 }

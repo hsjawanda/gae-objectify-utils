@@ -3,8 +3,8 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToEmpty;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.logging.Logger;
 

@@ -3,9 +3,9 @@
  */
 package com.hsjawanda.gaeobjectify.models;
 
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.abbreviate;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.abbreviate;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToNull;
 
 import java.util.ArrayList;
 import java.util.Collections;

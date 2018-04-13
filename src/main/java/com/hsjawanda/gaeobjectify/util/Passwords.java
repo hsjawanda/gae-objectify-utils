@@ -3,12 +3,13 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToEmpty;
 import lombok.Builder;
 
-import com.hsjawanda.gaeobjectify.repackaged.commonslang3.RandomStringUtils;
-import com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils;
-import com.hsjawanda.gaeobjectify.repackaged.commonslang3.tuple.ImmutablePair;
+import com.hsjawanda.gaeobjectify.repackaged.commons.lang3.RandomStringUtils;
+import com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils;
+import com.hsjawanda.gaeobjectify.repackaged.commons.lang3.tuple.ImmutablePair;
+
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToEmpty;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;

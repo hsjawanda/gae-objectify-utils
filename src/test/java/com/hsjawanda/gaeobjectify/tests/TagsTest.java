@@ -1,7 +1,7 @@
 package com.hsjawanda.gaeobjectify.tests;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.normalizeSpace;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.normalizeSpace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

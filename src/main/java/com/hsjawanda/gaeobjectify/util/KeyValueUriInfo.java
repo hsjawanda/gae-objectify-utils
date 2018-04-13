@@ -3,7 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.defaultString;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.defaultString;
 
 
 /**

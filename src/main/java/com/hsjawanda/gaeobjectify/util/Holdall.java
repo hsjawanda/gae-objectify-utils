@@ -4,8 +4,8 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.defaultString;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.defaultString;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

@@ -4,9 +4,9 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.normalizeSpace;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.normalizeSpace;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Optional;

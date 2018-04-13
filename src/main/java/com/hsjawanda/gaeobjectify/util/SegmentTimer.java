@@ -4,12 +4,12 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.defaultString;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.leftPad;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.repeat;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.rightPad;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.defaultString;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.leftPad;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.repeat;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.rightPad;
 
 import java.util.ArrayList;
 import java.util.List;

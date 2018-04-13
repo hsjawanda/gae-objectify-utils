@@ -3,7 +3,7 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;

@@ -4,8 +4,8 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;

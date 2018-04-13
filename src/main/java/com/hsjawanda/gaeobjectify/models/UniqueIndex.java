@@ -4,18 +4,17 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.normalizeSpace;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.normalizeSpace;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToNull;
 
 import java.util.logging.Logger;
-
-import com.hsjawanda.gaeobjectify.repackaged.commonslang3.tuple.Triple;
 
 import com.google.common.base.Optional;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
+import com.hsjawanda.gaeobjectify.repackaged.commons.lang3.tuple.Triple;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
 

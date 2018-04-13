@@ -4,14 +4,13 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.EMPTY;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToEmpty;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hsjawanda.gaeobjectify.repackaged.commonslang3.tuple.ImmutablePair;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +22,7 @@ import com.hsjawanda.gaeobjectify.data.IndexProperty;
 import com.hsjawanda.gaeobjectify.exceptions.InvalidFormatException;
 import com.hsjawanda.gaeobjectify.exceptions.InvalidPasswordException;
 import com.hsjawanda.gaeobjectify.exceptions.NotUniqueException;
+import com.hsjawanda.gaeobjectify.repackaged.commons.lang3.tuple.ImmutablePair;
 import com.hsjawanda.gaeobjectify.util.Config;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.PasswordKeys;

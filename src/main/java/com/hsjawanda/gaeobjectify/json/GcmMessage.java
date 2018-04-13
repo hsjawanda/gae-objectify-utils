@@ -1,9 +1,9 @@
 package com.hsjawanda.gaeobjectify.json;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.isNotBlank;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToEmpty;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.trimToNull;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToEmpty;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToNull;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

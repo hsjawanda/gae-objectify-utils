@@ -3,8 +3,8 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.leftPad;
-import static com.hsjawanda.gaeobjectify.repackaged.commonslang3.StringUtils.rightPad;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.leftPad;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.rightPad;
 
 import java.util.ArrayList;
 import java.util.List;

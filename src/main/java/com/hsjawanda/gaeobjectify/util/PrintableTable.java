@@ -69,7 +69,7 @@ public class PrintableTable {
 				colWidths[colIdx] = Math.max(colWidths[colIdx], row.get(colIdx).length());
 			}
 		}
-		StringBuilder sb = new StringBuilder(calcSpace(colWidths));
+		StringBuilder sb = new StringBuilder(calcSpace(colWidths)).append(prefix).append(NEWLINE);
 		for (rowIdx = 0; rowIdx < this.rows.size(); rowIdx++) {
 			List<String> row = this.rows.get(rowIdx);
 			int numCols = row.size();

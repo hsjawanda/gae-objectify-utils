@@ -7,6 +7,7 @@ import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EM
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -98,6 +99,10 @@ public class Constants {
 	public static final Calendar				INDIAN_CAL			= new GregorianCalendar(IST);
 
 	public static final String					CRON_HEADER			= "X-Appengine-Cron";
+
+	public static final String					IST_TIMEZONE		= "Asia/Kolkata";
+
+	public static final ZoneId					IST_TZ_ID			= ZoneId.of(IST_TIMEZONE);
 
 	protected Constants() {
 	}

@@ -14,7 +14,6 @@ public final class Lists {
 
 	private static Logger LOG;
 
-
 	private Lists() {
 	}
 

@@ -59,7 +59,7 @@ public class PropertyValues {
 		return this.properties;
 	}
 
-	public String publish(boolean startWithNewline) {
+	public String publish(boolean startWithNewline, boolean endWithNewline) {
 		StringBuilder result = new StringBuilder(this.properties.size() * 100 + 10);
 		if (startWithNewline) {
 			result.append(NL);
@@ -71,14 +71,21 @@ public class PropertyValues {
 			}
 		}
 		for (String property : this.properties.keySet()) {
-			result.append(StringUtils.leftPad(property, longestProperty)).append(this.separator)
-					.append(this.properties.get(property)).append(NL);
+			result.append(NL).append(StringUtils.leftPad(property, longestProperty)).append(this.separator)
+					.append(this.properties.get(property));
+		}
+		if (endWithNewline) {
+			result.append(NL);
 		}
 		return result.toString();
 	}
 
+	public String publish(boolean startWithNewline) {
+		return publish(startWithNewline, true);
+	}
+
 	public String publish() {
-		return publish(true);
+		return publish(false);
 	}
 
 }

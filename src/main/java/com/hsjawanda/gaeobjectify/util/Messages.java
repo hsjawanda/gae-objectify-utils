@@ -57,7 +57,7 @@ public class Messages {
 	}
 
 	public String printable(String prefix) {
-		StringBuilder message = new StringBuilder(this.initialCapacity).append(trimToEmpty(prefix)).append(NL);
+		StringBuilder message = new StringBuilder(this.initialCapacity).append(NL).append(trimToEmpty(prefix));
 		int counter = 0, padding = -1;
 		for (String mesg : this.messages) {
 			message.append(NL);

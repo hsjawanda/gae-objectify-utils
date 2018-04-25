@@ -3,10 +3,14 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
-import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.leftPad;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.rightPad;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,7 +25,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public class FrequencyCounter {
 
-	private static final String NEWLINE = System.lineSeparator();
+	private static final String NL = System.lineSeparator();
 
 	private static final String SEPARATOR = " : ";
 
@@ -65,19 +69,46 @@ public class FrequencyCounter {
 		return this.useSerialNumbers;
 	}
 
-	public String printable(@Nullable String prefix) {
-		StringBuilder sb = new StringBuilder(this.counters.size() * 15);
-		if (isNotBlank(prefix)) {
-			sb.append(prefix).append(':');
-		}
+	public synchronized String print(@Nullable String prefix) {
+		StringBuilder sb = new StringBuilder(this.counters.size() * 15).append(NL).append(prefix);
 		int counter = 0;
 		for (String key : this.counters.keySet()) {
 			counter++;
-			sb.append(NEWLINE);
+			sb.append(NL);
 			if (this.useSerialNumbers) {
 				sb.append(String.format("%3d. ", counter));
 			}
 			sb.append(key).append(SEPARATOR).append(this.counters.get(key).value());
+		}
+		return sb.toString();
+	}
+
+	public String printSorted(@Nullable String prefix) {
+		return printSorted(prefix, true);
+	}
+
+	public synchronized String printSorted(@Nullable String prefix, boolean sortDescending) {
+		List<Map.Entry<String, KeepCount>> sortedCounters = new ArrayList<>(this.counters.entrySet());
+		final int multiplier = sortDescending ? -1 : 1;
+		Collections.sort(sortedCounters, (a, b) -> multiplier * a.getValue().compareTo(b.getValue()));
+		int maxKeyWidth = 0, maxValueWidth = 0, counterPadding = Numbers.paddingRequiredFor(sortedCounters.size());
+		long maxValue = 0;
+		String serialNumFormatSpecifier = "%" + counterPadding + "d. ";
+		for (Map.Entry<String, KeepCount> entry : sortedCounters) {
+			maxKeyWidth = Math.max(maxKeyWidth, entry.getKey().length());
+			maxValue = Math.max(maxValue, entry.getValue().value());
+		}
+		maxValueWidth = Numbers.paddingRequiredFor(maxValue);
+		StringBuilder sb = new StringBuilder(this.counters.size() * 15).append(NL).append(prefix);
+		int counter = 0;
+		for (Map.Entry<String, KeepCount> entry : sortedCounters) {
+			counter++;
+			sb.append(NL);
+			if (this.useSerialNumbers) {
+				sb.append(String.format(serialNumFormatSpecifier, counter));
+			}
+			sb.append(rightPad(entry.getKey(), maxKeyWidth)).append(SEPARATOR)
+					.append(leftPad(Long.toString(entry.getValue().value()), maxValueWidth));
 		}
 		return sb.toString();
 	}

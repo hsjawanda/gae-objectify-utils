@@ -10,7 +10,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<appengine.target.version>1.9.49</appengine.target.version>
+		<appengine.target.version>1.9.63</appengine.target.version>
 		<commons.io.version>2.4</commons.io.version>
 		<commons.lang3.version>3.4</commons.lang3.version>
 		<commons.validator.version>1.5.0</commons.validator.version>
@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-labs</artifactId>
-			<version>${appengine.target.version}</version>
+			<version>1.9.49</version>
 		</dependency>
 
 		<dependency>
@@ -171,8 +171,8 @@
 				<version>2.5.1</version>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>

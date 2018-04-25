@@ -23,4 +23,8 @@ public final class Numbers {
 		return ((long) Math.random() * 2 * randomizationAmount) + value - randomizationAmount;
 	}
 
+	public static int paddingRequiredFor(long maxNumber) {
+		return (int) Math.floor(Math.log10(maxNumber)) + 1;
+	}
+
 }

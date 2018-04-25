@@ -12,7 +12,7 @@ import lombok.ToString;
  */
 @ToString
 @EqualsAndHashCode
-public class KeepCount {
+public class KeepCount implements Comparable<KeepCount> {
 
 	private long counter;
 
@@ -31,6 +31,13 @@ public class KeepCount {
 
 	public long value() {
 		return this.counter;
+	}
+
+	@Override
+	public int compareTo(KeepCount o) {
+		if (null == o)
+			return -1;
+		return (int) (this.counter - o.counter);
 	}
 
 }

@@ -7,12 +7,12 @@ package com.hsjawanda.gaeobjectify.exceptions;
  * @author harsh.deep
  *
  */
-public class InvalidFormatException extends Exception {
+public class InvalidFormatException extends RuntimeException {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	public InvalidFormatException(String message) {
 		super(message);

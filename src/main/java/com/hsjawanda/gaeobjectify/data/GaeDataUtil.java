@@ -8,12 +8,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isBlank;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +34,7 @@ import com.googlecode.objectify.cmd.Query;
 import com.hsjawanda.gaeobjectify.exceptions.NotUniqueException;
 import com.hsjawanda.gaeobjectify.models.GaeEntity;
 import com.hsjawanda.gaeobjectify.models.StringIdEntity;
+import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.PagingData;
 
@@ -366,25 +369,21 @@ public class GaeDataUtil {
 		return bildr.build();
 	}
 
-	public static <T extends StringIdEntity> Key<T> saveIfUnique(final T entity) throws NotUniqueException {
-		final String alreadyExists = "alreadyExists";
+	public static <T extends StringIdEntity> Key<T> saveIfUnique(final T entity)
+			throws NullPointerException, IllegalArgumentException, NotUniqueException {
+		Objects.requireNonNull(entity, "entity" + Constants.NOT_NULL);
+		checkArgument(isNotBlank(entity.getId()), "entity ID" + Constants.NOT_BLANK);
 		@SuppressWarnings("unchecked")
 		final Key<T> key = Key.create((Class<T>) entity.getClass(), entity.getId());
-		try {
-			ofy().transact(new VoidWork() {
-				@Override
-				public void vrun() {
-					T dsEntity = ofy().load().key(key).now();
-					if (null != dsEntity)
-						throw new IllegalStateException(alreadyExists);
-					ofy().save().entity(entity);
-				}
-			});
-		} catch (Exception e) {
-			if (e instanceof IllegalStateException && e.getMessage().equals(alreadyExists))
-				throw new NotUniqueException("Entity with " + key + " already exists.");
-			throw e;
-		}
+		ofy().transact(new VoidWork() {
+			@Override
+			public void vrun() {
+				T dsEntity = ofy().load().key(key).now();
+				if (null != dsEntity)
+					throw new NotUniqueException("Entity with " + key + " already exists.");
+				ofy().defer().save().entity(entity);
+			}
+		});
 		return key;
 	}
 

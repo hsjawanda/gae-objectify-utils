@@ -11,6 +11,7 @@ import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.tr
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -100,6 +101,16 @@ public class UniqueProperty implements Serializable, StringIdEntity {
 		return retVal;
 	}
 
+	public static UniqueProperty create(String namespace, String value, Key<?> referencedKey)
+			throws NullPointerException, IllegalArgumentException {
+		return create(namespace, value, Objects.requireNonNull(referencedKey).toWebSafeString());
+	}
+
+	public static UniqueProperty create(String namespace, String value, Object pojo)
+			throws NullPointerException, IllegalArgumentException {
+		return create(namespace, value, Key.create(Objects.requireNonNull(pojo)));
+	}
+
 	public static String genId(String namespace, String value) throws IllegalArgumentException {
 		checkArgument(isNotBlank(value), "value" + Constants.NOT_BLANK);
 		return genIdPreNormalized(trimToNull(namespace), value.trim());
@@ -136,21 +147,6 @@ public class UniqueProperty implements Serializable, StringIdEntity {
 	public Optional<Key<UniqueProperty>> save() {
 		return BASE.saveEntity(this);
 	}
-
-//
-//	@OnLoad
-//	protected void tokenize() {
-//		List<String> parts = SplitJoin.split(getId());
-//		int size;
-//		if (null != parts && (size = parts.size()) > 0) {
-//			if (1 == size) {
-//				this.value = parts.get(0);
-//			} else {
-//				this.namespace = parts.get(0);
-//				this.value = parts.get(1);
-//			}
-//		}
-//	}
 
 	protected UniqueProperty setId(String namespace, String value) {
 		this.id = genId(namespace, value);

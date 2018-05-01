@@ -6,7 +6,6 @@ package com.hsjawanda.gaeobjectify.models;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
-import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +24,7 @@ import com.hsjawanda.gaeobjectify.exceptions.NotUniqueException;
 import com.hsjawanda.gaeobjectify.repackaged.commons.lang3.tuple.ImmutablePair;
 import com.hsjawanda.gaeobjectify.util.Config;
 import com.hsjawanda.gaeobjectify.util.Constants;
+import com.hsjawanda.gaeobjectify.util.Normalize;
 import com.hsjawanda.gaeobjectify.util.PasswordKeys;
 import com.hsjawanda.gaeobjectify.util.Passwords;
 import com.hsjawanda.gaeobjectify.util.Validators;
@@ -120,9 +120,9 @@ public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 	}
 
 	protected String checkEmail(String inputEmail) throws InvalidFormatException {
-		inputEmail = trimToEmpty(inputEmail);
+		inputEmail = Normalize.get().email(inputEmail);
 		if (!Validators.email.isValid(inputEmail))
-			throw new InvalidFormatException("The email '" + this.email + "' is incorrect.");
+			throw new InvalidFormatException("The email '" + inputEmail + "' is invalid.");
 		return inputEmail;
 	}
 

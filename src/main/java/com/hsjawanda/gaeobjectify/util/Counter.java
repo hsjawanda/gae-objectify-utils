@@ -199,7 +199,7 @@ public class Counter implements Serializable, StringIdEntity {
 			shardIds.add(shardId.append(i).toString());
 			shardId.setLength(initialSize);
 		}
-		return SHARD.getByStringIds(shardIds).values();
+		return ofy().transactionless().load().type(CounterShard.class).ids(shardIds).values();
 	}
 
 	private long getCountFromCache() {

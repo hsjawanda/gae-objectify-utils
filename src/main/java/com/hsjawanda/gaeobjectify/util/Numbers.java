@@ -27,4 +27,9 @@ public final class Numbers {
 		return (int) Math.floor(Math.log10(maxNumber)) + 1;
 	}
 
+	public static String maxFrequencyFragment(long seconds) {
+		long timeMillis = seconds * 1000;
+		return Long.toString(System.currentTimeMillis() / timeMillis);
+	}
+
 }

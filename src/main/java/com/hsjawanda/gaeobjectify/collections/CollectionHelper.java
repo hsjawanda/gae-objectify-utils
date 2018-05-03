@@ -96,7 +96,7 @@ public final class CollectionHelper {
 			log.warning("maxItems = " + maxItems + ". It is advisable to not use a value greater than "
 					+ MAX_ADVISABLE_ITEMS + ".");
 		}
-		List<T> retList = new ArrayList<>(maxItems);
+		List<T> retList = new ArrayList<>(Math.min(maxItems, MAX_ADVISABLE_ITEMS));
 		while (--maxItems >= 0 && iterator.hasNext()) {
 			retList.add(iterator.next());
 		}

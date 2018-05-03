@@ -6,7 +6,9 @@ package com.hsjawanda.gaeobjectify.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
@@ -99,13 +101,25 @@ public class PullTaskConfig {
 
 	private TaskOptions buildTaskOptions() {
 		TaskOptions pullTask = TaskOptions.Builder.withMethod(Method.PULL).param(CLASS_NAME, this.cls.getName());
+		List<String> nameFragments = new ArrayList<>(3);
+		String freqFragment = null;
+		long timeMillis = 0;
 		if (null != this.maxFrequency) {
-			long timeMillis = this.maxFrequency.longValue() * 1000;
-			String freqFagment = Long.toString(System.currentTimeMillis() / timeMillis);
-			pullTask = pullTask.taskName(NAME_JOINER.join(this.cls.getName().replace('.', '_'),
-					this.strParams.getOrDefault(ID, null), freqFagment)).etaMillis(Math.max(timeMillis - 250, 0));
-		} else if (isNotBlank(this.taskName)) {
-			pullTask = pullTask.taskName(this.taskName);
+			freqFragment = Numbers.maxFrequencyFragment(this.maxFrequency.longValue());
+		}
+		if (isNotBlank(this.taskName)) {
+			nameFragments.add(this.taskName);
+		}
+		if (null != freqFragment) {
+			if (nameFragments.isEmpty()) {
+				nameFragments.add(this.cls.getName().replace('.', '_'));
+				nameFragments.add(this.strParams.getOrDefault(ID, null));
+			}
+			nameFragments.add(freqFragment);
+			pullTask = pullTask.etaMillis(Math.max(timeMillis - 250, 0));
+		}
+		if (!nameFragments.isEmpty()) {
+			pullTask = pullTask.taskName(NAME_JOINER.join(nameFragments));
 		}
 		if (null != this.tag) {
 			pullTask = pullTask.tag(this.tag);

@@ -140,9 +140,7 @@ public class TaskConfig<T> {
 				taskName.append('_').append(defaultString(this.nameSuffix));
 			}
 			if (null != this.maxFrequency) {
-				long timeMillis = this.maxFrequency.longValue() * 1000;
-				String freqFagment = Long.toString(System.currentTimeMillis() / timeMillis);
-				taskName.append('_').append(freqFagment);
+				taskName.append('_').append(Numbers.maxFrequencyFragment(this.maxFrequency.longValue()));
 			} else if (this.addTimestamp) {
 				TasksHelper.TASK_DATE.setTimeZone(Constants.IST);
 				taskName.append('_').append(TasksHelper.TASK_DATE.format(new Date()));

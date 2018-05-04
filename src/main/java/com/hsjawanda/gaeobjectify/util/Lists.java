@@ -31,6 +31,14 @@ public final class Lists {
 		return defaultValue;
 	}
 
+	public static boolean isEmpty(List<?> list) {
+		return null == list || list.isEmpty();
+	}
+
+	public static boolean isNotEmpty(List<?> list) {
+		return !isEmpty(list);
+	}
+
 	@SuppressWarnings("unused")
 	private static Logger log() {
 		if (null == LOG) {

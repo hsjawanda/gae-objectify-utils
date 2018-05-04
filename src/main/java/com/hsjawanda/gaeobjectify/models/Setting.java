@@ -95,7 +95,7 @@ public class Setting implements StringIdEntity, Serializable {
 
 	public static Optional<Setting> getByName(String name) {
 		name = normalizeName(name);
-		return DAO.getById(name);
+		return DAO.getById(name, 8, 100);
 	}
 
 	@Override

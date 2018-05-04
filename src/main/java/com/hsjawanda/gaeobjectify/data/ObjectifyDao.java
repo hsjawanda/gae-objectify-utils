@@ -84,13 +84,13 @@ public class ObjectifyDao<T> {
 				}
 			}
 			if (i > 1) {
-				this.log.info(String.format("%2d tries to retrieve by " + key
-						+ ". Succeeded: %s. Last waitMillis: %d. Stacktrace:\n%s", i, (null != entity), waitMillis,
-						Tracer.partialTrace(null, 0, 7)));
+				this.log.info(String.format(
+						"%2d tries to retrieve by %s. Succeeded: %s. Last waitMillis: %d. Stacktrace:\n%s", i, key,
+						(null != entity ? "yes" : "no"), waitMillis, Tracer.partialTrace(null, 0, 10)));
 			}
 			return Optional.fromNullable(entity);
 		} catch (Exception e) {
-			this.log.log(Level.WARNING, "Error getting by Key<T>", e);
+			this.log.log(Level.WARNING, "Error getting by " + key, e);
 			return Optional.absent();
 		}
 	}

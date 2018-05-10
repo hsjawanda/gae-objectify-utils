@@ -20,6 +20,7 @@ import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
 import com.hsjawanda.gaeobjectify.util.PrintableTable;
+import com.hsjawanda.gaeobjectify.util.PrintableTable.Justification;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
 import com.hsjawanda.gaeobjectify.util.UriParser;
 import com.hsjawanda.gaeobjectify.util.WebUtil;
@@ -117,15 +118,16 @@ public class UtilitiesTest {
 
 	@Test
 	public void testPrintableTable() {
-		PrintableTable table = PrintableTable.create().setSeparator(" | ");
-		table.add("Harshdeep").add("Singh").add("Jawanda");
-		table.startRow().add("Adarsh").add("ArbitrarilyLongMiddleName").add("Sharma");
+		PrintableTable table = PrintableTable.builder().separator(" | ").useSerialNum(true).hasHeaderRow(true).build();
+		table.add("First").add("Middle").add("Last");
+		table.startRow().add("Harshdeep").add("Singh", Justification.CENTRE).add("Jawanda");
+		table.startRow().add("Adarsh", Justification.RIGHT).add("ArbitrarilyLongMiddleName").add("Sharma");
 		table.startRow().add("Gajendra").add(null).add("Singh");
 		table.startRow().add("Gajendra").add("Singh");
 		for (int i = 0; i < 5; i++) {
 			table.startRow().add("Gajendra").add(null).add("Singh");
 		}
-		System.out.print(table.printable(null));
+		System.out.print(table.print(null));
 	}
 
 }

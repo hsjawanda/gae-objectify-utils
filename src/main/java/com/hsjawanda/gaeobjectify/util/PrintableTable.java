@@ -68,14 +68,6 @@ public class PrintableTable {
 		return this;
 	}
 
-	public String getSeparator() {
-		return this.separator;
-	}
-
-	public boolean isUseSerialNum() {
-		return this.useSerialNum;
-	}
-
 	public synchronized String print(@Nullable String prefix) {
 		if (null != this.currRow) {
 			this.rows.add(this.currRow);
@@ -115,23 +107,6 @@ public class PrintableTable {
 			}
 		}
 		return sb.append(NEWLINE).toString();
-	}
-
-	public PrintableTable setHasHeaderRow(boolean headerRow) {
-		this.hasHeaderRow = headerRow;
-		return this;
-	}
-
-	public PrintableTable setSeparator(String separator) {
-		if (null != separator) {
-			this.separator = separator;
-		}
-		return this;
-	}
-
-	public PrintableTable setUseSerialNum(boolean useSerialNum) {
-		this.useSerialNum = useSerialNum;
-		return this;
 	}
 
 	public synchronized PrintableTable startRow() {

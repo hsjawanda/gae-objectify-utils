@@ -39,6 +39,10 @@ public final class Lists {
 		return !isEmpty(list);
 	}
 
+	public static int size(List<?> list) {
+		return null == list ? 0 : list.size();
+	}
+
 	@SuppressWarnings("unused")
 	private static Logger log() {
 		if (null == LOG) {

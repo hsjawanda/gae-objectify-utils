@@ -4,7 +4,6 @@
 package com.hsjawanda.gaeobjectify.models;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
-import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.logging.Level;
@@ -145,14 +144,8 @@ public abstract class AccountEntity<K, T extends UniqueStringProperty<K>> {
 	 *         {@code Ref<T>} is invalid; or the email.
 	 */
 	public String getEmail() {
-		if (null == this.email)
-			return null;
-		T email = this.email.get();
-		this.email.getValue();
-		if (null != email)
-			return email.getId();
-		else
-			return EMPTY;
+		T email = null == this.email ? null : this.email.get();
+		return null != email ? email.getId() : null;
 	}
 
 	/**

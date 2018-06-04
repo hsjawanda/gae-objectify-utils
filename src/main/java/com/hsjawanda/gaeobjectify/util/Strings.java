@@ -4,35 +4,43 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.defaultString;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
+import javax.mail.internet.InternetAddress;
 
 
 /**
  * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
  *
  */
-public class StringHelper {
+public class Strings {
 
-	private static final Logger log = Logger.getLogger(StringHelper.class.getName());
+	private static final Logger log = Logger.getLogger(Strings.class.getName());
 
-	private StringHelper() {
+	public static final String NULL = "null";
+
+	private Strings() {
+	}
+
+	@Nonnull
+	public static String toString(InternetAddress addr) {
+		return String.format("%s <%s>", defaultString(addr.getPersonal(), NULL),
+				defaultString(addr.getAddress(), NULL));
 	}
 
 	@Nonnull
 	public static String toString(Object obj) {
-		if (null == obj)
-			return EMPTY;
-		String retVal = obj.toString();
+		String retVal = null == obj ? EMPTY : obj.toString();
 		return null == retVal ? EMPTY : retVal;
 	}
 
 	public static String toString(byte[] input) {
-		return null == input ? EMPTY : new String(input);
+		return null == input ? NULL : new String(input);
 	}
 
 	public static String toString(char[] input) {
@@ -40,7 +48,7 @@ public class StringHelper {
 	}
 
 	public static String toString(String input) {
-		return null == input ? EMPTY : input;
+		return null == input ? NULL : input;
 	}
 
 	public static Long getAsLong(String stringValue) {

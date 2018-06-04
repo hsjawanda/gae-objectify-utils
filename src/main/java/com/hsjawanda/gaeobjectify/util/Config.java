@@ -116,30 +116,30 @@ public class Config {
 	}
 
 	public static <T extends Enum<?>> Long getAsLong(T key) {
-		return StringHelper.getAsLong(get(key).orNull());
+		return Strings.getAsLong(get(key).orNull());
 	}
 
 	public static Long getAsLong(String key) {
-		return StringHelper.getAsLong(get(key).orNull());
+		return Strings.getAsLong(get(key).orNull());
 	}
 
 	public static long getAsLong(String key, long defaultValue) {
-		return StringHelper.getAsLong(get(key).orNull(), defaultValue);
+		return Strings.getAsLong(get(key).orNull(), defaultValue);
 	}
 
 	public static int getAsInt(String key, int defaultValue) {
-		return StringHelper.getAsInt(get(key).orNull(), defaultValue);
+		return Strings.getAsInt(get(key).orNull(), defaultValue);
 	}
 
 	public static Integer getAsInteger(String key) {
-		return StringHelper.getAsInteger(get(key).orNull());
+		return Strings.getAsInteger(get(key).orNull());
 	}
 
 	public static <T extends Enum<?>> Boolean getAsBoolean(T key) {
-		return StringHelper.getAsBoolean(get(key).orNull());
+		return Strings.getAsBoolean(get(key).orNull());
 	}
 
 	public static Boolean getAsBoolean(String key) {
-		return StringHelper.getAsBoolean(get(key).orNull());
+		return Strings.getAsBoolean(get(key).orNull());
 	}
 }

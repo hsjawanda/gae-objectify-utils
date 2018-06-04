@@ -14,7 +14,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.mindrot.jbcrypt.BCrypt;
 
-import com.hsjawanda.gaeobjectify.util.StringHelper;
+import com.hsjawanda.gaeobjectify.util.Strings;
 
 
 /**
@@ -38,8 +38,8 @@ public class BCryptCredentialsMatcher implements CredentialsMatcher {
 		checkNotNull(token);
 		checkNotNull(info);
 		checkArgument(token instanceof UsernamePasswordToken, "token does not have any password");
-		String password = StringHelper.toString(((UsernamePasswordToken) token).getPassword());
-		String hashedPasswd = StringHelper.toString(info.getCredentials());
+		String password = Strings.toString(((UsernamePasswordToken) token).getPassword());
+		String hashedPasswd = Strings.toString(info.getCredentials());
 		boolean authenticated = BCrypt.checkpw(password, hashedPasswd);
 		log.fine("Password matched: " + authenticated);
 		return authenticated;

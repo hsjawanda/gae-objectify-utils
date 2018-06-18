@@ -4,6 +4,7 @@
 package com.hsjawanda.gaeobjectify.util;
 
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.center;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.defaultString;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.leftPad;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.repeat;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.rightPad;
@@ -71,6 +72,7 @@ public class PrintableTable {
 	public synchronized String print(@Nullable String prefix) {
 		if (null != this.currRow) {
 			this.rows.add(this.currRow);
+			this.currRow = null;
 		}
 		int maxCols = maxColumns(), serialNumPad = serialNumPadding(), rowIdx, colIdx, counter;
 		int [] colWidths = new int[maxCols];
@@ -83,7 +85,7 @@ public class PrintableTable {
 		int serialColWidth = this.useSerialNum ? serialNumPad + 1 : 0;
 		int maxRowWidth = Arrays.stream(colWidths).sum() + ((maxCols - 1) * this.separator.length())
 				+ serialColWidth + (this.useSerialNum ? this.separator.length() : 0);
-		StringBuilder sb = new StringBuilder(calcSpace(colWidths)).append(prefix).append(NEWLINE);
+		StringBuilder sb = new StringBuilder(calcSpace(colWidths)).append(defaultString(prefix)).append(NEWLINE);
 		for (rowIdx = 0, counter = 0; rowIdx < this.rows.size(); rowIdx++) {
 			List<CellData> row = this.rows.get(rowIdx);
 			int numCols = row.size();

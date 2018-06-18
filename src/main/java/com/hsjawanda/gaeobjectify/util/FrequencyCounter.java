@@ -12,12 +12,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Harshdeep S Jawanda <hsjawanda@gmail.com>
@@ -54,7 +56,12 @@ public class FrequencyCounter {
 		return counter;
 	}
 
-	public long increment(@Nonnull String key, long incr) throws NullPointerException {
+	public FrequencyCounter clear() {
+		this.counters.clear();
+		return this;
+	}
+
+	public synchronized long increment(@Nonnull String key, long incr) throws NullPointerException {
 		if (null == key)
 			throw new NullPointerException("null keys are not allowed");
 		if (this.counters.containsKey(key)) {
@@ -67,6 +74,10 @@ public class FrequencyCounter {
 
 	public boolean isUseSerialNumbers() {
 		return this.useSerialNumbers;
+	}
+
+	public Set<String> keySet() {
+		return ImmutableSet.copyOf(this.counters.keySet());
 	}
 
 	public synchronized String print(@Nullable String prefix) {

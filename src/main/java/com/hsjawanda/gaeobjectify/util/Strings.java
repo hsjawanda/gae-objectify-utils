@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.mail.internet.InternetAddress;
 
+import com.googlecode.objectify.Key;
+
 
 /**
  * @author Harshdeep S Jawanda (hsjawanda@gmail.com)
@@ -31,6 +33,12 @@ public class Strings {
 	public static String toString(InternetAddress addr) {
 		return String.format("%s <%s>", defaultString(addr.getPersonal(), NULL),
 				defaultString(addr.getAddress(), NULL));
+	}
+
+	public static String toString(Key<?> key) {
+		return null == key ? null
+				: "Key(" + key.getKind() + ", "
+						+ (null == key.getName() ? Long.toString(key.getId()) : "'" + key.getName() + "'") + ")";
 	}
 
 	@Nonnull

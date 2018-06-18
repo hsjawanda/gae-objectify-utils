@@ -20,12 +20,11 @@ public class PropertyValues {
 
 	private static final String NL = System.lineSeparator();
 
-	private String separator = ": ";
-
 	private Map<String, Object> properties = Maps.newTreeMap();
 
+	private String separator = ": ";
+
 	private PropertyValues(String separator) {
-//		separator = StringUtils.trimToNull(separator);
 		if (null != separator) {
 			this.separator = separator + " ";
 		}
@@ -37,6 +36,10 @@ public class PropertyValues {
 
 	public static PropertyValues create(String separator) {
 		return new PropertyValues(separator);
+	}
+
+	public PropertyValues add(String property, Object value) {
+		return addProperty(property, value);
 	}
 
 	public PropertyValues addProperties(Map<String, Object> values) {
@@ -59,6 +62,14 @@ public class PropertyValues {
 		return this.properties;
 	}
 
+	public String publish() {
+		return publish(false);
+	}
+
+	public String publish(boolean startWithNewline) {
+		return publish(startWithNewline, true);
+	}
+
 	public String publish(boolean startWithNewline, boolean endWithNewline) {
 		StringBuilder result = new StringBuilder(this.properties.size() * 100 + 10);
 		if (startWithNewline) {
@@ -78,14 +89,6 @@ public class PropertyValues {
 			result.append(NL);
 		}
 		return result.toString();
-	}
-
-	public String publish(boolean startWithNewline) {
-		return publish(startWithNewline, true);
-	}
-
-	public String publish() {
-		return publish(false);
 	}
 
 }

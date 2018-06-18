@@ -3,16 +3,22 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isBlank;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 
 import freemarker.core.Environment;
@@ -152,4 +158,23 @@ public class FMHelper {
 		}
 		return roundingModeEnums;
 	}
+
+	@Nullable
+	public static Template createTemplate(@Nonnull String templateContent, @Nonnull String templateName)
+			throws NullPointerException, IllegalArgumentException {
+		Objects.nonNull(templateContent);
+		Objects.nonNull(templateName);
+		if (isBlank(templateContent))
+			throw new IllegalArgumentException("templateContent" + Constants.NOT_BLANK);
+		if (isBlank(templateName))
+			throw new IllegalArgumentException("templateName" + Constants.NOT_BLANK);
+		Template tmpl = null;
+		try {
+			tmpl = new Template(templateName, new StringReader(templateContent), config());
+		} catch (IOException e) {
+			log.log(Level.WARNING, "Error creating template from String.", e);
+		}
+		return tmpl;
+	}
+
 }

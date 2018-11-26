@@ -74,6 +74,10 @@ public class FluentMap<K, V> {
 		return this.map.keySet();
 	}
 
+	public Map<K, V> map() {
+		return this.map;
+	}
+
 	public V put(K key, V value) {
 		V prevValue = this.map.get(key);
 		this.map.put(key, value);

@@ -52,6 +52,8 @@ public class PullTaskConfig {
 
 	private Class<?> cls;
 
+	private long delayForMillis = -1;
+
 	/**
 	 * In seconds
 	 */
@@ -60,6 +62,8 @@ public class PullTaskConfig {
 	@Getter(value = AccessLevel.NONE)
 	@Setter(value = AccessLevel.NONE)
 	private Queue queue;
+
+	private long runAtMillis = -1;
 
 	private Map<String, String> strParams = new LinkedHashMap<>();
 
@@ -84,6 +88,23 @@ public class PullTaskConfig {
 		return this.queue.addAsync(opts);
 	}
 
+	public PullTaskConfig param(String key, boolean value) {
+		param(key, Boolean.toString(value));
+		return this;
+	}
+
+	public PullTaskConfig param(String key, Enum<?> value) {
+		param(key, value.name());
+		return this;
+	}
+
+	public PullTaskConfig param(String key, int number) {
+		if (null != key) {
+			this.strParams.put(key, Integer.toString(number));
+		}
+		return this;
+	}
+
 	public PullTaskConfig param(String key, @Nullable String value) {
 		if (null != key) {
 			this.strParams.put(key, value);
@@ -106,6 +127,10 @@ public class PullTaskConfig {
 		long timeMillis = 0;
 		if (null != this.maxFrequency) {
 			freqFragment = Numbers.maxFrequencyFragment(this.maxFrequency.longValue());
+		} else if (this.runAtMillis >= 0) {
+			pullTask = pullTask.etaMillis(this.runAtMillis);
+		} else if (this.delayForMillis >= 0) {
+			pullTask = pullTask.countdownMillis(this.delayForMillis);
 		}
 		if (isNotBlank(this.taskName)) {
 			nameFragments.add(this.taskName);

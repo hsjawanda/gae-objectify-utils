@@ -74,6 +74,15 @@ public class UniqueIdGenerator {
 		return asString(new BigInteger(numBits, random), MAX_RADIX);
 	}
 
+	/**
+	 * Generate a random, positive {@code long}. Produces the full range of positive {@code long}s.
+	 *
+	 * @return
+	 */
+	public static long nextLong() {
+		return new BigInteger(63, random).longValue();
+	}
+
 	public static String asString(BigInteger bigInt, int radix) {
 		if (!radixRange.contains(radix)) {
 			radix = 10;

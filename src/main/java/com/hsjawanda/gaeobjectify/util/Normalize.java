@@ -5,9 +5,10 @@ package com.hsjawanda.gaeobjectify.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EMPTY;
-import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isBlank;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.normalizeSpace;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToNull;
+
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -19,6 +20,8 @@ import javax.annotation.Nullable;
 public class Normalize {
 
 	private static final Normalize	INSTANCE	= new Normalize();
+
+	private static final Pattern TAG_PATTERN = Pattern.compile("[^- 0-9a-zA-Z]");
 
 	private Normalize() {
 	}
@@ -35,17 +38,16 @@ public class Normalize {
 
 	public String role(String role) throws NullPointerException {
 		role = checkNotNull(normalizeSpace(role), "role" + Constants.NOT_NULL);
-		return role.toLowerCase().replaceAll("[^-\\p{Alnum} ]", "").replace(' ', '-')
+		return role.toLowerCase().replaceAll("[^-\\p{Alnum} ]", EMPTY).replace(' ', '-')
 				.replaceAll("-{2,}", "-");
 	}
 
 	@Nullable
 	public String tag(String tag) {
+		tag = trimToNull(normalizeSpace(tag));
 		if (null == tag)
 			return null;
-		tag = normalizeSpace(tag).replaceAll("[^- 0-9a-zA-Z]", EMPTY).replaceAll(" +", "-")
-				.toLowerCase();
-		return isBlank(tag) ? null : tag;
+		return TAG_PATTERN.matcher(tag).replaceAll(EMPTY).replace(' ', '-').toLowerCase();
 	}
 
 }

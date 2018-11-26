@@ -3,7 +3,11 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.defaultString;
+
 import java.util.logging.Logger;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Harshdeep S Jawanda <hsjawanda@gmail.com>
@@ -30,6 +34,15 @@ public final class Numbers {
 	public static String maxFrequencyFragment(long seconds) {
 		long timeMillis = seconds * 1000;
 		return Long.toString(System.currentTimeMillis() / timeMillis);
+	}
+
+	@Nullable
+	public static Long longValueOf(String idStr) {
+		try {
+			return Long.valueOf(defaultString(idStr));
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 }

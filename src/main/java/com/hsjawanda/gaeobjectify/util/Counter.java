@@ -64,7 +64,6 @@ public class Counter implements Serializable, StringIdEntity {
 
 	private static AsyncMemcacheService				ASYNC_MEMCACHE;
 
-	@SuppressWarnings("unused")
 	private static Logger							LOG					= Logger.getLogger(Counter.class
 																				.getName());
 

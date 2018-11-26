@@ -7,10 +7,12 @@ import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.EM
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.defaultString;
 import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.isNotBlank;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.internet.InternetAddress;
 
 import com.googlecode.objectify.Key;
@@ -31,14 +33,25 @@ public class Strings {
 
 	@Nonnull
 	public static String toString(InternetAddress addr) {
-		return String.format("%s <%s>", defaultString(addr.getPersonal(), NULL),
-				defaultString(addr.getAddress(), NULL));
+		return null != addr ? String.format("%s <%s>", defaultString(addr.getPersonal(), NULL),
+				defaultString(addr.getAddress(), NULL)) : NULL;
 	}
 
 	public static String toString(Key<?> key) {
-		return null == key ? null
+		return null == key ? NULL
 				: "Key(" + key.getKind() + ", "
 						+ (null == key.getName() ? Long.toString(key.getId()) : "'" + key.getName() + "'") + ")";
+	}
+
+	public static void append(@Nullable Appendable appendable, @Nullable Key<?> key) {
+		if (null == appendable)
+			return;
+		try {
+			appendable.append(toString(key));
+		} catch (IOException e) {
+			// Extremely unlikely
+			log.log(Level.WARNING, "Error appending Key<?>", e);
+		}
 	}
 
 	@Nonnull

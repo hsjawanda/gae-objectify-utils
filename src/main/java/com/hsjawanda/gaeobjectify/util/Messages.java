@@ -72,6 +72,10 @@ public class Messages {
 		return message.toString();
 	}
 
+	public int size() {
+		return this.messages.size();
+	}
+
 	private String addTimestampIfNeeded(String mainMesg) {
 		return this.timestamps ? new StringBuilder(100).append(TIMESTAMP.format(Instant.now())).append(": ")
 				.append(mainMesg).toString() : defaultString(mainMesg, "null");

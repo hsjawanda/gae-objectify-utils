@@ -5,6 +5,7 @@ package com.hsjawanda.gaeobjectify.collections;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -12,10 +13,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
 
@@ -27,6 +31,8 @@ import com.hsjawanda.gaeobjectify.data.GaeDataUtil;
 public class RefsList<E> implements List<E> {
 
 	private List<Ref<E>> wrapped;
+
+	private Map<Key<E>, E> retrieved;
 
 	protected RefsList(List<Ref<E>> toWrap) {
 		this.wrapped = new ArrayList<>(toWrap);
@@ -41,7 +47,7 @@ public class RefsList<E> implements List<E> {
 		if (null == toWrap)
 			return new RefsList<>();
 		RefsList<T> refsList = new RefsList<>();
-		refsList.wrapped = toWrap;
+		refsList.wrapped = ImmutableList.copyOf(toWrap);
 		return refsList;
 	}
 
@@ -220,7 +226,14 @@ public class RefsList<E> implements List<E> {
 	@Nullable
 	public E get(int index) {
 		Ref<E> element = this.wrapped.get(index);
-		return element == null ? null : element.get();
+		retrieveEntities();
+		return element == null ? null : this.retrieved.get(element.key());
+	}
+
+	private void retrieveEntities() {
+		if (null == this.retrieved) {
+			this.retrieved = ofy().load().refs(this.wrapped);
+		}
 	}
 
 	/**
@@ -297,7 +310,8 @@ public class RefsList<E> implements List<E> {
 	@Override
 	public E remove(int index) {
 		Ref<E> ref = this.wrapped.remove(index);
-		return null != ref ? ref.get() : null;
+		retrieveEntities();
+		return null != ref ? this.retrieved.get(ref.key()) : null;
 	}
 
 	/**

@@ -21,13 +21,18 @@ public class FcmResponse {
 	private String multicast_id;
 
 	@JsonProperty(value = "message_id")
-	private String messageId;
+	private long messageId;
 
 	private int success;
 
 	private int failure;
 
 	private int canonical_ids;
+
+	/**
+	 * For topic messages
+	 */
+	private String error;
 
 	private int statusCode;
 

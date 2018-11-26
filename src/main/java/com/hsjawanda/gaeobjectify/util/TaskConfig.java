@@ -22,6 +22,7 @@ import com.google.appengine.api.taskqueue.RetryOptions;
 import com.google.appengine.api.taskqueue.TaskAlreadyExistsException;
 import com.google.appengine.api.taskqueue.TaskHandle;
 import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Range;
 
@@ -41,33 +42,27 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class TaskConfig<T> {
 
+	public static final Range<Long>			DELAY_RANGE	= Range.closed(1L, 60 * 60 * 1000L);
+
+	public static final String				MAPPING		= Config.get("tasks.mapping").or("/task");
+
+	protected static final SimpleDateFormat	TASK_DATE	= new SimpleDateFormat(
+																"yyyy-MM-dd_HH-mm-ss_SSS");
+
+	private static final int DEF_RETRY_LIMIT = 2;
+
 	private static Logger					LOG			= Logger.getLogger(TaskConfig.class
 																.getName());
 
-	@lombok.NonNull
+	private boolean							addTimestamp;
+
+	@Singular
 	@Setter(AccessLevel.PRIVATE)
-	private Class<T>						taskClass;
-
-	private String							nameSuffix;
-
-	@Setter(AccessLevel.NONE)
-	private Queue							queue;
-
-	private String							host;
-
-	private RetryOptions					retryOptions;
+	private Map<String, byte[]>				byteParams;
 
 	private long							delayMillis		= -1;
 
-	private long							startMillis;
-
-	private boolean							addTimestamp;
-
-	private boolean							useAutoNaming;
-
-	@Getter(AccessLevel.PRIVATE)
-	@Setter(AccessLevel.NONE)
-	private String							taskName;
+	private String							host;
 
 	/**
 	 * In seconds.
@@ -75,24 +70,32 @@ public class TaskConfig<T> {
 	@Getter(AccessLevel.NONE)
 	private Long							maxFrequency;
 
+	private Method							method;
+
+	private String							nameSuffix;
+
+	private byte[]							payload;
+
+	@Setter(AccessLevel.NONE)
+	private Queue							queue;
+
+	private RetryOptions					retryOptions;
+
+	private long							startMillis;
+
 	@Singular()
 	@Setter(AccessLevel.PRIVATE)
 	private Map<String, String>				strParams;
 
-	@Singular
+	@lombok.NonNull
 	@Setter(AccessLevel.PRIVATE)
-	private Map<String, byte[]>				byteParams;
+	private Class<T>						taskClass;
 
-	private byte[]							payload;
+	@Getter(AccessLevel.PRIVATE)
+	@Setter(AccessLevel.NONE)
+	private String							taskName;
 
-	private static final int DEF_RETRY_LIMIT = 2;
-
-	public static final Range<Long>			DELAY_RANGE	= Range.closed(1L, 60 * 60 * 1000L);
-
-	public static final String				MAPPING		= Config.get("tasks.mapping").or("/task");
-
-	protected static final SimpleDateFormat	TASK_DATE	= new SimpleDateFormat(
-																"yyyy-MM-dd_HH-mm-ss_SSS");
+	private boolean							useAutoNaming;
 
 	static {
 		TasksHelper.TASK_DATE.setTimeZone(TimeZone.getTimeZone("IST"));
@@ -110,11 +113,17 @@ public class TaskConfig<T> {
 		return config;
 	}
 
-	public TaskConfig<T> strParam(String key, String value) {
-		if (key != null && null != value) {
-			this.strParams.put(key, value);
-		}
-		return this;
+	private static String taskUrl(String normalizedName) {
+		return Constants.pathJoiner.join(MAPPING, normalizedName);
+	}
+
+	public TaskHandle addToQueue() throws IllegalStateException, TaskAlreadyExistsException {
+		return this.queue.add(buildTaskOptions());
+
+	}
+
+	public Future<TaskHandle> addToQueueAsync() {
+		return this.queue.addAsync(buildTaskOptions());
 	}
 
 	public TaskConfig<T> byteParam(String key, byte[] value) {
@@ -124,10 +133,43 @@ public class TaskConfig<T> {
 		return this;
 	}
 
+	public TaskConfig<T> setQueueName(String qName) throws IllegalArgumentException {
+		this.queue = null == qName ? QueueFactory.getDefaultQueue() : QueueFactory.getQueue(qName);
+		checkArgument(null != this.queue, "Couldn't find a queue with name '" + qName + "'.");
+		return this;
+	}
+
+	public TaskConfig<T> strParam(String key, boolean value) {
+		return strParam(key, Boolean.toString(value));
+	}
+
+	public TaskConfig<T> strParam(String key, int value) {
+		return strParam(key, Integer.toString(value));
+	}
+
+	public TaskConfig<T> strParam(String key, long value) {
+		return strParam(key, Long.toString(value));
+	}
+
+	public TaskConfig<T> strParam(String key, String value) {
+		if (key != null && null != value) {
+			this.strParams.put(key, value);
+		}
+		return this;
+	}
+
+	public void tryAddToQueue() throws IllegalStateException {
+		try {
+			addToQueue();
+		} catch (TaskAlreadyExistsException e) {
+			LOG.info("Task named " + this.taskName + " already exists. Ignoring this task addition.");
+		}
+	}
+
 	private TaskOptions buildTaskOptions() throws IllegalStateException, TaskAlreadyExistsException {
 		checkState(null != this.queue, "No valid queue has been set.");
 		String normalizedTaskName = normalizedTaskName();
-		TaskOptions taskOptions = TaskOptions.Builder.withUrl(taskUrl(normalizedTaskName));
+		TaskOptions taskOptions = TaskOptions.Builder.withUrl(taskUrl(normalizedTaskName))/*.method(Method.)*/;
 		RetryOptions ro = null == this.retryOptions ? RetryOptions.Builder.withTaskRetryLimit(
 				DEF_RETRY_LIMIT).maxDoublings(2) : this.retryOptions;
 		taskOptions = taskOptions.retryOptions(ro);
@@ -168,38 +210,14 @@ public class TaskConfig<T> {
 		} else if (this.delayMillis > 0) {
 			taskOptions = taskOptions.countdownMillis(this.delayMillis);
 		}
-		return taskOptions;
-	}
-
-	public TaskHandle addToQueue() throws IllegalStateException, TaskAlreadyExistsException {
-		return this.queue.add(buildTaskOptions());
-
-	}
-
-	public Future<TaskHandle> addToQueueAsync() {
-		return this.queue.addAsync(buildTaskOptions());
-	}
-
-	public void tryAddToQueue() throws IllegalStateException {
-		try {
-			addToQueue();
-		} catch (TaskAlreadyExistsException e) {
-			LOG.info("Task named " + this.taskName + " already exists. Ignoring this task addition.");
+		if (null != this.method) {
+			taskOptions = taskOptions.method(this.method);
 		}
-	}
-
-	public TaskConfig<T> setQueueName(String qName) throws IllegalArgumentException {
-		this.queue = null == qName ? QueueFactory.getDefaultQueue() : QueueFactory.getQueue(qName);
-		checkArgument(null != this.queue, "Couldn't find a queue with name '" + qName + "'.");
-		return this;
+		return taskOptions;
 	}
 
 	private String normalizedTaskName() {
 		return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, this.taskClass.getSimpleName());
-	}
-
-	private static String taskUrl(String normalizedName) {
-		return Constants.pathJoiner.join(MAPPING, normalizedName);
 	}
 
 }

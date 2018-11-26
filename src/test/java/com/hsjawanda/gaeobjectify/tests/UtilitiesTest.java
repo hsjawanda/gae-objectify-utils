@@ -3,7 +3,11 @@
  */
 package com.hsjawanda.gaeobjectify.tests;
 
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.normalizeSpace;
+import static com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils.trimToNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -19,6 +23,7 @@ import com.hsjawanda.gaeobjectify.util.BaseX;
 import com.hsjawanda.gaeobjectify.util.Constants;
 import com.hsjawanda.gaeobjectify.util.Holdall;
 import com.hsjawanda.gaeobjectify.util.KeyValueUriInfo;
+import com.hsjawanda.gaeobjectify.util.Normalize;
 import com.hsjawanda.gaeobjectify.util.PrintableTable;
 import com.hsjawanda.gaeobjectify.util.PrintableTable.Justification;
 import com.hsjawanda.gaeobjectify.util.SplitJoin;
@@ -128,6 +133,20 @@ public class UtilitiesTest {
 			table.startRow().add("Gajendra").add(null).add("Singh");
 		}
 		System.out.print(table.print(null));
+	}
+
+	@Test
+	public void testNormalizeSpace() {
+		String sample1 = "   ";
+		String result1 = normalizeSpace(sample1);
+		assertNotNull(result1);
+		assertEquals(0, result1.length());
+		String result2 = trimToNull(result1);
+		assertNull(result2);
+		trimToNull(null);
+
+		String sample2 = "Indian   Sports ";
+		assertEquals("indian-sports", Normalize.get().tag(sample2));
 	}
 
 }

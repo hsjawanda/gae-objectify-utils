@@ -3,10 +3,10 @@
  */
 package com.hsjawanda.gaeobjectify.util;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.google.common.collect.Maps;
 import com.hsjawanda.gaeobjectify.repackaged.commons.lang3.StringUtils;
 
 /**
@@ -20,7 +20,7 @@ public class PropertyValues {
 
 	private static final String NL = System.lineSeparator();
 
-	private Map<String, Object> properties = Maps.newTreeMap();
+	private Map<String, Object> properties = new LinkedHashMap<>();
 
 	private String separator = ": ";
 

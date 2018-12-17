@@ -10,7 +10,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<appengine.target.version>1.9.63</appengine.target.version>
+		<appengine.target.version>1.9.68</appengine.target.version>
 		<commons.io.version>2.4</commons.io.version>
 		<commons.lang3.version>3.4</commons.lang3.version>
 		<commons.validator.version>1.5.0</commons.validator.version>
@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-labs</artifactId>
-			<version>1.9.49</version>
+			<version>${appengine.target.version}</version>
 		</dependency>
 
 		<dependency>

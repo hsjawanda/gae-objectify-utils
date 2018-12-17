@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.appengine.labs.repackaged.org.json.JSONArray;
-import com.google.appengine.labs.repackaged.org.json.JSONException;
-import com.google.appengine.labs.repackaged.org.json.JSONObject;
+import com.google.appengine.repackaged.org.json.JSONArray;
+import com.google.appengine.repackaged.org.json.JSONException;
+import com.google.appengine.repackaged.org.json.JSONObject;
 
 
 public class Sendgrid {
